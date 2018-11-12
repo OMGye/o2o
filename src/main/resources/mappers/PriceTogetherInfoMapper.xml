@@ -33,7 +33,7 @@
       )
     values (#{priceTogetherId,jdbcType=INTEGER}, #{priceTogetherNum,jdbcType=INTEGER}, 
       #{priceTogetherPercentage,jdbcType=DECIMAL}, #{priceTogetherName,jdbcType=VARCHAR}, 
-      #{priceTogetherDec,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      #{priceTogetherDec,jdbcType=VARCHAR}, now(), now()
       )
   </insert>
   <insert id="insertSelective" parameterType="com.pojo.PriceTogetherInfo" >
@@ -57,9 +57,9 @@
       <if test="createTime != null" >
         create_time,
       </if>
-      <if test="updateTime != null" >
+
         update_time,
-      </if>
+
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="priceTogetherId != null" >
@@ -80,9 +80,9 @@
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null" >
-        #{updateTime,jdbcType=TIMESTAMP},
-      </if>
+
+        now(),
+
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.pojo.PriceTogetherInfo" >
@@ -103,9 +103,9 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
+
+        update_time = now(),
+
     </set>
     where price_together_id = #{priceTogetherId,jdbcType=INTEGER}
   </update>
@@ -116,7 +116,22 @@
       price_together_name = #{priceTogetherName,jdbcType=VARCHAR},
       price_together_dec = #{priceTogetherDec,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = now()
     where price_together_id = #{priceTogetherId,jdbcType=INTEGER}
   </update>
+
+  <select id="selectByPriceTogetherInfo" parameterType="com.pojo.PriceTogetherInfo" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from price_together_info
+    where price_together_num = #{priceTogetherNum,jdbcType=INTEGER}
+    and price_together_name = #{priceTogetherName,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from price_together_info
+  </select>
+
 </mapper>

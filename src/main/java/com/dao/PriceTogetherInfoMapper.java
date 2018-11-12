@@ -1,6 +1,9 @@
 package com.dao;
 
+import com.pojo.EngineerRankInfo;
 import com.pojo.PriceTogetherInfo;
+
+import java.util.List;
 
 public interface PriceTogetherInfoMapper {
     int deleteByPrimaryKey(Integer priceTogetherId);
@@ -14,4 +17,8 @@ public interface PriceTogetherInfoMapper {
     int updateByPrimaryKeySelective(PriceTogetherInfo record);
 
     int updateByPrimaryKey(PriceTogetherInfo record);
+
+    PriceTogetherInfo selectByPriceTogetherInfo(PriceTogetherInfo priceTogetherInfo);
+
+    List<PriceTogetherInfo> selectList();
 }

@@ -147,10 +147,10 @@
     <include refid="Base_Column_List" />
     from basic_price_info
     where
-    first_category = #{firstCategory,jdbcType=VARCHAR},
-    second_rank = #{secondRank,jdbcType=VARCHAR},
-    third_category = #{thirdCategory,jdbcType=VARCHAR},
-    basic_layer = #{basicLayer,jdbcType=INTEGER}
+    first_category = #{firstCategory,jdbcType=VARCHAR}
+    and second_rank = #{secondRank,jdbcType=VARCHAR}
+    and third_category = #{thirdCategory,jdbcType=VARCHAR}
+    and basic_layer = #{basicLayer,jdbcType=INTEGER}
   </select>
 
   <select id="selectList" resultMap="BaseResultMap">
