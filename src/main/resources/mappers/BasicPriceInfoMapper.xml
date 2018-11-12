@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.BasicPriceInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.pojo.BasicPriceInfo" >
+    <constructor >
+      <idArg column="basic_price_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="first_category" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="second_rank" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="third_category" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="basic_layer" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="price" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="basic_dec" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    basic_price_id, first_category, second_rank, third_category, basic_layer, price, 
+    basic_dec, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from basic_price_info
+    where basic_price_id = #{basicPriceId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from basic_price_info
+    where basic_price_id = #{basicPriceId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.pojo.BasicPriceInfo" >
+    insert into basic_price_info (basic_price_id, first_category, second_rank, 
+      third_category, basic_layer, price, 
+      basic_dec, create_time, update_time
+      )
+    values (#{basicPriceId,jdbcType=INTEGER}, #{firstCategory,jdbcType=VARCHAR}, #{secondRank,jdbcType=VARCHAR}, 
+      #{thirdCategory,jdbcType=VARCHAR}, #{basicLayer,jdbcType=INTEGER}, #{price,jdbcType=DECIMAL}, 
+      #{basicDec,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.pojo.BasicPriceInfo" >
+    insert into basic_price_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="basicPriceId != null" >
+        basic_price_id,
+      </if>
+      <if test="firstCategory != null" >
+        first_category,
+      </if>
+      <if test="secondRank != null" >
+        second_rank,
+      </if>
+      <if test="thirdCategory != null" >
+        third_category,
+      </if>
+      <if test="basicLayer != null" >
+        basic_layer,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="basicDec != null" >
+        basic_dec,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="basicPriceId != null" >
+        #{basicPriceId,jdbcType=INTEGER},
+      </if>
+      <if test="firstCategory != null" >
+        #{firstCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="secondRank != null" >
+        #{secondRank,jdbcType=VARCHAR},
+      </if>
+      <if test="thirdCategory != null" >
+        #{thirdCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="basicLayer != null" >
+        #{basicLayer,jdbcType=INTEGER},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="basicDec != null" >
+        #{basicDec,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.pojo.BasicPriceInfo" >
+    update basic_price_info
+    <set >
+      <if test="firstCategory != null" >
+        first_category = #{firstCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="secondRank != null" >
+        second_rank = #{secondRank,jdbcType=VARCHAR},
+      </if>
+      <if test="thirdCategory != null" >
+        third_category = #{thirdCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="basicLayer != null" >
+        basic_layer = #{basicLayer,jdbcType=INTEGER},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="basicDec != null" >
+        basic_dec = #{basicDec,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where basic_price_id = #{basicPriceId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.pojo.BasicPriceInfo" >
+    update basic_price_info
+    set first_category = #{firstCategory,jdbcType=VARCHAR},
+      second_rank = #{secondRank,jdbcType=VARCHAR},
+      third_category = #{thirdCategory,jdbcType=VARCHAR},
+      basic_layer = #{basicLayer,jdbcType=INTEGER},
+      price = #{price,jdbcType=DECIMAL},
+      basic_dec = #{basicDec,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where basic_price_id = #{basicPriceId,jdbcType=INTEGER}
+  </update>
+</mapper>

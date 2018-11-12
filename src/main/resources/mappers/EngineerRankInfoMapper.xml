@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.EngineerRankInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.pojo.EngineerRankInfo" >
+    <constructor >
+      <idArg column="engineer_rank_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="engineer_rank" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="engineer_rank_a" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="engineer_rank_b" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="engineer_rank_c" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="engineer_rank_d" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="engineer_rank_cam" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="engineer_rank_mi" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="engineer_rank_qae" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    engineer_rank_id, engineer_rank, engineer_rank_a, engineer_rank_b, engineer_rank_c, 
+    engineer_rank_d, engineer_rank_cam, engineer_rank_mi, engineer_rank_qae, create_time, 
+    update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from engineer_rank_info
+    where engineer_rank_id = #{engineerRankId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from engineer_rank_info
+    where engineer_rank_id = #{engineerRankId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.pojo.EngineerRankInfo" >
+    insert into engineer_rank_info (engineer_rank_id, engineer_rank, engineer_rank_a, 
+      engineer_rank_b, engineer_rank_c, engineer_rank_d, 
+      engineer_rank_cam, engineer_rank_mi, engineer_rank_qae, 
+      create_time, update_time)
+    values (#{engineerRankId,jdbcType=INTEGER}, #{engineerRank,jdbcType=INTEGER}, #{engineerRankA,jdbcType=INTEGER}, 
+      #{engineerRankB,jdbcType=INTEGER}, #{engineerRankC,jdbcType=INTEGER}, #{engineerRankD,jdbcType=INTEGER}, 
+      #{engineerRankCam,jdbcType=INTEGER}, #{engineerRankMi,jdbcType=INTEGER}, #{engineerRankQae,jdbcType=INTEGER}, 
+      now(), now())
+  </insert>
+  <insert id="insertSelective" parameterType="com.pojo.EngineerRankInfo" >
+    insert into engineer_rank_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="engineerRankId != null" >
+        engineer_rank_id,
+      </if>
+      <if test="engineerRank != null" >
+        engineer_rank,
+      </if>
+      <if test="engineerRankA != null" >
+        engineer_rank_a,
+      </if>
+      <if test="engineerRankB != null" >
+        engineer_rank_b,
+      </if>
+      <if test="engineerRankC != null" >
+        engineer_rank_c,
+      </if>
+      <if test="engineerRankD != null" >
+        engineer_rank_d,
+      </if>
+      <if test="engineerRankCam != null" >
+        engineer_rank_cam,
+      </if>
+      <if test="engineerRankMi != null" >
+        engineer_rank_mi,
+      </if>
+      <if test="engineerRankQae != null" >
+        engineer_rank_qae,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="engineerRankId != null" >
+        #{engineerRankId,jdbcType=INTEGER},
+      </if>
+      <if test="engineerRank != null" >
+        #{engineerRank,jdbcType=INTEGER},
+      </if>
+      <if test="engineerRankA != null" >
+        #{engineerRankA,jdbcType=INTEGER},
+      </if>
+      <if test="engineerRankB != null" >
+        #{engineerRankB,jdbcType=INTEGER},
+      </if>
+      <if test="engineerRankC != null" >
+        #{engineerRankC,jdbcType=INTEGER},
+      </if>
+      <if test="engineerRankD != null" >
+        #{engineerRankD,jdbcType=INTEGER},
+      </if>
+      <if test="engineerRankCam != null" >
+        #{engineerRankCam,jdbcType=INTEGER},
+      </if>
+      <if test="engineerRankMi != null" >
+        #{engineerRankMi,jdbcType=INTEGER},
+      </if>
+      <if test="engineerRankQae != null" >
+        #{engineerRankQae,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        now(),
+      </if>
+      <if test="updateTime != null" >
+        now(),
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.pojo.EngineerRankInfo" >
+    update engineer_rank_info
+    <set >
+      <if test="engineerRank != null" >
+        engineer_rank = #{engineerRank,jdbcType=INTEGER},
+      </if>
+      <if test="engineerRankA != null" >
+        engineer_rank_a = #{engineerRankA,jdbcType=INTEGER},
+      </if>
+      <if test="engineerRankB != null" >
+        engineer_rank_b = #{engineerRankB,jdbcType=INTEGER},
+      </if>
+      <if test="engineerRankC != null" >
+        engineer_rank_c = #{engineerRankC,jdbcType=INTEGER},
+      </if>
+      <if test="engineerRankD != null" >
+        engineer_rank_d = #{engineerRankD,jdbcType=INTEGER},
+      </if>
+      <if test="engineerRankCam != null" >
+        engineer_rank_cam = #{engineerRankCam,jdbcType=INTEGER},
+      </if>
+      <if test="engineerRankMi != null" >
+        engineer_rank_mi = #{engineerRankMi,jdbcType=INTEGER},
+      </if>
+      <if test="engineerRankQae != null" >
+        engineer_rank_qae = #{engineerRankQae,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+
+        update_time = now(),
+
+    </set>
+    where engineer_rank_id = #{engineerRankId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.pojo.EngineerRankInfo" >
+    update engineer_rank_info
+    set engineer_rank = #{engineerRank,jdbcType=INTEGER},
+      engineer_rank_a = #{engineerRankA,jdbcType=INTEGER},
+      engineer_rank_b = #{engineerRankB,jdbcType=INTEGER},
+      engineer_rank_c = #{engineerRankC,jdbcType=INTEGER},
+      engineer_rank_d = #{engineerRankD,jdbcType=INTEGER},
+      engineer_rank_cam = #{engineerRankCam,jdbcType=INTEGER},
+      engineer_rank_mi = #{engineerRankMi,jdbcType=INTEGER},
+      engineer_rank_qae = #{engineerRankQae,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = now()
+    where engineer_rank_id = #{engineerRankId,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from engineer_rank_info
+  </select>
+</mapper>

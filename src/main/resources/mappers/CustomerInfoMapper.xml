@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.CustomerInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.pojo.CustomerInfo" >
+    <constructor >
+      <idArg column="customer_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="customer_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="password" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="phone" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="email" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="customer_qq" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="customer_prov" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="customer_city" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="customer_state" jdbcType="TINYINT" javaType="java.lang.Byte" />
+      <arg column="customer_pay_count" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="customer_balance" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.pojo.CustomerInfo" >
+    <constructor >
+      <idArg column="customer_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="customer_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="password" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="phone" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="email" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="customer_qq" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="customer_prov" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="customer_city" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="customer_state" jdbcType="TINYINT" javaType="java.lang.Byte" />
+      <arg column="customer_pay_count" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="customer_balance" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="customer_attention" jdbcType="LONGVARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    customer_id, customer_name, password, phone, email, customer_qq, customer_prov, customer_city, 
+    customer_state, customer_pay_count, customer_balance, create_time, update_time
+  </sql>
+  <sql id="Blob_Column_List" >
+    customer_attention
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from customer_info
+    where customer_id = #{customerId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from customer_info
+    where customer_id = #{customerId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.pojo.CustomerInfo" >
+    insert into customer_info (customer_id, customer_name, password, 
+      phone, email, customer_qq, 
+      customer_prov, customer_city, customer_state, 
+      customer_pay_count, customer_balance, create_time, 
+      update_time, customer_attention)
+    values (#{customerId,jdbcType=INTEGER}, #{customerName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{customerQq,jdbcType=VARCHAR}, 
+      #{customerProv,jdbcType=VARCHAR}, #{customerCity,jdbcType=VARCHAR}, #{customerState,jdbcType=TINYINT}, 
+      #{customerPayCount,jdbcType=VARCHAR}, #{customerBalance,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{customerAttention,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.pojo.CustomerInfo" >
+    insert into customer_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="customerId != null" >
+        customer_id,
+      </if>
+      <if test="customerName != null" >
+        customer_name,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="customerQq != null" >
+        customer_qq,
+      </if>
+      <if test="customerProv != null" >
+        customer_prov,
+      </if>
+      <if test="customerCity != null" >
+        customer_city,
+      </if>
+      <if test="customerState != null" >
+        customer_state,
+      </if>
+      <if test="customerPayCount != null" >
+        customer_pay_count,
+      </if>
+      <if test="customerBalance != null" >
+        customer_balance,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="customerAttention != null" >
+        customer_attention,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="customerId != null" >
+        #{customerId,jdbcType=INTEGER},
+      </if>
+      <if test="customerName != null" >
+        #{customerName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="customerQq != null" >
+        #{customerQq,jdbcType=VARCHAR},
+      </if>
+      <if test="customerProv != null" >
+        #{customerProv,jdbcType=VARCHAR},
+      </if>
+      <if test="customerCity != null" >
+        #{customerCity,jdbcType=VARCHAR},
+      </if>
+      <if test="customerState != null" >
+        #{customerState,jdbcType=TINYINT},
+      </if>
+      <if test="customerPayCount != null" >
+        #{customerPayCount,jdbcType=VARCHAR},
+      </if>
+      <if test="customerBalance != null" >
+        #{customerBalance,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="customerAttention != null" >
+        #{customerAttention,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.pojo.CustomerInfo" >
+    update customer_info
+    <set >
+      <if test="customerName != null" >
+        customer_name = #{customerName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="customerQq != null" >
+        customer_qq = #{customerQq,jdbcType=VARCHAR},
+      </if>
+      <if test="customerProv != null" >
+        customer_prov = #{customerProv,jdbcType=VARCHAR},
+      </if>
+      <if test="customerCity != null" >
+        customer_city = #{customerCity,jdbcType=VARCHAR},
+      </if>
+      <if test="customerState != null" >
+        customer_state = #{customerState,jdbcType=TINYINT},
+      </if>
+      <if test="customerPayCount != null" >
+        customer_pay_count = #{customerPayCount,jdbcType=VARCHAR},
+      </if>
+      <if test="customerBalance != null" >
+        customer_balance = #{customerBalance,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="customerAttention != null" >
+        customer_attention = #{customerAttention,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where customer_id = #{customerId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.pojo.CustomerInfo" >
+    update customer_info
+    set customer_name = #{customerName,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      customer_qq = #{customerQq,jdbcType=VARCHAR},
+      customer_prov = #{customerProv,jdbcType=VARCHAR},
+      customer_city = #{customerCity,jdbcType=VARCHAR},
+      customer_state = #{customerState,jdbcType=TINYINT},
+      customer_pay_count = #{customerPayCount,jdbcType=VARCHAR},
+      customer_balance = #{customerBalance,jdbcType=DECIMAL},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      customer_attention = #{customerAttention,jdbcType=LONGVARCHAR}
+    where customer_id = #{customerId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.pojo.CustomerInfo" >
+    update customer_info
+    set customer_name = #{customerName,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      customer_qq = #{customerQq,jdbcType=VARCHAR},
+      customer_prov = #{customerProv,jdbcType=VARCHAR},
+      customer_city = #{customerCity,jdbcType=VARCHAR},
+      customer_state = #{customerState,jdbcType=TINYINT},
+      customer_pay_count = #{customerPayCount,jdbcType=VARCHAR},
+      customer_balance = #{customerBalance,jdbcType=DECIMAL},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where customer_id = #{customerId,jdbcType=INTEGER}
+  </update>
+</mapper>

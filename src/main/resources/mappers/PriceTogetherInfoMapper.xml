@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.PriceTogetherInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.pojo.PriceTogetherInfo" >
+    <constructor >
+      <idArg column="price_together_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="price_together_num" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="price_together_percentage" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="price_together_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="price_together_dec" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    price_together_id, price_together_num, price_together_percentage, price_together_name, 
+    price_together_dec, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from price_together_info
+    where price_together_id = #{priceTogetherId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from price_together_info
+    where price_together_id = #{priceTogetherId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.pojo.PriceTogetherInfo" >
+    insert into price_together_info (price_together_id, price_together_num, 
+      price_together_percentage, price_together_name, 
+      price_together_dec, create_time, update_time
+      )
+    values (#{priceTogetherId,jdbcType=INTEGER}, #{priceTogetherNum,jdbcType=INTEGER}, 
+      #{priceTogetherPercentage,jdbcType=DECIMAL}, #{priceTogetherName,jdbcType=VARCHAR}, 
+      #{priceTogetherDec,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.pojo.PriceTogetherInfo" >
+    insert into price_together_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="priceTogetherId != null" >
+        price_together_id,
+      </if>
+      <if test="priceTogetherNum != null" >
+        price_together_num,
+      </if>
+      <if test="priceTogetherPercentage != null" >
+        price_together_percentage,
+      </if>
+      <if test="priceTogetherName != null" >
+        price_together_name,
+      </if>
+      <if test="priceTogetherDec != null" >
+        price_together_dec,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="priceTogetherId != null" >
+        #{priceTogetherId,jdbcType=INTEGER},
+      </if>
+      <if test="priceTogetherNum != null" >
+        #{priceTogetherNum,jdbcType=INTEGER},
+      </if>
+      <if test="priceTogetherPercentage != null" >
+        #{priceTogetherPercentage,jdbcType=DECIMAL},
+      </if>
+      <if test="priceTogetherName != null" >
+        #{priceTogetherName,jdbcType=VARCHAR},
+      </if>
+      <if test="priceTogetherDec != null" >
+        #{priceTogetherDec,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.pojo.PriceTogetherInfo" >
+    update price_together_info
+    <set >
+      <if test="priceTogetherNum != null" >
+        price_together_num = #{priceTogetherNum,jdbcType=INTEGER},
+      </if>
+      <if test="priceTogetherPercentage != null" >
+        price_together_percentage = #{priceTogetherPercentage,jdbcType=DECIMAL},
+      </if>
+      <if test="priceTogetherName != null" >
+        price_together_name = #{priceTogetherName,jdbcType=VARCHAR},
+      </if>
+      <if test="priceTogetherDec != null" >
+        price_together_dec = #{priceTogetherDec,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where price_together_id = #{priceTogetherId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.pojo.PriceTogetherInfo" >
+    update price_together_info
+    set price_together_num = #{priceTogetherNum,jdbcType=INTEGER},
+      price_together_percentage = #{priceTogetherPercentage,jdbcType=DECIMAL},
+      price_together_name = #{priceTogetherName,jdbcType=VARCHAR},
+      price_together_dec = #{priceTogetherDec,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where price_together_id = #{priceTogetherId,jdbcType=INTEGER}
+  </update>
+</mapper>

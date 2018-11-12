@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.OrderAnsqueInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.pojo.OrderAnsqueInfo" >
+    <constructor >
+      <idArg column="order_ansque_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="order_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="user_type" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="user_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="order_ansque_content" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    order_ansque_id, order_id, user_type, user_id, user_name, order_ansque_content, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from order_ansque_info
+    where order_ansque_id = #{orderAnsqueId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from order_ansque_info
+    where order_ansque_id = #{orderAnsqueId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.pojo.OrderAnsqueInfo" >
+    insert into order_ansque_info (order_ansque_id, order_id, user_type, 
+      user_id, user_name, order_ansque_content, 
+      create_time)
+    values (#{orderAnsqueId,jdbcType=INTEGER}, #{orderId,jdbcType=INTEGER}, #{userType,jdbcType=INTEGER}, 
+      #{userId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{orderAnsqueContent,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.pojo.OrderAnsqueInfo" >
+    insert into order_ansque_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderAnsqueId != null" >
+        order_ansque_id,
+      </if>
+      <if test="orderId != null" >
+        order_id,
+      </if>
+      <if test="userType != null" >
+        user_type,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="orderAnsqueContent != null" >
+        order_ansque_content,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderAnsqueId != null" >
+        #{orderAnsqueId,jdbcType=INTEGER},
+      </if>
+      <if test="orderId != null" >
+        #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="userType != null" >
+        #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderAnsqueContent != null" >
+        #{orderAnsqueContent,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.pojo.OrderAnsqueInfo" >
+    update order_ansque_info
+    <set >
+      <if test="orderId != null" >
+        order_id = #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="userType != null" >
+        user_type = #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderAnsqueContent != null" >
+        order_ansque_content = #{orderAnsqueContent,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where order_ansque_id = #{orderAnsqueId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.pojo.OrderAnsqueInfo" >
+    update order_ansque_info
+    set order_id = #{orderId,jdbcType=INTEGER},
+      user_type = #{userType,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      user_name = #{userName,jdbcType=VARCHAR},
+      order_ansque_content = #{orderAnsqueContent,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where order_ansque_id = #{orderAnsqueId,jdbcType=INTEGER}
+  </update>
+</mapper>

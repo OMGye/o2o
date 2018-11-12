@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.EngineerInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.pojo.EngineerInfo" >
+    <constructor >
+      <idArg column="engineer_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="engineer_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="password" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="phone" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="email" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="engineer_qq" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="engineer_prov" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="engineer_city" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="engineer_state" jdbcType="TINYINT" javaType="java.lang.Byte" />
+      <arg column="engineer_pay_count" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="engineer_balance" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="engineer_file" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="engineer_rank" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="engineer_classfy" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="engineer_quantity" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    engineer_id, engineer_name, password, phone, email, engineer_qq, engineer_prov, engineer_city, 
+    engineer_state, engineer_pay_count, engineer_balance, engineer_file, engineer_rank, 
+    engineer_classfy, engineer_quantity, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from engineer_info
+    where engineer_id = #{engineerId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from engineer_info
+    where engineer_id = #{engineerId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.pojo.EngineerInfo" >
+    insert into engineer_info (engineer_id, engineer_name, password, 
+      phone, email, engineer_qq, 
+      engineer_prov, engineer_city, engineer_state, 
+      engineer_pay_count, engineer_balance, engineer_file, 
+      engineer_rank, engineer_classfy, engineer_quantity, 
+      create_time, update_time)
+    values (#{engineerId,jdbcType=INTEGER}, #{engineerName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{engineerQq,jdbcType=VARCHAR}, 
+      #{engineerProv,jdbcType=VARCHAR}, #{engineerCity,jdbcType=VARCHAR}, #{engineerState,jdbcType=TINYINT}, 
+      #{engineerPayCount,jdbcType=VARCHAR}, #{engineerBalance,jdbcType=DECIMAL}, #{engineerFile,jdbcType=VARCHAR}, 
+      #{engineerRank,jdbcType=INTEGER}, #{engineerClassfy,jdbcType=VARCHAR}, #{engineerQuantity,jdbcType=DECIMAL}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.pojo.EngineerInfo" >
+    insert into engineer_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="engineerId != null" >
+        engineer_id,
+      </if>
+      <if test="engineerName != null" >
+        engineer_name,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="engineerQq != null" >
+        engineer_qq,
+      </if>
+      <if test="engineerProv != null" >
+        engineer_prov,
+      </if>
+      <if test="engineerCity != null" >
+        engineer_city,
+      </if>
+      <if test="engineerState != null" >
+        engineer_state,
+      </if>
+      <if test="engineerPayCount != null" >
+        engineer_pay_count,
+      </if>
+      <if test="engineerBalance != null" >
+        engineer_balance,
+      </if>
+      <if test="engineerFile != null" >
+        engineer_file,
+      </if>
+      <if test="engineerRank != null" >
+        engineer_rank,
+      </if>
+      <if test="engineerClassfy != null" >
+        engineer_classfy,
+      </if>
+      <if test="engineerQuantity != null" >
+        engineer_quantity,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="engineerId != null" >
+        #{engineerId,jdbcType=INTEGER},
+      </if>
+      <if test="engineerName != null" >
+        #{engineerName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="engineerQq != null" >
+        #{engineerQq,jdbcType=VARCHAR},
+      </if>
+      <if test="engineerProv != null" >
+        #{engineerProv,jdbcType=VARCHAR},
+      </if>
+      <if test="engineerCity != null" >
+        #{engineerCity,jdbcType=VARCHAR},
+      </if>
+      <if test="engineerState != null" >
+        #{engineerState,jdbcType=TINYINT},
+      </if>
+      <if test="engineerPayCount != null" >
+        #{engineerPayCount,jdbcType=VARCHAR},
+      </if>
+      <if test="engineerBalance != null" >
+        #{engineerBalance,jdbcType=DECIMAL},
+      </if>
+      <if test="engineerFile != null" >
+        #{engineerFile,jdbcType=VARCHAR},
+      </if>
+      <if test="engineerRank != null" >
+        #{engineerRank,jdbcType=INTEGER},
+      </if>
+      <if test="engineerClassfy != null" >
+        #{engineerClassfy,jdbcType=VARCHAR},
+      </if>
+      <if test="engineerQuantity != null" >
+        #{engineerQuantity,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.pojo.EngineerInfo" >
+    update engineer_info
+    <set >
+      <if test="engineerName != null" >
+        engineer_name = #{engineerName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="engineerQq != null" >
+        engineer_qq = #{engineerQq,jdbcType=VARCHAR},
+      </if>
+      <if test="engineerProv != null" >
+        engineer_prov = #{engineerProv,jdbcType=VARCHAR},
+      </if>
+      <if test="engineerCity != null" >
+        engineer_city = #{engineerCity,jdbcType=VARCHAR},
+      </if>
+      <if test="engineerState != null" >
+        engineer_state = #{engineerState,jdbcType=TINYINT},
+      </if>
+      <if test="engineerPayCount != null" >
+        engineer_pay_count = #{engineerPayCount,jdbcType=VARCHAR},
+      </if>
+      <if test="engineerBalance != null" >
+        engineer_balance = #{engineerBalance,jdbcType=DECIMAL},
+      </if>
+      <if test="engineerFile != null" >
+        engineer_file = #{engineerFile,jdbcType=VARCHAR},
+      </if>
+      <if test="engineerRank != null" >
+        engineer_rank = #{engineerRank,jdbcType=INTEGER},
+      </if>
+      <if test="engineerClassfy != null" >
+        engineer_classfy = #{engineerClassfy,jdbcType=VARCHAR},
+      </if>
+      <if test="engineerQuantity != null" >
+        engineer_quantity = #{engineerQuantity,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where engineer_id = #{engineerId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.pojo.EngineerInfo" >
+    update engineer_info
+    set engineer_name = #{engineerName,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      engineer_qq = #{engineerQq,jdbcType=VARCHAR},
+      engineer_prov = #{engineerProv,jdbcType=VARCHAR},
+      engineer_city = #{engineerCity,jdbcType=VARCHAR},
+      engineer_state = #{engineerState,jdbcType=TINYINT},
+      engineer_pay_count = #{engineerPayCount,jdbcType=VARCHAR},
+      engineer_balance = #{engineerBalance,jdbcType=DECIMAL},
+      engineer_file = #{engineerFile,jdbcType=VARCHAR},
+      engineer_rank = #{engineerRank,jdbcType=INTEGER},
+      engineer_classfy = #{engineerClassfy,jdbcType=VARCHAR},
+      engineer_quantity = #{engineerQuantity,jdbcType=DECIMAL},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where engineer_id = #{engineerId,jdbcType=INTEGER}
+  </update>
+</mapper>

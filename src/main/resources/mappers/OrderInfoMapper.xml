@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.OrderInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.pojo.OrderInfo" >
+    <constructor >
+      <idArg column="order_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="customer_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="customer_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="engineer_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="engineer_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="engineer_check_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="engineer_check_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="order_first_category" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="order_second_category" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="order_mi" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="order_qae" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="order_dec" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="order_rush" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="order_deduct_rank" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="order_deduct_dec" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="order_rate_dec" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="order_state" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    order_id, customer_id, customer_name, engineer_id, engineer_name, engineer_check_id, 
+    engineer_check_name, order_first_category, order_second_category, order_mi, order_qae, 
+    order_dec, order_rush, order_deduct_rank, order_deduct_dec, order_rate_dec, order_state, 
+    create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from order_info
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from order_info
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.pojo.OrderInfo" >
+    insert into order_info (order_id, customer_id, customer_name, 
+      engineer_id, engineer_name, engineer_check_id, 
+      engineer_check_name, order_first_category, 
+      order_second_category, order_mi, order_qae, 
+      order_dec, order_rush, order_deduct_rank, 
+      order_deduct_dec, order_rate_dec, order_state, 
+      create_time, update_time)
+    values (#{orderId,jdbcType=INTEGER}, #{customerId,jdbcType=INTEGER}, #{customerName,jdbcType=VARCHAR}, 
+      #{engineerId,jdbcType=INTEGER}, #{engineerName,jdbcType=VARCHAR}, #{engineerCheckId,jdbcType=INTEGER}, 
+      #{engineerCheckName,jdbcType=VARCHAR}, #{orderFirstCategory,jdbcType=VARCHAR}, 
+      #{orderSecondCategory,jdbcType=VARCHAR}, #{orderMi,jdbcType=INTEGER}, #{orderQae,jdbcType=INTEGER}, 
+      #{orderDec,jdbcType=VARCHAR}, #{orderRush,jdbcType=INTEGER}, #{orderDeductRank,jdbcType=INTEGER}, 
+      #{orderDeductDec,jdbcType=VARCHAR}, #{orderRateDec,jdbcType=VARCHAR}, #{orderState,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.pojo.OrderInfo" >
+    insert into order_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        order_id,
+      </if>
+      <if test="customerId != null" >
+        customer_id,
+      </if>
+      <if test="customerName != null" >
+        customer_name,
+      </if>
+      <if test="engineerId != null" >
+        engineer_id,
+      </if>
+      <if test="engineerName != null" >
+        engineer_name,
+      </if>
+      <if test="engineerCheckId != null" >
+        engineer_check_id,
+      </if>
+      <if test="engineerCheckName != null" >
+        engineer_check_name,
+      </if>
+      <if test="orderFirstCategory != null" >
+        order_first_category,
+      </if>
+      <if test="orderSecondCategory != null" >
+        order_second_category,
+      </if>
+      <if test="orderMi != null" >
+        order_mi,
+      </if>
+      <if test="orderQae != null" >
+        order_qae,
+      </if>
+      <if test="orderDec != null" >
+        order_dec,
+      </if>
+      <if test="orderRush != null" >
+        order_rush,
+      </if>
+      <if test="orderDeductRank != null" >
+        order_deduct_rank,
+      </if>
+      <if test="orderDeductDec != null" >
+        order_deduct_dec,
+      </if>
+      <if test="orderRateDec != null" >
+        order_rate_dec,
+      </if>
+      <if test="orderState != null" >
+        order_state,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="customerId != null" >
+        #{customerId,jdbcType=INTEGER},
+      </if>
+      <if test="customerName != null" >
+        #{customerName,jdbcType=VARCHAR},
+      </if>
+      <if test="engineerId != null" >
+        #{engineerId,jdbcType=INTEGER},
+      </if>
+      <if test="engineerName != null" >
+        #{engineerName,jdbcType=VARCHAR},
+      </if>
+      <if test="engineerCheckId != null" >
+        #{engineerCheckId,jdbcType=INTEGER},
+      </if>
+      <if test="engineerCheckName != null" >
+        #{engineerCheckName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderFirstCategory != null" >
+        #{orderFirstCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="orderSecondCategory != null" >
+        #{orderSecondCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="orderMi != null" >
+        #{orderMi,jdbcType=INTEGER},
+      </if>
+      <if test="orderQae != null" >
+        #{orderQae,jdbcType=INTEGER},
+      </if>
+      <if test="orderDec != null" >
+        #{orderDec,jdbcType=VARCHAR},
+      </if>
+      <if test="orderRush != null" >
+        #{orderRush,jdbcType=INTEGER},
+      </if>
+      <if test="orderDeductRank != null" >
+        #{orderDeductRank,jdbcType=INTEGER},
+      </if>
+      <if test="orderDeductDec != null" >
+        #{orderDeductDec,jdbcType=VARCHAR},
+      </if>
+      <if test="orderRateDec != null" >
+        #{orderRateDec,jdbcType=VARCHAR},
+      </if>
+      <if test="orderState != null" >
+        #{orderState,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.pojo.OrderInfo" >
+    update order_info
+    <set >
+      <if test="customerId != null" >
+        customer_id = #{customerId,jdbcType=INTEGER},
+      </if>
+      <if test="customerName != null" >
+        customer_name = #{customerName,jdbcType=VARCHAR},
+      </if>
+      <if test="engineerId != null" >
+        engineer_id = #{engineerId,jdbcType=INTEGER},
+      </if>
+      <if test="engineerName != null" >
+        engineer_name = #{engineerName,jdbcType=VARCHAR},
+      </if>
+      <if test="engineerCheckId != null" >
+        engineer_check_id = #{engineerCheckId,jdbcType=INTEGER},
+      </if>
+      <if test="engineerCheckName != null" >
+        engineer_check_name = #{engineerCheckName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderFirstCategory != null" >
+        order_first_category = #{orderFirstCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="orderSecondCategory != null" >
+        order_second_category = #{orderSecondCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="orderMi != null" >
+        order_mi = #{orderMi,jdbcType=INTEGER},
+      </if>
+      <if test="orderQae != null" >
+        order_qae = #{orderQae,jdbcType=INTEGER},
+      </if>
+      <if test="orderDec != null" >
+        order_dec = #{orderDec,jdbcType=VARCHAR},
+      </if>
+      <if test="orderRush != null" >
+        order_rush = #{orderRush,jdbcType=INTEGER},
+      </if>
+      <if test="orderDeductRank != null" >
+        order_deduct_rank = #{orderDeductRank,jdbcType=INTEGER},
+      </if>
+      <if test="orderDeductDec != null" >
+        order_deduct_dec = #{orderDeductDec,jdbcType=VARCHAR},
+      </if>
+      <if test="orderRateDec != null" >
+        order_rate_dec = #{orderRateDec,jdbcType=VARCHAR},
+      </if>
+      <if test="orderState != null" >
+        order_state = #{orderState,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.pojo.OrderInfo" >
+    update order_info
+    set customer_id = #{customerId,jdbcType=INTEGER},
+      customer_name = #{customerName,jdbcType=VARCHAR},
+      engineer_id = #{engineerId,jdbcType=INTEGER},
+      engineer_name = #{engineerName,jdbcType=VARCHAR},
+      engineer_check_id = #{engineerCheckId,jdbcType=INTEGER},
+      engineer_check_name = #{engineerCheckName,jdbcType=VARCHAR},
+      order_first_category = #{orderFirstCategory,jdbcType=VARCHAR},
+      order_second_category = #{orderSecondCategory,jdbcType=VARCHAR},
+      order_mi = #{orderMi,jdbcType=INTEGER},
+      order_qae = #{orderQae,jdbcType=INTEGER},
+      order_dec = #{orderDec,jdbcType=VARCHAR},
+      order_rush = #{orderRush,jdbcType=INTEGER},
+      order_deduct_rank = #{orderDeductRank,jdbcType=INTEGER},
+      order_deduct_dec = #{orderDeductDec,jdbcType=VARCHAR},
+      order_rate_dec = #{orderRateDec,jdbcType=VARCHAR},
+      order_state = #{orderState,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.DrawCashInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.pojo.DrawCashInfo" >
+    <constructor >
+      <idArg column="draw_cash_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="user_type" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="user_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="draw_cash_money" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="draw_dec" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="draw_account" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="state" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    draw_cash_id, user_id, user_type, user_name, draw_cash_money, draw_dec, draw_account, 
+    state, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from draw_cash_info
+    where draw_cash_id = #{drawCashId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from draw_cash_info
+    where draw_cash_id = #{drawCashId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.pojo.DrawCashInfo" >
+    insert into draw_cash_info (draw_cash_id, user_id, user_type, 
+      user_name, draw_cash_money, draw_dec, 
+      draw_account, state, create_time, 
+      update_time)
+    values (#{drawCashId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{userType,jdbcType=INTEGER}, 
+      #{userName,jdbcType=VARCHAR}, #{drawCashMoney,jdbcType=DECIMAL}, #{drawDec,jdbcType=VARCHAR}, 
+      #{drawAccount,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.pojo.DrawCashInfo" >
+    insert into draw_cash_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="drawCashId != null" >
+        draw_cash_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="userType != null" >
+        user_type,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="drawCashMoney != null" >
+        draw_cash_money,
+      </if>
+      <if test="drawDec != null" >
+        draw_dec,
+      </if>
+      <if test="drawAccount != null" >
+        draw_account,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="drawCashId != null" >
+        #{drawCashId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userType != null" >
+        #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="drawCashMoney != null" >
+        #{drawCashMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="drawDec != null" >
+        #{drawDec,jdbcType=VARCHAR},
+      </if>
+      <if test="drawAccount != null" >
+        #{drawAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.pojo.DrawCashInfo" >
+    update draw_cash_info
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userType != null" >
+        user_type = #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="drawCashMoney != null" >
+        draw_cash_money = #{drawCashMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="drawDec != null" >
+        draw_dec = #{drawDec,jdbcType=VARCHAR},
+      </if>
+      <if test="drawAccount != null" >
+        draw_account = #{drawAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where draw_cash_id = #{drawCashId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.pojo.DrawCashInfo" >
+    update draw_cash_info
+    set user_id = #{userId,jdbcType=INTEGER},
+      user_type = #{userType,jdbcType=INTEGER},
+      user_name = #{userName,jdbcType=VARCHAR},
+      draw_cash_money = #{drawCashMoney,jdbcType=DECIMAL},
+      draw_dec = #{drawDec,jdbcType=VARCHAR},
+      draw_account = #{drawAccount,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where draw_cash_id = #{drawCashId,jdbcType=INTEGER}
+  </update>
+</mapper>
