@@ -3,8 +3,10 @@ package com.controller;
 import com.common.Const;
 import com.common.ServerResponse;
 import com.pojo.AdminInfo;
+import com.pojo.BasicPriceInfo;
 import com.pojo.EngineerRankInfo;
 import com.service.AdminInfoService;
+import com.service.BasicPriceInfoService;
 import com.service.EngineerRankInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,8 +24,7 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/admin/")
 public class AdminController {
 
-    @Autowired
-    private EngineerRankInfoService engineerRankInfoService;
+
 
     @Autowired
     private AdminInfoService adminInfoService;
@@ -38,6 +39,10 @@ public class AdminController {
         }
         return response;
     }
+
+
+    @Autowired
+    private EngineerRankInfoService engineerRankInfoService;
 
     @RequestMapping(value = "engineerrankinfo/delete.do",method = RequestMethod.POST)
     @ResponseBody
@@ -61,7 +66,7 @@ public class AdminController {
 
     }
 
-    @RequestMapping(value = "engineerrankinfo/list.do",method = RequestMethod.POST)
+    @RequestMapping(value = "engineerrankinfo/list.do",method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse listEngineerRankInfo(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize){
         AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
@@ -83,4 +88,51 @@ public class AdminController {
 
     }
 
+
+    @Autowired
+    private BasicPriceInfoService basicPriceInfoService;
+
+    @RequestMapping(value = "basicPriceInfo/delete.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse deleteBasicPriceInfo(HttpSession session, Integer basicPriceId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return basicPriceInfoService.delete(basicPriceId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+    @RequestMapping(value = "basicPriceInfo/update.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse updateBasicPriceInfo(HttpSession session, BasicPriceInfo basicPriceInfo){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return basicPriceInfoService.update(basicPriceInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+    @RequestMapping(value = "basicPriceInfo/list.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse listBasicPriceInfo(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return basicPriceInfoService.list(pageSize,pageNum);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+    @RequestMapping(value = "basicPriceInfo/add.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse addBasicPriceInfo(HttpSession session, BasicPriceInfo basicPriceInfo){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return basicPriceInfoService.add(basicPriceInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
 }

@@ -35,7 +35,7 @@
       )
     values (#{basicPriceId,jdbcType=INTEGER}, #{firstCategory,jdbcType=VARCHAR}, #{secondRank,jdbcType=VARCHAR}, 
       #{thirdCategory,jdbcType=VARCHAR}, #{basicLayer,jdbcType=INTEGER}, #{price,jdbcType=DECIMAL}, 
-      #{basicDec,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      #{basicDec,jdbcType=VARCHAR}, now(), now()
       )
   </insert>
   <insert id="insertSelective" parameterType="com.pojo.BasicPriceInfo" >
@@ -123,9 +123,9 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
+
+        update_time = now(),
+
     </set>
     where basic_price_id = #{basicPriceId,jdbcType=INTEGER}
   </update>
@@ -138,7 +138,24 @@
       price = #{price,jdbcType=DECIMAL},
       basic_dec = #{basicDec,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = now()
     where basic_price_id = #{basicPriceId,jdbcType=INTEGER}
   </update>
+
+  <select id="selectByBasicPriceInfo" parameterType="com.pojo.BasicPriceInfo" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from basic_price_info
+    where
+    first_category = #{firstCategory,jdbcType=VARCHAR},
+    second_rank = #{secondRank,jdbcType=VARCHAR},
+    third_category = #{thirdCategory,jdbcType=VARCHAR},
+    basic_layer = #{basicLayer,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from basic_price_info
+  </select>
 </mapper>

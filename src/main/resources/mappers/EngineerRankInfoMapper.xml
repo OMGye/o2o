@@ -170,4 +170,13 @@
     <include refid="Base_Column_List"/>
     from engineer_rank_info
   </select>
+
+  <select id="selectByEngineerRank" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from engineer_rank_info
+    where
+    engineer_rank = #{engineerRank,jdbcType=INTEGER}
+  </select>
+
 </mapper>

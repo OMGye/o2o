@@ -18,4 +18,6 @@ public interface EngineerRankInfoMapper {
     int updateByPrimaryKey(EngineerRankInfo record);
 
     List<EngineerRankInfo> selectList();
+
+    EngineerRankInfo selectByEngineerRank(Integer engineerRank);
 }

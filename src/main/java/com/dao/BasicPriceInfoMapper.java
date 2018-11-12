@@ -1,6 +1,9 @@
 package com.dao;
 
 import com.pojo.BasicPriceInfo;
+import com.pojo.EngineerRankInfo;
+
+import java.util.List;
 
 public interface BasicPriceInfoMapper {
     int deleteByPrimaryKey(Integer basicPriceId);
@@ -14,4 +17,8 @@ public interface BasicPriceInfoMapper {
     int updateByPrimaryKeySelective(BasicPriceInfo record);
 
     int updateByPrimaryKey(BasicPriceInfo record);
+
+    BasicPriceInfo selectByBasicPriceInfo(BasicPriceInfo record);
+
+    List<BasicPriceInfo> selectList();
 }

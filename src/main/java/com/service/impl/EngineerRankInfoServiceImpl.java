@@ -7,6 +7,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.pojo.EngineerRankInfo;
 import com.service.EngineerRankInfoService;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +23,14 @@ public class EngineerRankInfoServiceImpl implements EngineerRankInfoService{
     private EngineerRankInfoMapper rankInfoMapper;
     @Override
     public ServerResponse add(EngineerRankInfo engineerRankInfo) {
-        if (engineerRankInfo == null && engineerRankInfo.getEngineerRank() == null)
+        if (engineerRankInfo == null || engineerRankInfo.getEngineerRank() == null)
             return ServerResponse.createByErrorMessage("您未设置等级");
-        if (engineerRankInfo.getEngineerRankA() == null && engineerRankInfo.getEngineerRankB() == null && engineerRankInfo.getEngineerRankC() == null && engineerRankInfo.getEngineerRankD() == null)
+        if (engineerRankInfo.getEngineerRankA() == Const.EngineerRankInfo.CANNOT || engineerRankInfo.getEngineerRankB() == Const.EngineerRankInfo.CANNOT || engineerRankInfo.getEngineerRankC() == Const.EngineerRankInfo.CANNOT || engineerRankInfo.getEngineerRankD() == Const.EngineerRankInfo.CANNOT)
             return ServerResponse.createByErrorMessage("您未设置等级A.B.C.D任意等级");
         engineerRankInfo.setEngineerRankCam(Const.EngineerRankInfo.CAN);
+        EngineerRankInfo curEngineerRankInfo  = rankInfoMapper.selectByEngineerRank(engineerRankInfo.getEngineerRank());
+        if (curEngineerRankInfo != null)
+            return ServerResponse.createByErrorMessage("该工程师等级已存在");
         int row = rankInfoMapper.insert(engineerRankInfo);
         if (row > 0)
             return ServerResponse.createBySuccess("新增成功");
@@ -46,8 +50,10 @@ public class EngineerRankInfoServiceImpl implements EngineerRankInfoService{
 
     @Override
     public ServerResponse update(EngineerRankInfo engineerRankInfo) {
-        if (engineerRankInfo == null && engineerRankInfo.getEngineerRankId() == null)
+        if (engineerRankInfo == null || engineerRankInfo.getEngineerRankId() == null)
             return ServerResponse.createByErrorMessage("您未指定id");
+        engineerRankInfo.setEngineerRankCam(Const.EngineerRankInfo.CAN);
+        engineerRankInfo.setEngineerRank(null);
         int row = rankInfoMapper.updateByPrimaryKeySelective(engineerRankInfo);
         if (row > 0)
             return ServerResponse.createBySuccess("修改成功");
