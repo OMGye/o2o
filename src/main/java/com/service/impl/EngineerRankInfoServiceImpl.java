@@ -25,7 +25,7 @@ public class EngineerRankInfoServiceImpl implements EngineerRankInfoService{
     public ServerResponse add(EngineerRankInfo engineerRankInfo) {
         if (engineerRankInfo == null || engineerRankInfo.getEngineerRank() == null)
             return ServerResponse.createByErrorMessage("您未设置等级");
-        if (engineerRankInfo.getEngineerRankA() == Const.EngineerRankInfo.CANNOT || engineerRankInfo.getEngineerRankB() == Const.EngineerRankInfo.CANNOT || engineerRankInfo.getEngineerRankC() == Const.EngineerRankInfo.CANNOT || engineerRankInfo.getEngineerRankD() == Const.EngineerRankInfo.CANNOT)
+        if (engineerRankInfo.getEngineerRankA() == Const.EngineerRankInfo.CANNOT && engineerRankInfo.getEngineerRankB() == Const.EngineerRankInfo.CANNOT && engineerRankInfo.getEngineerRankC() == Const.EngineerRankInfo.CANNOT && engineerRankInfo.getEngineerRankD() == Const.EngineerRankInfo.CANNOT)
             return ServerResponse.createByErrorMessage("您未设置等级A.B.C.D任意等级");
         engineerRankInfo.setEngineerRankCam(Const.EngineerRankInfo.CAN);
         EngineerRankInfo curEngineerRankInfo  = rankInfoMapper.selectByEngineerRank(engineerRankInfo.getEngineerRank());
