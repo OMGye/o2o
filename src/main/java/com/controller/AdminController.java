@@ -228,4 +228,104 @@ public class AdminController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
 
     }
+
+
+    @Autowired
+    private OtherParamInfoService otherParamInfoService;
+
+    @RequestMapping(value = "otherParamInfo/delete.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse deleteOtherParamInfo(HttpSession session, Integer paramId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return otherParamInfoService.delete(paramId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+    @RequestMapping(value = "otherParamInfo/update.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse updateOtherParamInfo(HttpSession session, OtherParamInfo otherParamInfo){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return otherParamInfoService.update(otherParamInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+    @RequestMapping(value = "otherParamInfo/list.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse listOtherParamInfo(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return otherParamInfoService.list(pageSize,pageNum);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+    @RequestMapping(value = "otherParamInfo/add.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse addOtherParamInfo(HttpSession session, OtherParamInfo otherParamInfo){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return otherParamInfoService.add(otherParamInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+
+
+
+
+
+    @Autowired
+    private O2oInfoService o2oInfoService;
+
+    @RequestMapping(value = "o2oInfo/delete.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse deleteO2oInfo(HttpSession session, Integer o2oId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return o2oInfoService.delete(o2oId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+    @RequestMapping(value = "o2oInfo/update.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse updateO2oInfo(HttpSession session, O2oInfo o2oInfo){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return o2oInfoService.update(o2oInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+    @RequestMapping(value = "o2oInfo/list.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse listO2oInfo(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return o2oInfoService.list(pageSize,pageNum);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+    @RequestMapping(value = "o2oInfo/add.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse addO2oInfo(HttpSession session, O2oInfo o2oInfo){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return o2oInfoService.add(o2oInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
 }

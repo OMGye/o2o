@@ -108,11 +108,11 @@
   </update>
   
   <select id="selectByPriceDeductRank" resultMap="BaseResultMap" parameterType="java.lang.Integer">
-    select
-    <include refid="Base_Column_List" />
-    from price_deduct_info
-    where price_deduct_rank = #{priceDeductRank,jdbcType=INTEGER}
-  </select>
+  select
+  <include refid="Base_Column_List" />
+  from price_deduct_info
+  where price_deduct_rank = #{priceDeductRank,jdbcType=INTEGER}
+</select>
 
 
   <select id="selectList" resultMap="BaseResultMap">

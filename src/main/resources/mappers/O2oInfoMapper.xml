@@ -27,7 +27,7 @@
     insert into o2o_info (o2o_id, o2o_param_name, o2o_param_value, 
       create_time, update_time)
     values (#{o2oId,jdbcType=INTEGER}, #{o2oParamName,jdbcType=VARCHAR}, #{o2oParamValue,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+      now(), now())
   </insert>
   <insert id="insertSelective" parameterType="com.pojo.O2oInfo" >
     insert into o2o_info
@@ -78,9 +78,9 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
+
+        update_time = now(),
+
     </set>
     where o2o_id = #{o2oId,jdbcType=INTEGER}
   </update>
@@ -89,7 +89,21 @@
     set o2o_param_name = #{o2oParamName,jdbcType=VARCHAR},
       o2o_param_value = #{o2oParamValue,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = now()
     where o2o_id = #{o2oId,jdbcType=INTEGER}
   </update>
+
+  <select id="selectO2oParamName" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    from o2o_info
+    where o2o_param_name = #{o2oParamName,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from o2o_info
+  </select>
+
 </mapper>

@@ -29,7 +29,7 @@
       param_dec, create_time, update_time
       )
     values (#{paramId,jdbcType=INTEGER}, #{paramName,jdbcType=VARCHAR}, #{paramPercentage,jdbcType=DECIMAL}, 
-      #{paramDec,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      #{paramDec,jdbcType=VARCHAR}, now(), now()
       )
   </insert>
   <insert id="insertSelective" parameterType="com.pojo.OtherParamInfo" >
@@ -90,9 +90,9 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
+
+        update_time = now(),
+
     </set>
     where param_id = #{paramId,jdbcType=INTEGER}
   </update>
@@ -102,7 +102,21 @@
       param_percentage = #{paramPercentage,jdbcType=DECIMAL},
       param_dec = #{paramDec,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = now()
     where param_id = #{paramId,jdbcType=INTEGER}
   </update>
+
+
+  <select id="selectByParamName" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    from other_param_info
+    where param_name = #{paramName,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from other_param_info
+  </select>
 </mapper>
