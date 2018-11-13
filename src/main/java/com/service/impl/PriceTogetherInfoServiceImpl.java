@@ -63,7 +63,7 @@ public class PriceTogetherInfoServiceImpl implements PriceTogetherInfoService {
     @Override
     public ServerResponse<PageInfo> list(int pageSize, int pageNum) {
         PageHelper.startPage(pageNum,pageSize);
-        PageHelper.orderBy("engineer_rank asc");
+        PageHelper.orderBy("price_together_id desc");
         List<PriceTogetherInfo> list = priceTogetherInfoMapper.selectList();
         PageInfo pageInfo = new PageInfo(list);
         return ServerResponse.createBySuccess(pageInfo);

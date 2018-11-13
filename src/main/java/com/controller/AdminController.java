@@ -2,14 +2,8 @@ package com.controller;
 
 import com.common.Const;
 import com.common.ServerResponse;
-import com.pojo.AdminInfo;
-import com.pojo.BasicPriceInfo;
-import com.pojo.EngineerRankInfo;
-import com.pojo.PriceTogetherInfo;
-import com.service.AdminInfoService;
-import com.service.BasicPriceInfoService;
-import com.service.EngineerRankInfoService;
-import com.service.PriceTogetherInfoService;
+import com.pojo.*;
+import com.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -182,6 +176,54 @@ public class AdminController {
         AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
         if (adminInfo != null){
             return priceTogetherInfoService.add(priceTogetherInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+
+    @Autowired
+    private PriceDeductInfoService priceDeductInfoService;
+
+    @RequestMapping(value = "priceDeductInfo/delete.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse deletePriceDeductInfo(HttpSession session, Integer priceDeductId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return priceDeductInfoService.delete(priceDeductId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+    @RequestMapping(value = "priceDeductInfo/update.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse updatePriceDeductInfo(HttpSession session, PriceDeductInfo priceDeductInfo){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return priceDeductInfoService.update(priceDeductInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+    @RequestMapping(value = "priceDeductInfo/list.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse listPriceDeductInfo(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return priceDeductInfoService.list(pageSize,pageNum);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+    @RequestMapping(value = "priceDeductInfo/add.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse addPriceDeductInfo(HttpSession session, PriceDeductInfo priceDeductInfo){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return priceDeductInfoService.add(priceDeductInfo);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
 

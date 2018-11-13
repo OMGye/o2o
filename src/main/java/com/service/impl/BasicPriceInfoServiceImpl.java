@@ -25,7 +25,7 @@ public class BasicPriceInfoServiceImpl implements BasicPriceInfoService{
 
     @Override
     public ServerResponse add(BasicPriceInfo basicPriceInfo) {
-        if (basicPriceInfo == null || basicPriceInfo.getFirstCategory() == null || basicPriceInfo.getSecondRank() == null || basicPriceInfo.getThirdCategory() == null || basicPriceInfo.getBasicLayer() == null)
+        if (basicPriceInfo == null || basicPriceInfo.getFirstCategory() == null || basicPriceInfo.getSecondRank() == null || basicPriceInfo.getThirdCategory() == null || basicPriceInfo.getBasicLayer() == null || basicPriceInfo.getPrice() == null)
             return ServerResponse.createByErrorMessage("部分参数不能为空");
         BasicPriceInfo curBasicPriceInfo = basicPriceInfoMapper.selectByBasicPriceInfo(basicPriceInfo);
         if (curBasicPriceInfo == null){

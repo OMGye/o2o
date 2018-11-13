@@ -30,7 +30,7 @@
       price_deduct_dec, create_time, update_time
       )
     values (#{priceDeductId,jdbcType=INTEGER}, #{priceDeductRank,jdbcType=INTEGER}, #{priceDeductPercentage,jdbcType=DECIMAL}, 
-      #{priceDeductDec,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      #{priceDeductDec,jdbcType=VARCHAR}, now(), now()
       )
   </insert>
   <insert id="insertSelective" parameterType="com.pojo.PriceDeductInfo" >
@@ -91,9 +91,9 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
+
+        update_time = now(),
+
     </set>
     where price_deduct_id = #{priceDeductId,jdbcType=INTEGER}
   </update>
@@ -103,7 +103,21 @@
       price_deduct_percentage = #{priceDeductPercentage,jdbcType=DECIMAL},
       price_deduct_dec = #{priceDeductDec,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = now()
     where price_deduct_id = #{priceDeductId,jdbcType=INTEGER}
   </update>
+  
+  <select id="selectByPriceDeductRank" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    <include refid="Base_Column_List" />
+    from price_deduct_info
+    where price_deduct_rank = #{priceDeductRank,jdbcType=INTEGER}
+  </select>
+
+
+  <select id="selectList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from price_deduct_info
+  </select>
 </mapper>
