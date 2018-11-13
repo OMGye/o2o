@@ -37,6 +37,7 @@ public class AdminController {
     public ServerResponse<AdminInfo> login(AdminInfo adminInfo, HttpSession session){
         ServerResponse<AdminInfo> response = adminInfoService.login(adminInfo);
         if(response.isSuccess()){
+
             session.setAttribute(Const.CURRENT_USER,response.getData());
         }
         return response;

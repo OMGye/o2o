@@ -1,5 +1,6 @@
 package com.pojo;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class OrderInfo {
@@ -25,6 +26,12 @@ public class OrderInfo {
 
     private Integer orderQae;
 
+    private String otherParamInfo;
+
+    private Integer basicLayer;
+
+    private Integer priceTogetherNum;
+
     private String orderDec;
 
     private Integer orderRush;
@@ -37,11 +44,13 @@ public class OrderInfo {
 
     private Integer orderState;
 
+    private BigDecimal orderPrice;
+
     private Date createTime;
 
     private Date updateTime;
 
-    public OrderInfo(Integer orderId, Integer customerId, String customerName, Integer engineerId, String engineerName, Integer engineerCheckId, String engineerCheckName, String orderFirstCategory, String orderSecondCategory, Integer orderMi, Integer orderQae, String orderDec, Integer orderRush, Integer orderDeductRank, String orderDeductDec, String orderRateDec, Integer orderState, Date createTime, Date updateTime) {
+    public OrderInfo(Integer orderId, Integer customerId, String customerName, Integer engineerId, String engineerName, Integer engineerCheckId, String engineerCheckName, String orderFirstCategory, String orderSecondCategory, Integer orderMi, Integer orderQae, String otherParamInfo, Integer basicLayer, Integer priceTogetherNum, String orderDec, Integer orderRush, Integer orderDeductRank, String orderDeductDec, String orderRateDec, Integer orderState, BigDecimal orderPrice, Date createTime, Date updateTime) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.customerName = customerName;
@@ -53,12 +62,16 @@ public class OrderInfo {
         this.orderSecondCategory = orderSecondCategory;
         this.orderMi = orderMi;
         this.orderQae = orderQae;
+        this.otherParamInfo = otherParamInfo;
+        this.basicLayer = basicLayer;
+        this.priceTogetherNum = priceTogetherNum;
         this.orderDec = orderDec;
         this.orderRush = orderRush;
         this.orderDeductRank = orderDeductRank;
         this.orderDeductDec = orderDeductDec;
         this.orderRateDec = orderRateDec;
         this.orderState = orderState;
+        this.orderPrice = orderPrice;
         this.createTime = createTime;
         this.updateTime = updateTime;
     }
@@ -155,6 +168,30 @@ public class OrderInfo {
         this.orderQae = orderQae;
     }
 
+    public String getOtherParamInfo() {
+        return otherParamInfo;
+    }
+
+    public void setOtherParamInfo(String otherParamInfo) {
+        this.otherParamInfo = otherParamInfo == null ? null : otherParamInfo.trim();
+    }
+
+    public Integer getBasicLayer() {
+        return basicLayer;
+    }
+
+    public void setBasicLayer(Integer basicLayer) {
+        this.basicLayer = basicLayer;
+    }
+
+    public Integer getPriceTogetherNum() {
+        return priceTogetherNum;
+    }
+
+    public void setPriceTogetherNum(Integer priceTogetherNum) {
+        this.priceTogetherNum = priceTogetherNum;
+    }
+
     public String getOrderDec() {
         return orderDec;
     }
@@ -201,6 +238,14 @@ public class OrderInfo {
 
     public void setOrderState(Integer orderState) {
         this.orderState = orderState;
+    }
+
+    public BigDecimal getOrderPrice() {
+        return orderPrice;
+    }
+
+    public void setOrderPrice(BigDecimal orderPrice) {
+        this.orderPrice = orderPrice;
     }
 
     public Date getCreateTime() {
