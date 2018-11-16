@@ -2,6 +2,7 @@ package com.controller;
 
 import com.common.Const;
 import com.common.ServerResponse;
+import com.github.pagehelper.PageInfo;
 import com.pojo.*;
 import com.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -328,4 +329,92 @@ public class AdminController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
 
     }
+
+
+
+
+    @Autowired
+    private QuantityInfoService quantityInfoService;
+
+    @RequestMapping(value = "quantityInfo/delete.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse deleteQuantityInfo(HttpSession session, Integer quantityId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return quantityInfoService.delete(quantityId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+    @RequestMapping(value = "quantityInfo/update.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse updateQuantityInfo(HttpSession session, QuantityInfo quantityInfo){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return quantityInfoService.update(quantityInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+    @RequestMapping(value = "quantityInfo/list.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse listQuantityInfo(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return quantityInfoService.list(pageSize,pageNum);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+    @RequestMapping(value = "quantityInfo/add.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse addQuantityInfo(HttpSession session, QuantityInfo quantityInfo){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return quantityInfoService.add(quantityInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+
+    @Autowired
+    private EngineerInfoService engineerInfoService;
+
+    @RequestMapping(value = "engineerInfo/list.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> list(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize, Integer state){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return engineerInfoService.list(pageSize,pageNum,state);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "engineerInfo/getengineerbyid.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse getEngineerById(HttpSession session, Integer engineerId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return engineerInfoService.getEngineerInfoById(engineerId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "engineerInfo/check.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse check(HttpSession session, EngineerInfo engineerInfo){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return engineerInfoService.check(engineerInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
+
+
 }

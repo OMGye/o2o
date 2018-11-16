@@ -49,7 +49,7 @@
       #{engineerProv,jdbcType=VARCHAR}, #{engineerCity,jdbcType=VARCHAR}, #{engineerState,jdbcType=TINYINT}, 
       #{engineerPayCount,jdbcType=VARCHAR}, #{engineerBalance,jdbcType=DECIMAL}, #{engineerFile,jdbcType=VARCHAR}, 
       #{engineerRank,jdbcType=INTEGER}, #{engineerClassfy,jdbcType=VARCHAR}, #{engineerQuantity,jdbcType=DECIMAL}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+     now(), now())
   </insert>
   <insert id="insertSelective" parameterType="com.pojo.EngineerInfo" >
     insert into engineer_info
@@ -208,9 +208,9 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
+
+        update_time = now(),
+
     </set>
     where engineer_id = #{engineerId,jdbcType=INTEGER}
   </update>
@@ -231,7 +231,35 @@
       engineer_classfy = #{engineerClassfy,jdbcType=VARCHAR},
       engineer_quantity = #{engineerQuantity,jdbcType=DECIMAL},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = now()
     where engineer_id = #{engineerId,jdbcType=INTEGER}
   </update>
+
+  <select id="list" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from engineer_info
+    <where>
+      <if test="state != null"> engineer_state = #{state}</if>
+    </where>
+  </select>
+
+  <select id="login" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List" />
+    from engineer_info
+    where engineer_name = #{userName,jdbcType=VARCHAR}
+    and password = #{password,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByUserName" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from engineer_info
+    <where>
+      <if test="engineerId != null"> engineer_id != #{engineerId}</if>
+      <if test="userName != null">and engineer_name = #{userName}</if>
+      <if test="email != null">and email = #{email}</if>
+    </where>
+  </select>
 </mapper>

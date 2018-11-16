@@ -12,6 +12,13 @@ public class Const {
         int CAN = 1;
         int CANNOT = 0;
     }
+
+    public interface EngineerInfo{
+        byte ABLE = 1;
+        byte UNABLE = 0;
+        byte BAN = 10;
+    }
+
     public interface User{
         int ACTIVATE = 1;
         int UNACTIVATE = 0;

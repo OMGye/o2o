@@ -31,8 +31,8 @@
       quantity_draw, quantity_dec, create_time, 
       update_time)
     values (#{quantityId,jdbcType=INTEGER}, #{quantiyRank,jdbcType=INTEGER}, #{quantityPercentage,jdbcType=DECIMAL}, 
-      #{quantityDraw,jdbcType=DECIMAL}, #{quantityDec,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP})
+      #{quantityDraw,jdbcType=DECIMAL}, #{quantityDec,jdbcType=VARCHAR}, now(),
+      now())
   </insert>
   <insert id="insertSelective" parameterType="com.pojo.QuantityInfo" >
     insert into quantity_info
@@ -101,9 +101,9 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
+
+        update_time = now(),
+
     </set>
     where quantity_id = #{quantityId,jdbcType=INTEGER}
   </update>
@@ -114,7 +114,22 @@
       quantity_draw = #{quantityDraw,jdbcType=DECIMAL},
       quantity_dec = #{quantityDec,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = now()
     where quantity_id = #{quantityId,jdbcType=INTEGER}
   </update>
+
+  <select id="selectByQuantiyRank" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    <include refid="Base_Column_List" />
+    from quantity_info
+    where quantiy_rank = #{quantiyRank,jdbcType=INTEGER}
+  </select>
+
+
+  <select id="selectList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from quantity_info
+  </select>
+
 </mapper>
