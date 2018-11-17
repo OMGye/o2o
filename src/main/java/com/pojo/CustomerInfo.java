@@ -32,7 +32,7 @@ public class CustomerInfo {
 
     private String customerAttention;
 
-    public CustomerInfo(Integer customerId, String customerName, String password, String phone, String email, String customerQq, String customerProv, String customerCity, Byte customerState, String customerPayCount, BigDecimal customerBalance, Date createTime, Date updateTime, String customerAttention) {
+    public CustomerInfo(Integer customerId, String customerName, String password, String phone, String email, String customerQq, String customerProv, String customerCity, Byte customerState, String customerPayCount, BigDecimal customerBalance, String customerAttention,Date createTime, Date updateTime) {
         this.customerId = customerId;
         this.customerName = customerName;
         this.password = password;
@@ -48,6 +48,7 @@ public class CustomerInfo {
         this.updateTime = updateTime;
         this.customerAttention = customerAttention;
     }
+
 
     public CustomerInfo() {
         super();

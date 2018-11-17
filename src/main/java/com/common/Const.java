@@ -19,6 +19,12 @@ public class Const {
         byte BAN = 10;
     }
 
+
+    public interface CustomerInfo{
+
+        byte ABLE = 1;
+        byte BAN = 10;
+    }
     public interface User{
         int ACTIVATE = 1;
         int UNACTIVATE = 0;

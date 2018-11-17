@@ -86,6 +86,18 @@ public class AdminController {
 
     }
 
+    @RequestMapping(value = "engineerrankinfo/getbyid.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse getByIdEngineerRankInfo(HttpSession session, Integer engineerRankId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return engineerRankInfoService.getById(engineerRankId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+
 
     @Autowired
     private BasicPriceInfoService basicPriceInfoService;
@@ -123,12 +135,23 @@ public class AdminController {
 
     }
 
-    @RequestMapping(value = "basicPriceInfo/add.do",method = RequestMethod.POST)
+    @RequestMapping(value = "basicPriceInfo/add.do",method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse addBasicPriceInfo(HttpSession session, BasicPriceInfo basicPriceInfo){
         AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
         if (adminInfo != null){
             return basicPriceInfoService.add(basicPriceInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+    @RequestMapping(value = "basicPriceInfo/getbyid.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse getByIdBasicPriceInfo(HttpSession session, Integer basicPriceId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return basicPriceInfoService.getById(basicPriceId);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
 
@@ -182,6 +205,17 @@ public class AdminController {
 
     }
 
+    @RequestMapping(value = "priceTogetherInfo/getbyid.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse getByIdPriceTogetherInfo(HttpSession session, Integer priceTogetherId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return priceTogetherInfoService.getById(priceTogetherId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
 
     @Autowired
     private PriceDeductInfoService priceDeductInfoService;
@@ -230,6 +264,17 @@ public class AdminController {
 
     }
 
+    @RequestMapping(value = "priceDeductInfo/getbyid.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse getByIdPriceDeductInfo(HttpSession session, Integer priceDeductId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return priceDeductInfoService.getById(priceDeductId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
 
     @Autowired
     private OtherParamInfoService otherParamInfoService;
@@ -273,6 +318,17 @@ public class AdminController {
         AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
         if (adminInfo != null){
             return otherParamInfoService.add(otherParamInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+    @RequestMapping(value = "otherParamInfo/getbyid.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse getByIdOtherParamInfo(HttpSession session, Integer paramId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return otherParamInfoService.getById(paramId);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
 
@@ -330,6 +386,17 @@ public class AdminController {
 
     }
 
+    @RequestMapping(value = "o2oInfo/getbyid.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse getByIdO2oInfo(HttpSession session, Integer o2oId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return o2oInfoService.getById(o2oId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
 
 
 
@@ -380,13 +447,25 @@ public class AdminController {
 
     }
 
+    @RequestMapping(value = "quantityInfo/getbyid.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse getByIdQuantityInfo(HttpSession session, Integer quantityId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return quantityInfoService.getById(quantityId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+
 
     @Autowired
     private EngineerInfoService engineerInfoService;
 
     @RequestMapping(value = "engineerInfo/list.do",method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<PageInfo> list(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize, Integer state){
+    public ServerResponse<PageInfo> engineerlist(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize, Integer state){
         AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
         if (adminInfo != null){
             return engineerInfoService.list(pageSize,pageNum,state);
@@ -396,7 +475,7 @@ public class AdminController {
 
     @RequestMapping(value = "engineerInfo/getengineerbyid.do",method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse getEngineerById(HttpSession session, Integer engineerId){
+    public ServerResponse engineerGetEngineerById(HttpSession session, Integer engineerId){
         AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
         if (adminInfo != null){
             return engineerInfoService.getEngineerInfoById(engineerId);
@@ -406,7 +485,7 @@ public class AdminController {
 
     @RequestMapping(value = "engineerInfo/check.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse check(HttpSession session, EngineerInfo engineerInfo){
+    public ServerResponse engineerCheck(HttpSession session, EngineerInfo engineerInfo){
         AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
         if (adminInfo != null){
             return engineerInfoService.check(engineerInfo);
@@ -414,6 +493,40 @@ public class AdminController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
+
+
+    @Autowired
+    private CustomerInfoService customerInfoService;
+
+    @RequestMapping(value = "customerInfo/list.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> customerInfoList(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize, Integer state){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return customerInfoService.list(pageSize,pageNum,state);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "customerInfo/getengineerbyid.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse customerGetEngineerById(HttpSession session, Integer customerId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return customerInfoService.getEngineerInfoById(customerId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "customerInfo/check.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse check(HttpSession session, CustomerInfo customerInfo){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return customerInfoService.check(customerInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
 
 
 

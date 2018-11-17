@@ -14,40 +14,18 @@
       <arg column="customer_state" jdbcType="TINYINT" javaType="java.lang.Byte" />
       <arg column="customer_pay_count" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="customer_balance" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
-      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
-      <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
-    </constructor>
-  </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.pojo.CustomerInfo" >
-    <constructor >
-      <idArg column="customer_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
-      <arg column="customer_name" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="password" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="phone" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="email" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="customer_qq" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="customer_prov" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="customer_city" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="customer_state" jdbcType="TINYINT" javaType="java.lang.Byte" />
-      <arg column="customer_pay_count" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="customer_balance" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
-      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
-      <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
       <arg column="customer_attention" jdbcType="LONGVARCHAR" javaType="java.lang.String" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
     </constructor>
   </resultMap>
   <sql id="Base_Column_List" >
-    customer_id, customer_name, password, phone, email, customer_qq, customer_prov, customer_city, 
-    customer_state, customer_pay_count, customer_balance, create_time, update_time
+    customer_id, customer_name, password, phone, email, customer_qq, customer_prov, customer_city,
+    customer_state, customer_pay_count, customer_balance, customer_attention,create_time, update_time
   </sql>
-  <sql id="Blob_Column_List" >
-    customer_attention
-  </sql>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from customer_info
     where customer_id = #{customerId,jdbcType=INTEGER}
   </select>
@@ -59,13 +37,13 @@
     insert into customer_info (customer_id, customer_name, password, 
       phone, email, customer_qq, 
       customer_prov, customer_city, customer_state, 
-      customer_pay_count, customer_balance, create_time, 
-      update_time, customer_attention)
+      customer_pay_count, customer_balance, customer_attention,create_time,
+      update_time)
     values (#{customerId,jdbcType=INTEGER}, #{customerName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{customerQq,jdbcType=VARCHAR}, 
       #{customerProv,jdbcType=VARCHAR}, #{customerCity,jdbcType=VARCHAR}, #{customerState,jdbcType=TINYINT}, 
-      #{customerPayCount,jdbcType=VARCHAR}, #{customerBalance,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{customerAttention,jdbcType=LONGVARCHAR})
+      #{customerPayCount,jdbcType=VARCHAR}, #{customerBalance,jdbcType=DECIMAL},#{customerAttention,jdbcType=LONGVARCHAR} ,now(),
+      now())
   </insert>
   <insert id="insertSelective" parameterType="com.pojo.CustomerInfo" >
     insert into customer_info
@@ -103,14 +81,14 @@
       <if test="customerBalance != null" >
         customer_balance,
       </if>
+      <if test="customerAttention != null" >
+        customer_attention,
+      </if>
       <if test="createTime != null" >
         create_time,
       </if>
       <if test="updateTime != null" >
         update_time,
-      </if>
-      <if test="customerAttention != null" >
-        customer_attention,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -147,15 +125,16 @@
       <if test="customerBalance != null" >
         #{customerBalance,jdbcType=DECIMAL},
       </if>
+      <if test="customerAttention != null" >
+        #{customerAttention,jdbcType=LONGVARCHAR},
+      </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateTime != null" >
         #{updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="customerAttention != null" >
-        #{customerAttention,jdbcType=LONGVARCHAR},
-      </if>
+
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.pojo.CustomerInfo" >
@@ -191,15 +170,16 @@
       <if test="customerBalance != null" >
         customer_balance = #{customerBalance,jdbcType=DECIMAL},
       </if>
-      <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
       <if test="customerAttention != null" >
         customer_attention = #{customerAttention,jdbcType=LONGVARCHAR},
       </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+
+        update_time = now(),
+
+
     </set>
     where customer_id = #{customerId,jdbcType=INTEGER}
   </update>
@@ -236,4 +216,33 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where customer_id = #{customerId,jdbcType=INTEGER}
   </update>
+
+  <select id="selectByUserName" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from customer_info
+    <where>
+      <if test="customerId != null"> customer_id != #{customerId}</if>
+      <if test="customerName != null">and customer_name = #{customerName}</if>
+      <if test="email != null">and email = #{email}</if>
+    </where>
+  </select>
+
+  <select id="login" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List" />
+    from customer_info
+    where customer_name = #{customerName,jdbcType=VARCHAR}
+    and password = #{password,jdbcType=VARCHAR}
+  </select>
+
+  <select id="list" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from customer_info
+    <where>
+      <if test="state != null"> customer_state = #{state}</if>
+    </where>
+  </select>
+
 </mapper>

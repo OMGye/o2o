@@ -5,6 +5,7 @@ import com.common.ServerResponse;
 import com.dao.EngineerRankInfoMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.pojo.BasicPriceInfo;
 import com.pojo.EngineerRankInfo;
 import com.service.EngineerRankInfoService;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -67,5 +68,13 @@ public class EngineerRankInfoServiceImpl implements EngineerRankInfoService{
         List<EngineerRankInfo> list = rankInfoMapper.selectList();
         PageInfo pageInfo = new PageInfo(list);
         return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Override
+    public ServerResponse getById(Integer engineerRankId) {
+        if (engineerRankId == null)
+            return ServerResponse.createByErrorMessage("参数不能为空");
+        EngineerRankInfo engineerRankInfo = rankInfoMapper.selectByPrimaryKey(engineerRankId);
+        return ServerResponse.createBySuccess(engineerRankInfo);
     }
 }

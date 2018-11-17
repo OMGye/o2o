@@ -69,4 +69,12 @@ public class BasicPriceInfoServiceImpl implements BasicPriceInfoService{
         PageInfo pageInfo = new PageInfo(list);
         return ServerResponse.createBySuccess(pageInfo);
     }
+
+    @Override
+    public ServerResponse getById(Integer basicPriceId) {
+        if (basicPriceId == null)
+            return ServerResponse.createByErrorMessage("参数不能为空");
+        BasicPriceInfo basicPriceInfo = basicPriceInfoMapper.selectByPrimaryKey(basicPriceId);
+        return ServerResponse.createBySuccess(basicPriceInfo);
+    }
 }

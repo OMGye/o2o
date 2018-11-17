@@ -5,6 +5,7 @@ import com.dao.QuantityInfoMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.pojo.O2oInfo;
+import com.pojo.PriceTogetherInfo;
 import com.pojo.QuantityInfo;
 import com.service.QuantityInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,5 +66,13 @@ public class QuantityInfoServiceImpl implements QuantityInfoService {
         List<QuantityInfo> list = quantityInfoMapper.selectList();
         PageInfo pageInfo = new PageInfo(list);
         return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Override
+    public ServerResponse getById(Integer quantityId) {
+        if (quantityId == null)
+            return ServerResponse.createByErrorMessage("参数不能为空");
+        QuantityInfo quantityInfo = quantityInfoMapper.selectByPrimaryKey(quantityId);
+        return ServerResponse.createBySuccess(quantityInfo);
     }
 }

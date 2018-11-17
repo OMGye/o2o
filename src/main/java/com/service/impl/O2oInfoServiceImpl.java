@@ -4,6 +4,7 @@ import com.common.ServerResponse;
 import com.dao.O2oInfoMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.pojo.EngineerRankInfo;
 import com.pojo.O2oInfo;
 import com.pojo.OtherParamInfo;
 import com.service.O2oInfoService;
@@ -64,4 +65,13 @@ public class O2oInfoServiceImpl implements O2oInfoService {
         PageInfo pageInfo = new PageInfo(list);
         return ServerResponse.createBySuccess(pageInfo);
     }
+
+    @Override
+    public ServerResponse getById(Integer o2oId) {
+        if (o2oId == null)
+            return ServerResponse.createByErrorMessage("参数不能为空");
+        O2oInfo o2oInfo = o2oInfoMapper.selectByPrimaryKey(o2oId);
+        return ServerResponse.createBySuccess(o2oInfo);
+    }
+
 }

@@ -5,6 +5,7 @@ import com.dao.PriceTogetherInfoMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.pojo.EngineerRankInfo;
+import com.pojo.PriceDeductInfo;
 import com.pojo.PriceTogetherInfo;
 import com.service.PriceTogetherInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,5 +68,13 @@ public class PriceTogetherInfoServiceImpl implements PriceTogetherInfoService {
         List<PriceTogetherInfo> list = priceTogetherInfoMapper.selectList();
         PageInfo pageInfo = new PageInfo(list);
         return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Override
+    public ServerResponse getById(Integer priceTogetherId) {
+        if (priceTogetherId == null)
+            return ServerResponse.createByErrorMessage("参数不能为空");
+        PriceTogetherInfo priceTogetherInfo = priceTogetherInfoMapper.selectByPrimaryKey(priceTogetherId);
+        return ServerResponse.createBySuccess(priceTogetherId);
     }
 }

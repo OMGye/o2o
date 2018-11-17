@@ -17,4 +17,6 @@ public interface OtherParamInfoService {
     ServerResponse update(OtherParamInfo otherParamInfo);
 
     ServerResponse<PageInfo> list(int pageSize, int pageNum);
+
+    ServerResponse getById(Integer paramId);
 }

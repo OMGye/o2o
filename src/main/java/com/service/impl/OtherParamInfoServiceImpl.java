@@ -4,6 +4,7 @@ import com.common.ServerResponse;
 import com.dao.OtherParamInfoMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.pojo.O2oInfo;
 import com.pojo.OtherParamInfo;
 import com.pojo.PriceDeductInfo;
 import com.service.OtherParamInfoService;
@@ -66,5 +67,13 @@ public class OtherParamInfoServiceImpl implements OtherParamInfoService {
         List<OtherParamInfo> list = otherParamInfoMapper.selectList();
         PageInfo pageInfo = new PageInfo(list);
         return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Override
+    public ServerResponse getById(Integer paramId) {
+        if (paramId == null)
+            return ServerResponse.createByErrorMessage("参数不能为空");
+        OtherParamInfo otherParamInfo = otherParamInfoMapper.selectByPrimaryKey(paramId);
+        return ServerResponse.createBySuccess(otherParamInfo);
     }
 }

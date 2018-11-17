@@ -17,4 +17,6 @@ public interface PriceTogetherInfoService {
     ServerResponse update(PriceTogetherInfo priceTogetherInfo);
 
     ServerResponse<PageInfo> list(int pageSize, int pageNum);
+
+    ServerResponse getById(Integer priceTogetherId);
 }

@@ -4,6 +4,7 @@ import com.common.ServerResponse;
 import com.dao.PriceDeductInfoMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.pojo.OtherParamInfo;
 import com.pojo.PriceDeductInfo;
 import com.pojo.PriceTogetherInfo;
 import com.service.PriceDeductInfoService;
@@ -64,5 +65,13 @@ public class PriceDeductInfoServiceImpl implements PriceDeductInfoService {
         List<PriceDeductInfo> list = priceDeductInfoMapper.selectList();
         PageInfo pageInfo = new PageInfo(list);
         return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Override
+    public ServerResponse getById(Integer priceDeductId) {
+        if (priceDeductId == null)
+            return ServerResponse.createByErrorMessage("参数不能为空");
+        PriceDeductInfo priceDeductInfo = priceDeductInfoMapper.selectByPrimaryKey(priceDeductId);
+        return ServerResponse.createBySuccess(priceDeductInfo);
     }
 }

@@ -17,4 +17,6 @@ public interface PriceDeductInfoService {
     ServerResponse update(PriceDeductInfo priceDeductInfo);
 
     ServerResponse<PageInfo> list(int pageSize, int pageNum);
+
+    ServerResponse getById(Integer priceDeductId);
 }

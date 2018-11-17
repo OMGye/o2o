@@ -16,4 +16,6 @@ public interface EngineerRankInfoService {
     ServerResponse update(EngineerRankInfo engineerRankInfo);
 
     ServerResponse<PageInfo> list(int pageSize, int pageNum);
+
+    ServerResponse getById(Integer engineerRankId);
 }

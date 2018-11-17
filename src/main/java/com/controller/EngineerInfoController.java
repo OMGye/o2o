@@ -51,7 +51,7 @@ public class EngineerInfoController {
         EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
         if (curEngineerInfo != null){
             if (engineerInfo.getEngineerId() != null){
-                if(curEngineerInfo.getEngineerId() != engineerInfo.getEngineerId()){
+                if(curEngineerInfo.getEngineerId().intValue() != engineerInfo.getEngineerId().intValue()){
                     return ServerResponse.createByErrorMessage("您已越权");
                 }
             }
@@ -70,6 +70,16 @@ public class EngineerInfoController {
     @ResponseBody
     public ServerResponse comfirm(EngineerInfo engineerInfo){
         return engineerInfoService.comfirmUserNameAndEmail(engineerInfo);
+    }
+
+    @RequestMapping(value = "engineerInfo/getengineerbyid.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse getEngineerById(HttpSession session){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            return engineerInfoService.getEngineerInfoById(curEngineerInfo.getEngineerId());
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
 }

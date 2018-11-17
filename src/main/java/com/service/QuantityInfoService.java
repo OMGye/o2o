@@ -17,4 +17,6 @@ public interface QuantityInfoService {
     ServerResponse update(QuantityInfo quantityInfo);
 
     ServerResponse<PageInfo> list(int pageSize, int pageNum);
+
+    ServerResponse getById(Integer quantityId);
 }
