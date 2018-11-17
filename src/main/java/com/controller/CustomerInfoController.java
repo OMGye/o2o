@@ -63,7 +63,7 @@ public class CustomerInfoController {
         return customerInfoService.comfirmUserNameAndEmail(customerInfo);
     }
 
-    @RequestMapping(value = "customerInfo/getengineerbyid.do",method = RequestMethod.GET)
+    @RequestMapping(value = "customerInfo/getcustomerbyid.do",method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse getEngineerById(HttpSession session){
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);

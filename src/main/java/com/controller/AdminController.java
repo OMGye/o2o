@@ -508,7 +508,7 @@ public class AdminController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
-    @RequestMapping(value = "customerInfo/getengineerbyid.do",method = RequestMethod.GET)
+    @RequestMapping(value = "customerInfo/getcustomerbyid.do",method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse customerGetEngineerById(HttpSession session, Integer customerId){
         AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);

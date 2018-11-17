@@ -97,6 +97,7 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
         newCustomerInfo.setCustomerPayCount(customerInfo.getCustomerPayCount());
         newCustomerInfo.setCustomerQq(customerInfo.getCustomerQq());
         newCustomerInfo.setCustomerAttention(customerInfo.getCustomerAttention());
+        newCustomerInfo.setCustomerId(customerInfo.getCustomerId());
         if(customerInfo.getCustomerName() != null){
             CustomerInfo dbCustomer = customerInfoMapper.selectByUserName(customerInfo.getCustomerName(),customerInfo.getCustomerId(),null);
             if (dbCustomer != null)
@@ -126,7 +127,7 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
         try {
             MailUtil.sendMail(dbCustomerInfo.getEmail(),dbCustomerInfo.getPassword());
         }catch (Exception e){
-            return ServerResponse.createByErrorMessage("邮件发送失败"+ e);
+            return ServerResponse.createByErrorMessage("邮件发送失败");
         }
 
         return ServerResponse.createBySuccess("密码已发送至您的邮箱");
