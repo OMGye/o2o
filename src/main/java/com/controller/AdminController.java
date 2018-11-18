@@ -135,7 +135,7 @@ public class AdminController {
 
     }
 
-    @RequestMapping(value = "basicPriceInfo/add.do",method = RequestMethod.GET)
+    @RequestMapping(value = "basicPriceInfo/add.do",method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse addBasicPriceInfo(HttpSession session, BasicPriceInfo basicPriceInfo){
         AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
