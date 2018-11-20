@@ -7,10 +7,12 @@ import com.github.pagehelper.PageInfo;
 import com.pojo.BasicPriceInfo;
 import com.pojo.EngineerRankInfo;
 import com.service.BasicPriceInfoService;
+import com.util.BigDecimalUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -76,5 +78,18 @@ public class BasicPriceInfoServiceImpl implements BasicPriceInfoService{
             return ServerResponse.createByErrorMessage("参数不能为空");
         BasicPriceInfo basicPriceInfo = basicPriceInfoMapper.selectByPrimaryKey(basicPriceId);
         return ServerResponse.createBySuccess(basicPriceInfo);
+    }
+
+    @Override
+    public ServerResponse getPrice(BasicPriceInfo basicPriceInfo) {
+        if (basicPriceInfo == null || basicPriceInfo.getFirstCategory() == null || basicPriceInfo.getSecondRank() == null || basicPriceInfo.getBasicLayer() == null || basicPriceInfo.getThirdCategory() == null)
+            return ServerResponse.createByErrorMessage("部分参数不能为空");
+
+        BasicPriceInfo curBasicPriceInfo = basicPriceInfoMapper.selectByBasicPriceInfo(basicPriceInfo);
+        if (curBasicPriceInfo != null) {
+            return ServerResponse.createBySuccess(curBasicPriceInfo.getPrice());
+
+        }
+        return ServerResponse.createByErrorMessage("找不到该基础价格");
     }
 }

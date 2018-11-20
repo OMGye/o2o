@@ -1,67 +1,35 @@
-# kdiff3 ignore
+*.class
 
+#package file
+*.war
+*.ear
+
+#kdiff3
 *.orig
 
-
-
-# maven ignore
-
+#maven ignore
 target/
 
-
-
-# eclipse ignore
-
-.settings/
-
+#eclipse ignore
+.settings
 .project
+.classpatch
 
-.classpath
-
-
-
-# idea ignore
-
-.idea/
-
+#idea
+.idea
+/idea/
 *.ipr
-
 *.iml
-
 *.iws
 
-
-
-# temp ignore
+#temp file
 
 *.log
-
 *.cache
-
 *.diff
-
 *.patch
-
 *.tmp
 
-
-
-# system ignore
-
+#system ignore
 .DS_Store
-
 Thumbs.db
-
-
-
-# package ignore (optional)
-
- *.jar
-
- *.war
-
- *.zip
-
- *.tar
-
- *.tar.gz

@@ -19,4 +19,6 @@ public interface BasicPriceInfoService {
     ServerResponse<PageInfo> list(int pageSize, int pageNum);
 
     ServerResponse getById(Integer basicPriceId);
+
+    ServerResponse getPrice(BasicPriceInfo basicPriceInfo);
 }

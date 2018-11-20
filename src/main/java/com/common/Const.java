@@ -19,6 +19,10 @@ public class Const {
         byte BAN = 10;
     }
 
+    public interface Order{
+        int PAYING = 0;
+    }
+
 
     public interface CustomerInfo{
 
