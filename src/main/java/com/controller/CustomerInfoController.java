@@ -212,9 +212,9 @@ public class CustomerInfoController {
 
 
     private static  final Logger logger = LoggerFactory.getLogger(CustomerInfo.class);
-    @RequestMapping(value = "orderInfo/callback.do", method = RequestMethod.GET)
+    @RequestMapping(value = "orderInfo/callback.do", method = RequestMethod.POST)
     @ResponseBody
-    public Object callBack(HttpSession session, Integer orderId, HttpServletRequest request, HttpServletResponse response) {
+    public Object callBack(HttpServletRequest request) {
         Map<String,String> params = new HashMap<String,String>();
         Map<String,String[]> requestParams = request.getParameterMap();
         for (Iterator<String> iter = requestParams.keySet().iterator(); iter.hasNext();) {
