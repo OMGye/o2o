@@ -10,19 +10,17 @@ import com.dao.PriceTogetherInfoMapper;
 import com.pojo.*;
 import com.service.BasicPriceInfoService;
 import com.service.OrderInfoService;
-import com.service.TimerCancleOrderService;
 import com.util.BigDecimalUtil;
 import com.util.DateTimeUtil;
+import com.util.TimerChangePayOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
+import java.util.*;
 
 /**
  * Created by upupgogogo on 2018/11/20.下午2:52
@@ -44,6 +42,8 @@ public class OrderInfoServiceImpl implements OrderInfoService{
 
     @Autowired
     private O2oPayInfoMapper o2oPayInfoMapper;
+
+
 
     private static  final Logger logger = LoggerFactory.getLogger(OrderInfoServiceImpl.class);
 
@@ -150,10 +150,9 @@ public class OrderInfoServiceImpl implements OrderInfoService{
         int row = orderInfoMapper.insert(order);
         if (row > 0){
             Timer timer = new Timer();
-            TimerCancleOrderServiceImpl timerCancleOrderService = new TimerCancleOrderServiceImpl();
-            Varible.UN_PAY_CHAGE_ORDERID = order.getOrderId();
-            timer.schedule(timerCancleOrderService,Const.TIMER);
-            return ServerResponse.createBySuccess("下单成功");
+            TimerChangePayOrder changePayOrder = new TimerChangePayOrder(order.getOrderId(),orderInfoMapper);
+            timer.schedule(changePayOrder,Const.TIMER);
+            return ServerResponse.createBySuccess("下单成功",order.getOrderId());
 
         }
 
@@ -201,7 +200,5 @@ public class OrderInfoServiceImpl implements OrderInfoService{
 
         return ServerResponse.createBySuccess();
     }
-
-
 
 }

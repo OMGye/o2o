@@ -7,7 +7,7 @@ public class Const {
 
     public static final String CURRENT_USER = "currentUser";
 
-    public static final Long TIMER = (long)60000;
+    public static final Long TIMER = (long)600000;
 
 
     public interface EngineerRankInfo{

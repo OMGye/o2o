@@ -185,7 +185,7 @@ public class CustomerInfoController {
                     + "\"total_amount\":\"" + total_amount + "\","
                     + "\"subject\":\"" + subject + "\","
                     + "\"body\":\"" + body + "\","
-                    + "\"timeout_express\":\"90m\","
+                    + "\"timeout_express\":\"9m\","
                     + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\"}");
             //请求
             response.setContentType("text/html;charset=" + "UTF-8");

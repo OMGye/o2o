@@ -44,7 +44,7 @@
     delete from order_info
     where order_id = #{orderId,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.pojo.OrderInfo" useGeneratedKeys="true">
+  <insert id="insert" parameterType="com.pojo.OrderInfo" useGeneratedKeys="true" keyProperty="orderId">
     insert into order_info (order_id, customer_id, customer_name, 
       engineer_id, engineer_name, engineer_check_id, 
       engineer_check_name, order_first_category, 
