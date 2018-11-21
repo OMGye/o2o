@@ -211,7 +211,7 @@ public class CustomerInfoController {
     }
 
 
-    private static  final Logger logger = LoggerFactory.getLogger(CustomerInfo.class);
+    private static  final Logger logger = LoggerFactory.getLogger(CustomerInfoController.class);
     @RequestMapping(value = "orderInfo/callback.do", method = RequestMethod.POST)
     @ResponseBody
     public Object callBack(HttpServletRequest request) {
@@ -229,10 +229,11 @@ public class CustomerInfoController {
         }
             //乱码解决，这段代码在出现乱码时使用
             try {
-                boolean signVerified = AlipaySignature.rsaCheckV2(params, AlipayConfig.alipay_public_key, AlipayConfig.charset, AlipayConfig.sign_type);
+                boolean signVerified = AlipaySignature.rsaCheckV1(params, AlipayConfig.alipay_public_key, AlipayConfig.charset, AlipayConfig.sign_type);
 
                 logger.info("支付宝回调,sign:{},trade_status:{},参数:{}",params.get("sign"),params.get("trade_status"),params.toString());
                 if(!signVerified) {//验证失败
+                    logger.debug("验证失败");
                     return ServerResponse.createByErrorMessage("非法请求,验证不通过,再恶意请求我就报警找网警了");
                 }
             } catch (Exception e) {
