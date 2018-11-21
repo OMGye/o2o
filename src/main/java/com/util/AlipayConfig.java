@@ -18,10 +18,10 @@ public class AlipayConfig {
     public static String alipay_public_key = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmYnqyMIojGHeqbnUkFdjGYA2b86NdfwvpWmC/Y0U/LTY/+YfiEKalsWtUDYJgy0otimjsadoe36O/mMBbSKY5hL6slajXdks+1GUiezeV2+nTfmUKmhgn66KjfQOW/uv4pgPkf+1nmSgmo1d7/cbBQeUSjaBoJmgkYhf1GR1O4YNBigMEVyQq5LsbH40gpIA6sFMJGgV/PP7op6E1e4wYgRoYcP4PRGY/jma/WMOsf5HKyyBK2z82jgZF4pkDi9x5vJquzoJS6Z+6pMxblARc4t5gLtlYEKzVHvIkbVKa0xzXtBI+YMqWtb22SAIgvXIpJmVKEx4P7tKuEdCv0OOYQIDAQAB";
 
     // 服务器异步通知页面路径  需http://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问
-    public static String notify_url = "http://193.112.26.167:8080/alipay/notify_url.jsp";
+    public static String notify_url = "http://193.112.26.167:8080/o2o/customer/orderInfo/callback.do";
 
     // 页面跳转同步通知页面路径 需http://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问
-    public static String return_url = "http://193.112.26.167:8080/alipay/return_url.jsp";
+    public static String return_url = "http://193.112.26.167:8080/o2o";
 
     // 签名方式
     public static String sign_type = "RSA2";
