@@ -225,11 +225,12 @@ public class CustomerInfoController {
                 valueStr = (i == values.length - 1) ? valueStr + values[i]
                         : valueStr + values[i] + ",";
             }
+            params.put(name, valueStr);
+        }
             //乱码解决，这段代码在出现乱码时使用
             try {
-                valueStr = new String(valueStr.getBytes("ISO-8859-1"), "utf-8");
                 boolean signVerified = AlipaySignature.rsaCheckV2(params, AlipayConfig.alipay_public_key, AlipayConfig.charset, AlipayConfig.sign_type);
-                params.put(name, valueStr);
+
                 logger.info("支付宝回调,sign:{},trade_status:{},参数:{}",params.get("sign"),params.get("trade_status"),params.toString());
                 if(!signVerified) {//验证失败
                     return ServerResponse.createByErrorMessage("非法请求,验证不通过,再恶意请求我就报警找网警了");
@@ -237,8 +238,6 @@ public class CustomerInfoController {
             } catch (Exception e) {
                 logger.error("支付宝验证回调异常",e);
             }
-
-        }
 
         //调用SDK验证签名
 
