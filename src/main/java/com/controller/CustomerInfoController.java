@@ -186,7 +186,14 @@ public class CustomerInfoController {
                     + "\"timeout_express\":\"1m\","
                     + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\"}");
             //请求
-            String result = alipayClient.pageExecute(alipayRequest).getBody();
+            String result = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n" +
+                    "<html>\n" +
+                    "<head>\n" +
+                    "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
+                    "<title>付款</title>\n" +
+                    "</head>"+alipayClient.pageExecute(alipayRequest).getBody() + "<body>\n" +
+                    "</body>\n" +
+                    "</html>";
 
             //输出
             PrintWriter out = response.getWriter();
