@@ -188,7 +188,7 @@ public class CustomerInfoController {
                     + "\"timeout_express\":\"90m\","
                     + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\"}");
             //请求
-            response.setContentType("text/html;charset=" + "UTF");
+            response.setContentType("text/html;charset=" + "UTF-8");
             String result = alipayClient.pageExecute(alipayRequest).getBody();
 
             //输出
