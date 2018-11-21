@@ -18,4 +18,6 @@ public interface O2oInfoService {
     ServerResponse<PageInfo> list(int pageSize, int pageNum);
 
     ServerResponse getById(Integer o2oId);
+
+
 }

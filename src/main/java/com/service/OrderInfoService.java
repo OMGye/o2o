@@ -15,5 +15,5 @@ public interface OrderInfoService {
 
     ServerResponse getOrderById(Integer orderId);
 
-    ServerResponse checkState(Integer orderId, Map<String,String> params);
+    ServerResponse aliCallback(Map<String,String> params);
 }

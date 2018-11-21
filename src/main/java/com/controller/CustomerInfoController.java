@@ -14,6 +14,8 @@ import com.service.*;
 
 import com.util.AlipayConfig;
 import org.aspectj.weaver.ast.Or;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
@@ -183,17 +185,11 @@ public class CustomerInfoController {
                     + "\"total_amount\":\"" + total_amount + "\","
                     + "\"subject\":\"" + subject + "\","
                     + "\"body\":\"" + body + "\","
-                    + "\"timeout_express\":\"1m\","
+                    + "\"timeout_express\":\"90m\","
                     + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\"}");
             //请求
-            String result = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n" +
-                    "<html>\n" +
-                    "<head>\n" +
-                    "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n" +
-                    "<title>付款</title>\n" +
-                    "</head>"+alipayClient.pageExecute(alipayRequest).getBody() + "<body>\n" +
-                    "</body>\n" +
-                    "</html>";
+            response.setContentType("text/html;charset=" + "UTF");
+            String result = alipayClient.pageExecute(alipayRequest).getBody();
 
             //输出
             PrintWriter out = response.getWriter();
@@ -214,6 +210,8 @@ public class CustomerInfoController {
 
     }
 
+
+    private static  final Logger logger = LoggerFactory.getLogger(CustomerInfo.class);
     @RequestMapping(value = "orderInfo/callback.do", method = RequestMethod.GET)
     @ResponseBody
     public Object callBack(HttpSession session, Integer orderId, HttpServletRequest request, HttpServletResponse response) {
@@ -229,15 +227,15 @@ public class CustomerInfoController {
             }
             //乱码解决，这段代码在出现乱码时使用
             try {
-                PrintWriter out = response.getWriter();
                 valueStr = new String(valueStr.getBytes("ISO-8859-1"), "utf-8");
                 boolean signVerified = AlipaySignature.rsaCheckV2(params, AlipayConfig.alipay_public_key, AlipayConfig.charset, AlipayConfig.sign_type);
                 params.put(name, valueStr);
-                if(signVerified) {//验证成功
-
+                logger.info("支付宝回调,sign:{},trade_status:{},参数:{}",params.get("sign"),params.get("trade_status"),params.toString());
+                if(!signVerified) {//验证失败
+                    return ServerResponse.createByErrorMessage("非法请求,验证不通过,再恶意请求我就报警找网警了");
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("支付宝验证回调异常",e);
             }
 
         }

@@ -2,13 +2,19 @@ package com.service.impl;
 
 import com.common.Const;
 import com.common.ServerResponse;
+import com.common.Varible;
+import com.dao.O2oPayInfoMapper;
 import com.dao.OrderInfoMapper;
 import com.dao.OtherParamInfoMapper;
 import com.dao.PriceTogetherInfoMapper;
 import com.pojo.*;
 import com.service.BasicPriceInfoService;
 import com.service.OrderInfoService;
+import com.service.TimerCancleOrderService;
 import com.util.BigDecimalUtil;
+import com.util.DateTimeUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
 
 /**
  * Created by upupgogogo on 2018/11/20.下午2:52
@@ -34,6 +41,11 @@ public class OrderInfoServiceImpl implements OrderInfoService{
 
     @Autowired
     private PriceTogetherInfoMapper priceTogetherInfoMapper;
+
+    @Autowired
+    private O2oPayInfoMapper o2oPayInfoMapper;
+
+    private static  final Logger logger = LoggerFactory.getLogger(OrderInfoServiceImpl.class);
 
     @Override
     public ServerResponse createOrder(OrderInfo order, CustomerInfo customerInfo, Integer params[], Integer rushId) {
@@ -136,8 +148,14 @@ public class OrderInfoServiceImpl implements OrderInfoService{
         order.setOrderPrice(allCount);
 
         int row = orderInfoMapper.insert(order);
-        if (row > 0)
+        if (row > 0){
+            Timer timer = new Timer();
+            TimerCancleOrderServiceImpl timerCancleOrderService = new TimerCancleOrderServiceImpl();
+            Varible.UN_PAY_CHAGE_ORDERID = order.getOrderId();
+            timer.schedule(timerCancleOrderService,Const.TIMER);
             return ServerResponse.createBySuccess("下单成功");
+
+        }
 
         return ServerResponse.createByErrorMessage("下单失败");
     }
@@ -151,7 +169,37 @@ public class OrderInfoServiceImpl implements OrderInfoService{
     }
 
     @Override
-    public ServerResponse checkState(Integer orderId,Map<String,String> params) {
-        return null;
+    public ServerResponse aliCallback(Map<String,String> params){
+        try {
+            Integer orderId = Integer.parseInt(params.get("out_trade_no"));
+            String tradeNo = params.get("trade_no");
+            String tradeStatus = params.get("trade_status");
+            OrderInfo order = orderInfoMapper.selectByPrimaryKey(orderId);
+            if(order == null){
+                return ServerResponse.createByErrorMessage("非o2o的订单,回调忽略");
+            }
+            if(order.getOrderState() >= Const.Order.PAIED){
+                return ServerResponse.createBySuccess("支付宝重复调用");
+            }
+            if(Const.AlipayCallback.TRADE_STATUS_TRADE_SUCCESS.equals(tradeStatus)){
+                order.setOrderState(Const.Order.PAIED);
+                orderInfoMapper.updateByPrimaryKeySelective(order);
+            }
+            O2oPayInfo payInfo = new O2oPayInfo();
+            payInfo.setUserId(order.getCustomerId());
+            payInfo.setOrderNo((long) order.getOrderId());
+            payInfo.setPayPlatform(Const.PayPlatformEnum.ALIPAY.getCode());
+            payInfo.setPlatformNumber(tradeNo);
+            payInfo.setPlatformStatus(tradeStatus);
+
+            o2oPayInfoMapper.insert(payInfo);
+        }catch (Exception e){
+            logger.error("支付宝验证回调异常",e);
+        }
+
+        return ServerResponse.createBySuccess();
     }
+
+
+
 }

@@ -7,6 +7,8 @@ public class Const {
 
     public static final String CURRENT_USER = "currentUser";
 
+    public static final Long TIMER = (long)60000;
+
 
     public interface EngineerRankInfo{
         int CAN = 1;
@@ -21,8 +23,37 @@ public class Const {
 
     public interface Order{
         int PAYING = 0;
+        int PAIED = 1;
+        int CANNCEL = 10;
     }
 
+
+    public interface  AlipayCallback{
+        String TRADE_STATUS_WAIT_BUYER_PAY = "WAIT_BUYER_PAY";
+        String TRADE_STATUS_TRADE_SUCCESS = "TRADE_SUCCESS";
+
+        String RESPONSE_SUCCESS = "success";
+        String RESPONSE_FAILED = "failed";
+    }
+
+    public enum PayPlatformEnum{
+        ALIPAY(1,"支付宝");
+
+        PayPlatformEnum(int code,String value){
+            this.code = code;
+            this.value = value;
+        }
+        private String value;
+        private int code;
+
+        public String getValue() {
+            return value;
+        }
+
+        public int getCode() {
+            return code;
+        }
+    }
 
     public interface CustomerInfo{
 
