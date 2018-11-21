@@ -176,9 +176,11 @@ public class OrderInfoServiceImpl implements OrderInfoService{
             String tradeStatus = params.get("trade_status");
             OrderInfo order = orderInfoMapper.selectByPrimaryKey(orderId);
             if(order == null){
+                logger.error("非o2o的订单,回调忽略");
                 return ServerResponse.createByErrorMessage("非o2o的订单,回调忽略");
             }
             if(order.getOrderState() >= Const.Order.PAIED){
+                logger.error("支付宝重复调用");
                 return ServerResponse.createBySuccess("支付宝重复调用");
             }
             if(Const.AlipayCallback.TRADE_STATUS_TRADE_SUCCESS.equals(tradeStatus)){
