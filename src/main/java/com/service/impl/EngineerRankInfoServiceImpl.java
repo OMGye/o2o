@@ -8,10 +8,12 @@ import com.github.pagehelper.PageInfo;
 import com.pojo.BasicPriceInfo;
 import com.pojo.EngineerRankInfo;
 import com.service.EngineerRankInfoService;
+import com.vo.EngineerRankVO;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -76,5 +78,27 @@ public class EngineerRankInfoServiceImpl implements EngineerRankInfoService{
             return ServerResponse.createByErrorMessage("参数不能为空");
         EngineerRankInfo engineerRankInfo = rankInfoMapper.selectByPrimaryKey(engineerRankId);
         return ServerResponse.createBySuccess(engineerRankInfo);
+    }
+
+    @Override
+    public ServerResponse getEngineerRank(Integer engineerRankId) {
+        EngineerRankInfo engineerRankInfo = rankInfoMapper.selectByPrimaryKey(engineerRankId);
+        if (engineerRankInfo != null){
+            EngineerRankVO engineerRankVO = new EngineerRankVO();
+            engineerRankVO.setMI(engineerRankInfo.getEngineerRankMi());
+            engineerRankVO.setQAE(engineerRankInfo.getEngineerRankQae());
+            List<String> secondCategories = new ArrayList<>();
+            if (engineerRankInfo.getEngineerRankA() == 1)
+                secondCategories.add("A");
+            if (engineerRankInfo.getEngineerRankB() == 1)
+                secondCategories.add("B");
+            if (engineerRankInfo.getEngineerRankC() == 1)
+                secondCategories.add("C");
+            if (engineerRankInfo.getEngineerRankD() == 1)
+                secondCategories.add("D");
+            engineerRankVO.setSecondCategories(secondCategories);
+            return ServerResponse.createBySuccess(engineerRankVO);
+        }
+        return null;
     }
 }

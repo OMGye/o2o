@@ -34,6 +34,8 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
 
     @Autowired
     private EngineerInfoMapper engineerInfoMapper;
+
+
     @Override
     public ServerResponse<EngineerInfo> register(EngineerInfo engineerInfo, MultipartFile file, String path) {
         if (file == null)
@@ -140,6 +142,7 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
             if (dbEngineerInfo.getEngineerState() == Const.EngineerInfo.BAN)
                 return ServerResponse.createByErrorMessage("您的账号已被停止使用");
         }
+
         return ServerResponse.createBySuccess(dbEngineerInfo);
     }
 
@@ -202,4 +205,6 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
            return ServerResponse.createByErrorMessage("已存在用户名或者邮箱");
        return ServerResponse.createBySuccess("不存在用户名或者邮箱");
     }
+
+
 }

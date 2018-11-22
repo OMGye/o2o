@@ -4,8 +4,14 @@ import com.common.Const;
 import com.common.ServerResponse;
 import com.github.pagehelper.PageInfo;
 import com.pojo.AdminInfo;
+import com.pojo.CustomerInfo;
 import com.pojo.EngineerInfo;
+import com.pojo.EngineerRankInfo;
 import com.service.EngineerInfoService;
+import com.service.EngineerRankInfoService;
+import com.service.OrderInfoService;
+import com.service.OtherParamInfoService;
+import com.vo.EngineerRankVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +34,9 @@ public class EngineerInfoController {
     @Autowired
     private EngineerInfoService engineerInfoService;
 
+    @Autowired
+    private EngineerRankInfoService rankInfoService;
+
     @RequestMapping(value = "engineerInfo/register.do",method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse register(@RequestParam(value = "upload_file",required = false) MultipartFile file, HttpServletRequest request, EngineerInfo engineerInfo){
@@ -41,6 +50,15 @@ public class EngineerInfoController {
         ServerResponse<EngineerInfo> response = engineerInfoService.login(engineerInfo);
         if(response.isSuccess()){
             session.setAttribute(Const.CURRENT_USER,response.getData());
+            EngineerInfo curEngineerInfo = (EngineerInfo)response.getData();
+            if (curEngineerInfo.getEngineerRank() != null){
+                ServerResponse serverResponse = rankInfoService.getEngineerRank(curEngineerInfo.getEngineerId());
+                EngineerRankVO engineerRankVO = (EngineerRankVO) serverResponse.getData();
+                if (engineerInfo != null) {
+                    engineerRankVO.setFirstCategory(curEngineerInfo.getEngineerClassfy());
+                    session.setAttribute(Const.CURRENT_RANK, engineerRankVO);
+                }
+            }
         }
         return response;
     }
@@ -78,6 +96,24 @@ public class EngineerInfoController {
         EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
         if (curEngineerInfo != null){
             return engineerInfoService.getEngineerInfoById(curEngineerInfo.getEngineerId());
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
+
+
+    @Autowired
+    private OrderInfoService orderInfoService;
+    @RequestMapping(value = "orderInfo/cancaughtlist.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse orderList(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null) {
+            EngineerRankVO engineerRankVO = (EngineerRankVO) session.getAttribute(Const.CURRENT_RANK);
+            if (engineerRankVO == null)
+                return ServerResponse.createByErrorMessage("当前工程没有等级");
+            orderInfoService.engineerCaughtList(pageSize,pageNum,engineerRankVO);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }

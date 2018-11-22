@@ -46,11 +46,13 @@ public class OrderInfo {
 
     private BigDecimal orderPrice;
 
+    private String orderFile;
+
     private Date createTime;
 
     private Date updateTime;
 
-    public OrderInfo(Integer orderId, Integer customerId, String customerName, Integer engineerId, String engineerName, Integer engineerCheckId, String engineerCheckName, String orderFirstCategory, String orderSecondCategory, Integer orderMi, Integer orderQae, String otherParamInfo, Integer basicLayer, Integer priceTogetherNum, String orderDec, Integer orderRush, Integer orderDeductRank, String orderDeductDec, String orderRateDec, Integer orderState, BigDecimal orderPrice, Date createTime, Date updateTime) {
+    public OrderInfo(Integer orderId, Integer customerId, String customerName, Integer engineerId, String engineerName, Integer engineerCheckId, String engineerCheckName, String orderFirstCategory, String orderSecondCategory, Integer orderMi, Integer orderQae, String otherParamInfo, Integer basicLayer, Integer priceTogetherNum, String orderDec, Integer orderRush, Integer orderDeductRank, String orderDeductDec, String orderRateDec, Integer orderState, BigDecimal orderPrice, String orderFile, Date createTime, Date updateTime) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.customerName = customerName;
@@ -72,6 +74,7 @@ public class OrderInfo {
         this.orderRateDec = orderRateDec;
         this.orderState = orderState;
         this.orderPrice = orderPrice;
+        this.orderFile = orderFile;
         this.createTime = createTime;
         this.updateTime = updateTime;
     }
@@ -246,6 +249,14 @@ public class OrderInfo {
 
     public void setOrderPrice(BigDecimal orderPrice) {
         this.orderPrice = orderPrice;
+    }
+
+    public String getOrderFile() {
+        return orderFile;
+    }
+
+    public void setOrderFile(String orderFile) {
+        this.orderFile = orderFile == null ? null : orderFile.trim();
     }
 
     public Date getCreateTime() {

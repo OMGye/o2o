@@ -18,6 +18,7 @@
       <arg column="engineer_rank" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="engineer_classfy" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="engineer_quantity" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="order_count" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
       <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
     </constructor>
@@ -25,7 +26,7 @@
   <sql id="Base_Column_List" >
     engineer_id, engineer_name, password, phone, email, engineer_qq, engineer_prov, engineer_city, 
     engineer_state, engineer_pay_count, engineer_balance, engineer_file, engineer_rank, 
-    engineer_classfy, engineer_quantity, create_time, update_time
+    engineer_classfy, engineer_quantity,order_count, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -42,13 +43,13 @@
       phone, email, engineer_qq, 
       engineer_prov, engineer_city, engineer_state, 
       engineer_pay_count, engineer_balance, engineer_file, 
-      engineer_rank, engineer_classfy, engineer_quantity, 
+      engineer_rank, engineer_classfy, engineer_quantity,order_count ,
       create_time, update_time)
     values (#{engineerId,jdbcType=INTEGER}, #{engineerName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{engineerQq,jdbcType=VARCHAR}, 
       #{engineerProv,jdbcType=VARCHAR}, #{engineerCity,jdbcType=VARCHAR}, #{engineerState,jdbcType=TINYINT}, 
       #{engineerPayCount,jdbcType=VARCHAR}, #{engineerBalance,jdbcType=DECIMAL}, #{engineerFile,jdbcType=VARCHAR}, 
-      #{engineerRank,jdbcType=INTEGER}, #{engineerClassfy,jdbcType=VARCHAR}, #{engineerQuantity,jdbcType=DECIMAL}, 
+      #{engineerRank,jdbcType=INTEGER}, #{engineerClassfy,jdbcType=VARCHAR}, #{engineerQuantity,jdbcType=DECIMAL}, #{orderCount,jdbcType=INTEGER},
      now(), now())
   </insert>
   <insert id="insertSelective" parameterType="com.pojo.EngineerInfo" >
@@ -98,6 +99,9 @@
       </if>
       <if test="engineerQuantity != null" >
         engineer_quantity,
+      </if>
+      <if test="orderCount != null" >
+        order_count,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -152,6 +156,9 @@
       <if test="engineerQuantity != null" >
         #{engineerQuantity,jdbcType=DECIMAL},
       </if>
+      <if test="orderCount != null" >
+        #{orderCount,jdbcType=INTEGER},
+      </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -205,6 +212,9 @@
       <if test="engineerQuantity != null" >
         engineer_quantity = #{engineerQuantity,jdbcType=DECIMAL},
       </if>
+      <if test="orderCount != null" >
+        order_count = #{orderCount,jdbcType=INTEGER},
+      </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -230,6 +240,7 @@
       engineer_rank = #{engineerRank,jdbcType=INTEGER},
       engineer_classfy = #{engineerClassfy,jdbcType=VARCHAR},
       engineer_quantity = #{engineerQuantity,jdbcType=DECIMAL},
+      order_count = #{orderCount,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = now()
     where engineer_id = #{engineerId,jdbcType=INTEGER}

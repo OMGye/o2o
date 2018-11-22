@@ -253,5 +253,32 @@ public class CustomerInfoController {
         return orderInfoService.aliCallback(params);
     }
 
+    @RequestMapping(value = "orderInfo/list.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse orderList(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize, Integer orderState){
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null) {
+            return orderInfoService.customerList(pageSize, pageNum,curCustomerInfo,orderState);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
+    @RequestMapping(value = "orderInfo/getorderbyid.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse getOrderById(HttpSession session, Integer orderId){
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null) {
+            ServerResponse response = orderInfoService.getOrderById(orderId);
+            OrderInfo orderInfo = (OrderInfo)response.getData();
+            if (orderInfo != null){
+                if (orderInfo.getCustomerId() != curCustomerInfo.getCustomerId())
+                    return ServerResponse.createBySuccess();
+            }
+            return response;
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
 
 }

@@ -18,4 +18,6 @@ public interface EngineerRankInfoService {
     ServerResponse<PageInfo> list(int pageSize, int pageNum);
 
     ServerResponse getById(Integer engineerRankId);
+
+    ServerResponse getEngineerRank(Integer engineerRankId);
 }

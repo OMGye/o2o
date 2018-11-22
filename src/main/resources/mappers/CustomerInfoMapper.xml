@@ -15,13 +15,14 @@
       <arg column="customer_pay_count" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="customer_balance" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
       <arg column="customer_attention" jdbcType="LONGVARCHAR" javaType="java.lang.String" />
+      <arg column="order_count" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
       <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
     </constructor>
   </resultMap>
   <sql id="Base_Column_List" >
     customer_id, customer_name, password, phone, email, customer_qq, customer_prov, customer_city,
-    customer_state, customer_pay_count, customer_balance, customer_attention,create_time, update_time
+    customer_state, customer_pay_count, customer_balance, customer_attention,order_count,create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -37,12 +38,12 @@
     insert into customer_info (customer_id, customer_name, password, 
       phone, email, customer_qq, 
       customer_prov, customer_city, customer_state, 
-      customer_pay_count, customer_balance, customer_attention,create_time,
+      customer_pay_count, customer_balance, customer_attention,order_count,create_time,
       update_time)
     values (#{customerId,jdbcType=INTEGER}, #{customerName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{customerQq,jdbcType=VARCHAR}, 
       #{customerProv,jdbcType=VARCHAR}, #{customerCity,jdbcType=VARCHAR}, #{customerState,jdbcType=TINYINT}, 
-      #{customerPayCount,jdbcType=VARCHAR}, #{customerBalance,jdbcType=DECIMAL},#{customerAttention,jdbcType=LONGVARCHAR} ,now(),
+      #{customerPayCount,jdbcType=VARCHAR}, #{customerBalance,jdbcType=DECIMAL},#{customerAttention,jdbcType=LONGVARCHAR} , #{orderCount,jdbcType=INTEGER},now(),
       now())
   </insert>
   <insert id="insertSelective" parameterType="com.pojo.CustomerInfo" >
@@ -83,6 +84,9 @@
       </if>
       <if test="customerAttention != null" >
         customer_attention,
+      </if>
+      <if test="orderCount != null" >
+        order_count,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -127,6 +131,9 @@
       </if>
       <if test="customerAttention != null" >
         #{customerAttention,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="orderCount != null" >
+        #{orderCount,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
@@ -173,6 +180,9 @@
       <if test="customerAttention != null" >
         customer_attention = #{customerAttention,jdbcType=LONGVARCHAR},
       </if>
+      <if test="orderCount != null" >
+        order_count = #{orderCount,jdbcType=INTEGER},
+      </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -195,6 +205,7 @@
       customer_state = #{customerState,jdbcType=TINYINT},
       customer_pay_count = #{customerPayCount,jdbcType=VARCHAR},
       customer_balance = #{customerBalance,jdbcType=DECIMAL},
+      order_count = #{orderCount,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       customer_attention = #{customerAttention,jdbcType=LONGVARCHAR}
@@ -212,6 +223,8 @@
       customer_state = #{customerState,jdbcType=TINYINT},
       customer_pay_count = #{customerPayCount,jdbcType=VARCHAR},
       customer_balance = #{customerBalance,jdbcType=DECIMAL},
+      customer_attention = #{customerAttention,jdbcType=LONGVARCHAR}
+      order_count = #{orderCount,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where customer_id = #{customerId,jdbcType=INTEGER}
