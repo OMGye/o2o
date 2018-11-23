@@ -75,6 +75,6 @@ public class PriceTogetherInfoServiceImpl implements PriceTogetherInfoService {
         if (priceTogetherId == null)
             return ServerResponse.createByErrorMessage("参数不能为空");
         PriceTogetherInfo priceTogetherInfo = priceTogetherInfoMapper.selectByPrimaryKey(priceTogetherId);
-        return ServerResponse.createBySuccess(priceTogetherId);
+        return ServerResponse.createBySuccess(priceTogetherInfo);
     }
 }
