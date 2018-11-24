@@ -2,6 +2,7 @@ package com.service.impl;
 
 import com.common.Const;
 import com.common.ServerResponse;
+import com.controller.CustomerInfoController;
 import com.dao.CustomerInfoMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -9,6 +10,8 @@ import com.pojo.CustomerInfo;
 import com.pojo.EngineerInfo;
 import com.service.CustomerInfoService;
 import com.util.MailUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +26,8 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
 
     @Autowired
     private CustomerInfoMapper customerInfoMapper;
+
+    private static  final Logger logger = LoggerFactory.getLogger(CustomerInfoServiceImpl.class);
 
 
     @Override
@@ -127,6 +132,8 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
         try {
             MailUtil.sendMail(dbCustomerInfo.getEmail(),dbCustomerInfo.getPassword());
         }catch (Exception e){
+            logger.debug("e:" + e);
+
             return ServerResponse.createByErrorMessage("邮件发送失败");
         }
 
