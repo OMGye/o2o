@@ -34,11 +34,23 @@ public class EngineerInfo {
 
     private BigDecimal engineerQuantity;
 
+    private Integer orderCount;
+
     private Date createTime;
 
     private Date updateTime;
 
-    public EngineerInfo(Integer engineerId, String engineerName, String password, String phone, String email, String engineerQq, String engineerProv, String engineerCity, Byte engineerState, String engineerPayCount, BigDecimal engineerBalance, String engineerFile, Integer engineerRank, String engineerClassfy, BigDecimal engineerQuantity, Date createTime, Date updateTime) {
+    public void setOrderCount(Integer orderCount) {
+        this.orderCount = orderCount;
+    }
+
+    public Integer getOrderCount() {
+
+        return orderCount;
+    }
+
+    public EngineerInfo(Integer engineerId, String engineerName, String password, String phone, String email, String engineerQq, String engineerProv, String engineerCity, Byte engineerState, String engineerPayCount, BigDecimal engineerBalance, String engineerFile, Integer engineerRank, String engineerClassfy, BigDecimal engineerQuantity, Integer orderCount, Date createTime, Date updateTime) {
+
         this.engineerId = engineerId;
         this.engineerName = engineerName;
         this.password = password;
@@ -54,6 +66,7 @@ public class EngineerInfo {
         this.engineerRank = engineerRank;
         this.engineerClassfy = engineerClassfy;
         this.engineerQuantity = engineerQuantity;
+        this.orderCount = orderCount;
         this.createTime = createTime;
         this.updateTime = updateTime;
     }
