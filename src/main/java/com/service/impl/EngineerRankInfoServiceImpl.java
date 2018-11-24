@@ -81,8 +81,8 @@ public class EngineerRankInfoServiceImpl implements EngineerRankInfoService{
     }
 
     @Override
-    public ServerResponse getEngineerRank(Integer engineerRankId) {
-        EngineerRankInfo engineerRankInfo = rankInfoMapper.selectByPrimaryKey(engineerRankId);
+    public ServerResponse getEngineerRank(Integer engineerRank) {
+        EngineerRankInfo engineerRankInfo = rankInfoMapper.selectByEngineerRank(engineerRank);
         if (engineerRankInfo != null){
             EngineerRankVO engineerRankVO = new EngineerRankVO();
             engineerRankVO.setMI(engineerRankInfo.getEngineerRankMi());

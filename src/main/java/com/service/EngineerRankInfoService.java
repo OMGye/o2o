@@ -19,5 +19,5 @@ public interface EngineerRankInfoService {
 
     ServerResponse getById(Integer engineerRankId);
 
-    ServerResponse getEngineerRank(Integer engineerRankId);
+    ServerResponse getEngineerRank(Integer engineerRank);
 }

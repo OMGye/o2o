@@ -171,6 +171,8 @@
     from engineer_rank_info
   </select>
 
+
+
   <select id="selectByEngineerRank" resultMap="BaseResultMap" parameterType="java.lang.Integer">
     select
     <include refid="Base_Column_List"/>
@@ -178,5 +180,6 @@
     where
     engineer_rank = #{engineerRank,jdbcType=INTEGER}
   </select>
+
 
 </mapper>
