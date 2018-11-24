@@ -52,7 +52,7 @@ public class EngineerInfoController {
             session.setAttribute(Const.CURRENT_USER,response.getData());
             EngineerInfo curEngineerInfo = (EngineerInfo)response.getData();
             if (curEngineerInfo.getEngineerRank() != null){
-                ServerResponse serverResponse = rankInfoService.getEngineerRank(curEngineerInfo.getEngineerId());
+                ServerResponse serverResponse = rankInfoService.getEngineerRank(curEngineerInfo.getEngineerRank());
                 EngineerRankVO engineerRankVO = (EngineerRankVO) serverResponse.getData();
                 if (engineerInfo != null) {
                     engineerRankVO.setFirstCategory(curEngineerInfo.getEngineerClassfy());
