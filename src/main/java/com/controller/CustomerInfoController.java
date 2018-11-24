@@ -142,7 +142,7 @@ public class CustomerInfoController {
     @Autowired
     private OrderInfoService orderInfoService;
 
-    @RequestMapping(value = "orderInfo/createorder.do", method = RequestMethod.GET)
+    @RequestMapping(value = "orderInfo/createorder.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse createOrder(HttpSession session, OrderInfo orderInfo, Integer rushId, Integer[] params) {
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
@@ -156,7 +156,7 @@ public class CustomerInfoController {
 
 
 
-    @RequestMapping(value = "orderInfo/pay.do", method = RequestMethod.GET)
+    @RequestMapping(value = "orderInfo/pay.do", method = RequestMethod.POST)
     public void pay(HttpSession session, Integer orderId, HttpServletRequest request, HttpServletResponse response) {
         //获得初始化的AlipayClient
         AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.gatewayUrl, AlipayConfig.app_id, AlipayConfig.merchant_private_key, "json", AlipayConfig.charset, AlipayConfig.alipay_public_key, AlipayConfig.sign_type);
@@ -253,7 +253,7 @@ public class CustomerInfoController {
         return orderInfoService.aliCallback(params);
     }
 
-    @RequestMapping(value = "orderInfo/list.do", method = RequestMethod.POST)
+    @RequestMapping(value = "orderInfo/list.do", method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse orderList(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize, Integer orderState){
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
@@ -264,7 +264,7 @@ public class CustomerInfoController {
     }
 
 
-    @RequestMapping(value = "orderInfo/getorderbyid.do", method = RequestMethod.POST)
+    @RequestMapping(value = "orderInfo/getorderbyid.do", method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse getOrderById(HttpSession session, Integer orderId){
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
