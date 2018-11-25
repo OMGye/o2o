@@ -113,7 +113,7 @@ public class EngineerInfoController {
             EngineerRankVO engineerRankVO = (EngineerRankVO) session.getAttribute(Const.CURRENT_RANK);
             if (engineerRankVO == null)
                 return ServerResponse.createByErrorMessage("当前工程没有等级");
-            orderInfoService.engineerCaughtList(pageSize,pageNum,engineerRankVO);
+            return orderInfoService.engineerCaughtList(pageSize,pageNum,engineerRankVO);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
