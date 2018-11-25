@@ -272,7 +272,7 @@ public class CustomerInfoController {
             ServerResponse response = orderInfoService.getOrderById(orderId);
             OrderInfo orderInfo = (OrderInfo)response.getData();
             if (orderInfo != null){
-                if (orderInfo.getCustomerId() != curCustomerInfo.getCustomerId())
+                if (orderInfo.getCustomerId().intValue() != curCustomerInfo.getCustomerId().intValue())
                     return ServerResponse.createBySuccess();
             }
             return response;
