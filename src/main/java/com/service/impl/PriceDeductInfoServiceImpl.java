@@ -51,6 +51,7 @@ public class PriceDeductInfoServiceImpl implements PriceDeductInfoService {
             return ServerResponse.createByErrorMessage("参数不能为空");
         PriceDeductInfo newPriceDeductInfo = new PriceDeductInfo();
         newPriceDeductInfo.setPriceDeductId(priceDeductInfo.getPriceDeductId());
+        newPriceDeductInfo.setPriceDeductDec(priceDeductInfo.getPriceDeductDec());
         newPriceDeductInfo.setPriceDeductPercentage(priceDeductInfo.getPriceDeductPercentage());
         int row = priceDeductInfoMapper.updateByPrimaryKeySelective(newPriceDeductInfo);
         if (row > 0)

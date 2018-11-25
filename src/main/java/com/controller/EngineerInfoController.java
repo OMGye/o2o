@@ -105,7 +105,7 @@ public class EngineerInfoController {
 
     @Autowired
     private OrderInfoService orderInfoService;
-    @RequestMapping(value = "orderInfo/cancaughtlist.do", method = RequestMethod.POST)
+    @RequestMapping(value = "orderInfo/cancaughtlist.do", method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse orderList(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
         EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);

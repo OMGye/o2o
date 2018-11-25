@@ -53,6 +53,7 @@ public class OtherParamInfoServiceImpl implements OtherParamInfoService {
         OtherParamInfo newOtherParamInfo = new OtherParamInfo();
         newOtherParamInfo.setParamId(otherParamInfo.getParamId());
         newOtherParamInfo.setParamPercentage(otherParamInfo.getParamPercentage());
+        newOtherParamInfo.setParamDec(otherParamInfo.getParamDec());
         int row = otherParamInfoMapper.updateByPrimaryKeySelective(newOtherParamInfo);
         if (row > 0)
             return ServerResponse.createBySuccess("修改成功");

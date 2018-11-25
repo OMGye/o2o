@@ -56,6 +56,7 @@ public class BasicPriceInfoServiceImpl implements BasicPriceInfoService{
             return ServerResponse.createByErrorMessage("参数不能为空");
         BasicPriceInfo newBasicPriceInfo = new BasicPriceInfo();
         newBasicPriceInfo.setBasicPriceId(basicPriceInfo.getBasicPriceId());
+        newBasicPriceInfo.setBasicDec(basicPriceInfo.getBasicDec());
         newBasicPriceInfo.setPrice(basicPriceInfo.getPrice());
         int row = basicPriceInfoMapper.updateByPrimaryKeySelective(newBasicPriceInfo);
         if (row > 0)

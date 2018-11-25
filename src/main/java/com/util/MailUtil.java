@@ -44,7 +44,7 @@ public class MailUtil {
 
 		message.setSubject("o2o密码找回");
 
-		String str = "你的密码为" + code + "请及时修改您的密码，防止他人盗取您的账户";
+		String str = code;
 
 		message.setContent(str, "text/html;charset=UTF-8");
 

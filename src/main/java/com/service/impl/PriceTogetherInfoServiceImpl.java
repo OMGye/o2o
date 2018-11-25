@@ -54,6 +54,7 @@ public class PriceTogetherInfoServiceImpl implements PriceTogetherInfoService {
             return ServerResponse.createByErrorMessage("参数不能为空");
         PriceTogetherInfo newPriceTogetherInfo = new PriceTogetherInfo();
         newPriceTogetherInfo.setPriceTogetherId(priceTogetherInfo.getPriceTogetherId());
+        newPriceTogetherInfo.setPriceTogetherDec(priceTogetherInfo.getPriceTogetherDec());
         newPriceTogetherInfo.setPriceTogetherPercentage(priceTogetherInfo.getPriceTogetherPercentage());
         int row = priceTogetherInfoMapper.updateByPrimaryKeySelective(newPriceTogetherInfo);
         if (row > 0)

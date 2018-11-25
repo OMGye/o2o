@@ -117,6 +117,14 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
     public ServerResponse check(EngineerInfo engineerInfo) {
         if (engineerInfo == null || engineerInfo.getEngineerId() == null)
             return ServerResponse.createByErrorMessage("参数不能为空");
+        if (engineerInfo.getEngineerState() == Const.EngineerInfo.ABLE){
+            try {
+                EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByPrimaryKey(engineerInfo.getEngineerId());
+                MailUtil.sendMail(dbEngineerInfo.getEmail(),"您的账户已激活");
+            }catch (Exception e){
+                return ServerResponse.createByErrorMessage("邮件发送失败"+ e);
+            }
+        }
         EngineerInfo newEngineerInfo = new EngineerInfo();
         newEngineerInfo.setEngineerId(engineerInfo.getEngineerId());
         newEngineerInfo.setEngineerState(engineerInfo.getEngineerState());

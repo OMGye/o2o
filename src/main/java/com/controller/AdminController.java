@@ -367,12 +367,7 @@ public class AdminController {
     @RequestMapping(value = "o2oInfo/list.do",method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse listO2oInfo(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize){
-        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
-        if (adminInfo != null){
             return o2oInfoService.list(pageSize,pageNum);
-        }
-        return ServerResponse.createByErrorMessage("请登入管理员账户");
-
     }
 
     @RequestMapping(value = "o2oInfo/add.do",method = RequestMethod.POST)

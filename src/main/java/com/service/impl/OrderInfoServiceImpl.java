@@ -48,7 +48,7 @@ public class OrderInfoServiceImpl implements OrderInfoService{
 
 
 
-    private static  final Logger logger = LoggerFactory.getLogger(OrderInfoServiceImpl.class);
+   private static  final Logger logger = LoggerFactory.getLogger(OrderInfoServiceImpl.class);
 
     @Override
     public ServerResponse createOrder(OrderInfo order, CustomerInfo customerInfo, Integer params[], Integer rushId) {
@@ -65,12 +65,17 @@ public class OrderInfoServiceImpl implements OrderInfoService{
         ServerResponse response = basicPriceInfoService.getPrice(basicPriceInfo);
         BigDecimal bigDecimalCAM = (BigDecimal) response.getData();
 
+        if (bigDecimalCAM == null)
+            return ServerResponse.createByErrorMessage("CAM基础价格为空,下单失败");
+
         //2.得到MI的基础价格
         BigDecimal bigDecimalMI = null;
         if (order.getOrderMi() == 1){
             basicPriceInfo.setThirdCategory("MI");
             response = basicPriceInfoService.getPrice(basicPriceInfo);
-             bigDecimalMI = (BigDecimal) response.getData();
+            bigDecimalMI = (BigDecimal) response.getData();
+            if (bigDecimalMI == null)
+                return ServerResponse.createByErrorMessage("MI基础价格为空,下单失败");
         }
 
         //3.得到QAE的基础价格
@@ -79,12 +84,19 @@ public class OrderInfoServiceImpl implements OrderInfoService{
             basicPriceInfo.setThirdCategory("QAE");
             response = basicPriceInfoService.getPrice(basicPriceInfo);
             bigDecimalQAE = (BigDecimal) response.getData();
+            if (bigDecimalQAE == null)
+                return ServerResponse.createByErrorMessage("QAE基础价格为空,下单失败");
         }
 
-        //4.得到总计带参的基础价格
-        BigDecimal bigDecimalParam = BigDecimalUtil.add(bigDecimalCAM.doubleValue(),bigDecimalMI == null ? null : bigDecimalMI.doubleValue());
-        bigDecimalParam = BigDecimalUtil.add(bigDecimalParam.doubleValue(),bigDecimalQAE
-                == null ? null : bigDecimalQAE.doubleValue());
+        //得到总的基础价格，在计算带参价格
+        BigDecimal bigDecimalParam = BigDecimalUtil.add(0,bigDecimalCAM.doubleValue());
+
+        if (bigDecimalMI != null)
+            bigDecimalParam = BigDecimalUtil.add(bigDecimalParam.doubleValue(),bigDecimalMI.doubleValue());
+
+        if (bigDecimalQAE != null)
+            bigDecimalParam = BigDecimalUtil.add(bigDecimalParam.doubleValue(),bigDecimalQAE.doubleValue());
+
         String paramName = null;
         if (params != null && params.length > 0){
             BigDecimal param = new BigDecimal("0");
@@ -109,12 +121,16 @@ public class OrderInfoServiceImpl implements OrderInfoService{
             priceTogetherInfo.setPriceTogetherNum(order.getPriceTogetherNum());
             priceTogetherInfo.setPriceTogetherName("CAM");
             PriceTogetherInfo curPriceTogetherInfo = priceTogetherInfoMapper.selectByPriceTogetherInfo(priceTogetherInfo);
+            if (curPriceTogetherInfo == null)
+                return ServerResponse.createByErrorMessage("CAM对应拼款层数找不到");
             if (curPriceTogetherInfo != null){
                 bigDecimalCAM = BigDecimalUtil.mul(bigDecimalCAM.doubleValue(),curPriceTogetherInfo.getPriceTogetherPercentage().doubleValue());
             }
             if (bigDecimalMI != null){
                 priceTogetherInfo.setPriceTogetherName("MI");
                 curPriceTogetherInfo = priceTogetherInfoMapper.selectByPriceTogetherInfo(priceTogetherInfo);
+                if (curPriceTogetherInfo == null)
+                    return ServerResponse.createByErrorMessage("MI对应拼款层数找不到");
                 if (curPriceTogetherInfo != null){
                     bigDecimalMI = BigDecimalUtil.mul(bigDecimalMI.doubleValue(),curPriceTogetherInfo.getPriceTogetherPercentage().doubleValue());
                 }
@@ -123,13 +139,20 @@ public class OrderInfoServiceImpl implements OrderInfoService{
             if (bigDecimalQAE != null){
                 priceTogetherInfo.setPriceTogetherName("QAE");
                 curPriceTogetherInfo = priceTogetherInfoMapper.selectByPriceTogetherInfo(priceTogetherInfo);
+                if (curPriceTogetherInfo == null)
+                    return ServerResponse.createByErrorMessage("QAE对应拼款层数找不到");
                 if (curPriceTogetherInfo != null){
                     bigDecimalQAE = BigDecimalUtil.mul(bigDecimalQAE.doubleValue(),curPriceTogetherInfo.getPriceTogetherPercentage().doubleValue());
                 }
             }
 
-            BigDecimal bigDecimalTogether = BigDecimalUtil.add(bigDecimalCAM.doubleValue(),bigDecimalMI == null ? null : bigDecimalMI.doubleValue());
-            bigDecimalTogether = BigDecimalUtil.add(bigDecimalTogether.doubleValue(),bigDecimalQAE == null ? null : bigDecimalQAE.doubleValue());
+            BigDecimal bigDecimalTogether = BigDecimalUtil.add(0,bigDecimalCAM.doubleValue());
+            if (bigDecimalMI != null)
+                bigDecimalTogether = BigDecimalUtil.add(bigDecimalTogether.doubleValue(),bigDecimalMI.doubleValue());
+
+            if (bigDecimalQAE != null)
+                bigDecimalTogether = BigDecimalUtil.add(bigDecimalTogether.doubleValue(),bigDecimalQAE.doubleValue());
+
             //6.得到总计的拼款价格与参数基本价格之和
             allCount = BigDecimalUtil.add(bigDecimalParam.doubleValue(),bigDecimalTogether.doubleValue());
 
