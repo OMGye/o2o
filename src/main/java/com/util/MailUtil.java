@@ -21,6 +21,8 @@ public class MailUtil {
 
 		props.setProperty("mail.host", "smtp.163.com");
 
+		props.setProperty("mail.smtp.port", "465");
+
 		props.setProperty("mail.smtp.auth", "true");
 
 
