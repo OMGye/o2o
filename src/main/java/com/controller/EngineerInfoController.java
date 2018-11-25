@@ -54,7 +54,7 @@ public class EngineerInfoController {
             if (curEngineerInfo.getEngineerRank() != null){
                 ServerResponse serverResponse = rankInfoService.getEngineerRank(curEngineerInfo.getEngineerRank());
                 EngineerRankVO engineerRankVO = (EngineerRankVO) serverResponse.getData();
-                if (engineerInfo != null) {
+                if (engineerRankVO != null) {
                     engineerRankVO.setFirstCategory(curEngineerInfo.getEngineerClassfy());
                     session.setAttribute(Const.CURRENT_RANK, engineerRankVO);
                 }
