@@ -21,8 +21,6 @@ public class MailUtil {
 
 		props.setProperty("mail.host", "smtp.163.com");
 
-		props.setProperty("mail.smtp.port", "465");
-
 		props.setProperty("mail.smtp.auth", "true");
 
 
@@ -35,7 +33,7 @@ public class MailUtil {
 		};
 
 
-		Session session = Session.getDefaultInstance(props, authenticator);
+		Session session = Session.getInstance(props, authenticator);
 
 
 		Message message = new MimeMessage(session);
