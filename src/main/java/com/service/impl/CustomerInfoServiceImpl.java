@@ -128,12 +128,11 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
         CustomerInfo dbCustomerInfo = customerInfoMapper.selectByUserName(customerInfo.getCustomerName(),null,customerInfo.getEmail());
         if (dbCustomerInfo  == null)
             return ServerResponse.createByErrorMessage("您的用户名和邮箱不匹配");
-
         try {
             MailUtil.sendMail(dbCustomerInfo.getEmail(),dbCustomerInfo.getPassword());
         }catch (Exception e){
             logger.debug("e:" + e.getMessage());
-            return ServerResponse.createByErrorMessage("邮件发送失败");
+            return ServerResponse.createByErrorMessage("邮件发送失败" + e);
         }
 
         return ServerResponse.createBySuccess("密码已发送至您的邮箱");
