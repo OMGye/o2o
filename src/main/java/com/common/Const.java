@@ -9,7 +9,7 @@ public class Const {
 
     public static final String CURRENT_RANK = "currentRank";
 
-    public static final Long TIMER = (long)60000;
+    public static final Long TIMER = (long)300000;
 
 
     public interface EngineerRankInfo{
