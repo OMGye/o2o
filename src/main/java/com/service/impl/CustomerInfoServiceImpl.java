@@ -132,8 +132,7 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
         try {
             MailUtil.sendMail(dbCustomerInfo.getEmail(),dbCustomerInfo.getPassword());
         }catch (Exception e){
-            logger.debug("e:" + e);
-
+            logger.debug("e:" + e.getMessage());
             return ServerResponse.createByErrorMessage("邮件发送失败");
         }
 
