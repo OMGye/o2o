@@ -280,5 +280,14 @@ public class CustomerInfoController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
+    @RequestMapping(value = "orderInfo/receiveorder.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse receiveOrder(HttpSession session, Integer orderId){
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null) {
+            return orderInfoService.receiveOrder(orderId, curCustomerInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
 
 }

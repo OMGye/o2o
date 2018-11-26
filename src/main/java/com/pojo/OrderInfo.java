@@ -48,11 +48,22 @@ public class OrderInfo {
 
     private String orderFile;
 
+    private String refuseDec;
+
     private Date createTime;
 
     private Date updateTime;
 
-    public OrderInfo(Integer orderId, Integer customerId, String customerName, Integer engineerId, String engineerName, Integer engineerCheckId, String engineerCheckName, String orderFirstCategory, String orderSecondCategory, Integer orderMi, Integer orderQae, String otherParamInfo, Integer basicLayer, Integer priceTogetherNum, String orderDec, Integer orderRush, Integer orderDeductRank, String orderDeductDec, String orderRateDec, Integer orderState, BigDecimal orderPrice, String orderFile, Date createTime, Date updateTime) {
+    public void setRefuseDec(String refuseDec) {
+        this.refuseDec = refuseDec;
+    }
+
+    public String getRefuseDec() {
+
+        return refuseDec;
+    }
+
+    public OrderInfo(Integer orderId, Integer customerId, String customerName, Integer engineerId, String engineerName, Integer engineerCheckId, String engineerCheckName, String orderFirstCategory, String orderSecondCategory, Integer orderMi, Integer orderQae, String otherParamInfo, Integer basicLayer, Integer priceTogetherNum, String orderDec, Integer orderRush, Integer orderDeductRank, String orderDeductDec, String orderRateDec, Integer orderState, BigDecimal orderPrice, String orderFile, String refuseDec, Date createTime, Date updateTime) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.customerName = customerName;
@@ -75,6 +86,7 @@ public class OrderInfo {
         this.orderState = orderState;
         this.orderPrice = orderPrice;
         this.orderFile = orderFile;
+        this.refuseDec = refuseDec;
         this.createTime = createTime;
         this.updateTime = updateTime;
     }

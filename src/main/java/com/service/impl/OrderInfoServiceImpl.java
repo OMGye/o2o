@@ -3,25 +3,24 @@ package com.service.impl;
 import com.common.Const;
 import com.common.ServerResponse;
 import com.common.Varible;
-import com.dao.O2oPayInfoMapper;
-import com.dao.OrderInfoMapper;
-import com.dao.OtherParamInfoMapper;
-import com.dao.PriceTogetherInfoMapper;
+import com.dao.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import com.pojo.*;
 import com.service.BasicPriceInfoService;
 import com.service.OrderInfoService;
-import com.util.BigDecimalUtil;
-import com.util.DateTimeUtil;
-import com.util.TimerChangePayOrder;
+import com.util.*;
 import com.vo.EngineerRankVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -44,7 +43,16 @@ public class OrderInfoServiceImpl implements OrderInfoService{
     private PriceTogetherInfoMapper priceTogetherInfoMapper;
 
     @Autowired
+    private CustomerInfoMapper customerInfoMapper;
+
+    @Autowired
     private O2oPayInfoMapper o2oPayInfoMapper;
+
+    @Autowired
+    private EngineerInfoMapper engineerInfoMapper;
+
+    @Autowired
+    private QuantityInfoMapper quantityInfoMapper;
 
 
 
@@ -243,6 +251,128 @@ public class OrderInfoServiceImpl implements OrderInfoService{
         List<OrderInfo> list = orderInfoMapper.engineerCaughtList(engineerRankVO.getFirstCategory(),engineerRankVO.getSecondCategories(),engineerRankVO.getMI() == 1 ? null : 0,Const.Order.PAIED);
         PageInfo pageInfo = new PageInfo(list);
         return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Override
+    public ServerResponse caughtCamOrder(Integer orderId, EngineerRankVO engineerRankVO, EngineerInfo engineerInfo) {
+        if (orderId == null)
+            return ServerResponse.createByErrorMessage("订单号为空");
+
+        OrderInfo orderInfo = orderInfoMapper.selectByPrimaryKey(orderId);
+        if (orderInfo == null)
+            return ServerResponse.createByErrorMessage("找不到该订单");
+
+        if (orderInfo.getOrderState() != Const.Order.PAIED)
+            return ServerResponse.createBySuccess("该订单状态不可接");
+
+        if (orderInfo.getOrderFirstCategory().equals(engineerRankVO.getFirstCategory()) &&
+                orderInfo.getOrderMi() <= engineerRankVO.getMI()) {
+            for (String str : engineerRankVO.getSecondCategories()) {
+                if (str.equals(orderInfo.getOrderSecondCategory())) {
+                    orderInfo.setEngineerId(engineerInfo.getEngineerId());
+                    orderInfo.setEngineerName(engineerInfo.getEngineerName());
+                    orderInfo.setOrderState(Const.Order.HAVE_CAUGHT);
+                    int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+                    if (row > 0) {
+                        CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey
+                                (orderInfo.getCustomerId());
+                        Timer timer = new Timer();
+                        TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(customerInfo.getEmail(),"您的订单已被接单");
+                        timer.schedule(caughtOrder,Const.TIMER_FOR_SEND_EMAIL);
+                        return ServerResponse.createByErrorMessage("接单成功");
+                    }
+                    return ServerResponse.createByErrorMessage("接单失败");
+                }
+            }
+        }
+        return ServerResponse.createByErrorMessage("该订单等级");
+    }
+
+    @Override
+    public ServerResponse orderUploadFile(Integer orderId, EngineerInfo engineerInfo, MultipartFile file, String path) {
+        if (orderId == null && file == null)
+            return ServerResponse.createByErrorMessage("参数不能为空");
+
+        OrderInfo orderInfo = orderInfoMapper.selectByPrimaryKey(orderId);
+        if (orderInfo == null && orderInfo.getEngineerId().intValue() != engineerInfo.getEngineerId())
+            return ServerResponse.createByErrorMessage("找不到该订单");
+
+        if (orderInfo.getOrderState() != Const.Order.HAVE_CAUGHT)
+            return ServerResponse.createBySuccess("该订单状态不可上传文件");
+
+        if (file != null) {
+            String fileName = file.getOriginalFilename();
+            //扩展名
+            //abc.jpg
+            String fileExtensionName = fileName.substring(fileName.lastIndexOf(".") + 1);
+            String uploadFileName = UUID.randomUUID().toString() + "." + fileExtensionName;
+            logger.info("开始上传文件,上传文件的文件名:{},上传的路径:{},新文件名:{}", fileName, path, uploadFileName);
+
+            File fileDir = new File(path);
+            if (!fileDir.exists()) {
+                fileDir.setWritable(true);
+                fileDir.mkdirs();
+            }
+            File targetFile = new File(path, uploadFileName);
+
+
+            try {
+                file.transferTo(targetFile);
+                //文件已经上传成功了
+
+                FTPUtil.uploadFile(Lists.newArrayList(targetFile));
+                //已经上传到ftp服务器上
+
+                targetFile.delete();
+            } catch (IOException e) {
+                logger.error("上传文件异常", e);
+                return ServerResponse.createByErrorMessage("上传文件异常");
+            }
+            orderInfo.setOrderFile(PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFile.getName());
+        }
+        orderInfo.setOrderState(Const.Order.HAVE_UPLOAD_FILE);
+        int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+        if (row <= 0)
+            return ServerResponse.createByErrorMessage("上传失败");
+        if (orderInfo.getOrderQae() == 0){
+            CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey
+                    (orderInfo.getCustomerId());
+            Timer timer = new Timer();
+            TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(customerInfo.getEmail(),"您的订单已被工程师完成");
+            timer.schedule(caughtOrder,Const.TIMER_FOR_SEND_EMAIL);
+        }
+        return ServerResponse.createBySuccess("上传成功");
+    }
+
+    @Override
+    public ServerResponse receiveOrder(Integer orderId, CustomerInfo customerInfo) {
+        if (orderId == null)
+            return ServerResponse.createByErrorMessage("参数不能为空");
+
+        OrderInfo orderInfo = orderInfoMapper.selectByPrimaryKey(orderId);
+        if (orderInfo != null && orderInfo.getOrderState() == Const.Order.HAVE_UPLOAD_FILE &&
+                orderInfo.getOrderQae() == 0 && orderInfo.getCustomerId() == customerInfo.getCustomerId()){
+            orderInfo.setOrderState(Const.Order.HAVE_REIVER_ORDER);
+            int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+            if (row > 0){
+                EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey
+                        (orderInfo.getEngineerId());
+                Timer timer = new Timer();
+                TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(customerInfo.getEmail(),"您完成的订单已被客户查看，如果三天之内没有确认，系统将直接帮您确认，并将资金直接转入您的账户");
+                timer.schedule(caughtOrder,Const.TIMER_FOR_SEND_EMAIL);
+
+                List<QuantityInfo> list = quantityInfoMapper.selectByQuantiy(engineerInfo.getEngineerQuantity());
+                QuantityInfo maxQuantity = list.get(0);
+                Timer newTimer = new Timer();
+                TimerChangeOrderFinished timerChangeOrderFinished = new TimerChangeOrderFinished(orderId,orderInfoMapper, engineerInfoMapper,customerInfoMapper,null, maxQuantity.getQuantityDraw());
+                newTimer.schedule(timerChangeOrderFinished,Const.TIMER);
+
+                return ServerResponse.createBySuccess("确认下载附件成功");
+            }
+
+        }
+
+        return ServerResponse.createByErrorMessage("确认下载附件失败");
     }
 
 }

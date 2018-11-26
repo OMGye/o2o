@@ -3,6 +3,7 @@ package com.dao;
 import com.pojo.OtherParamInfo;
 import com.pojo.QuantityInfo;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface QuantityInfoMapper {
@@ -21,4 +22,6 @@ public interface QuantityInfoMapper {
     QuantityInfo selectByQuantiyRank(Integer quantiyRank);
 
     List<QuantityInfo> selectList();
+
+    List<QuantityInfo> selectByQuantiy(BigDecimal pence);
 }

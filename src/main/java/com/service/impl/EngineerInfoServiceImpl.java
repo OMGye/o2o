@@ -117,7 +117,7 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
     public ServerResponse check(EngineerInfo engineerInfo) {
         if (engineerInfo == null || engineerInfo.getEngineerId() == null)
             return ServerResponse.createByErrorMessage("参数不能为空");
-        if (engineerInfo.getEngineerState() == Const.EngineerInfo.ABLE){
+        if (engineerInfo.getEngineerState() != null && engineerInfo.getEngineerState() == Const.EngineerInfo.ABLE){
             try {
                 EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByPrimaryKey(engineerInfo.getEngineerId());
                 MailUtil.sendMail(dbEngineerInfo.getEmail(),"您的账户已激活");
@@ -213,6 +213,7 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
            return ServerResponse.createByErrorMessage("已存在用户名或者邮箱");
        return ServerResponse.createBySuccess("不存在用户名或者邮箱");
     }
+
 
 
 }

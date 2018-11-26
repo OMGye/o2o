@@ -3,8 +3,10 @@ package com.service;
 import com.common.ServerResponse;
 import com.github.pagehelper.PageInfo;
 import com.pojo.CustomerInfo;
+import com.pojo.EngineerInfo;
 import com.pojo.OrderInfo;
 import com.vo.EngineerRankVO;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -23,4 +25,11 @@ public interface OrderInfoService {
 
 
     ServerResponse<PageInfo> engineerCaughtList(int pageSize, int pageNum, EngineerRankVO engineerRankVO);
+
+
+    ServerResponse caughtCamOrder(Integer orderId, EngineerRankVO engineerRankVO, EngineerInfo engineerInfo);
+
+    ServerResponse orderUploadFile(Integer orderId, EngineerInfo engineerInfo, MultipartFile file, String path);
+
+    ServerResponse receiveOrder(Integer orderId, CustomerInfo customerInfo);
 }

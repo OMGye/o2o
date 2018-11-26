@@ -11,6 +11,8 @@ public class Const {
 
     public static final Long TIMER = (long)300000;
 
+    public static final Long TIMER_FOR_SEND_EMAIL = (long)30000;
+
 
     public interface EngineerRankInfo{
         int CAN = 1;
@@ -26,6 +28,11 @@ public class Const {
     public interface Order{
         int PAYING = 0;
         int PAIED = 1;
+        int HAVE_CAUGHT = 2;
+        int HAVE_UPLOAD_FILE = 3;
+        int CHECK = 4;
+        int HAVE_REIVER_ORDER = 5;
+        int HAVE_FINISHED = 6;
         int CANNCEL = 10;
     }
 

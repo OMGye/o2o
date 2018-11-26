@@ -132,4 +132,13 @@
     from quantity_info
   </select>
 
+  <select id="selectByQuantiy" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    <include refid="Base_Column_List" />
+    from quantity_info
+    where #{quantityPercentage,jdbcType=DECIMAL} > quantity_percentage
+    ORDER BY quantiy_rank DESC
+  </select>
+
+
 </mapper>

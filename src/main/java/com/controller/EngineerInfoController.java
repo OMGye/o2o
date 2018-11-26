@@ -118,6 +118,35 @@ public class EngineerInfoController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
+    @RequestMapping(value = "orderInfo/caughtcamorder.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse caughtOrder(HttpSession session, Integer orderId){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null) {
+            EngineerRankVO engineerRankVO = (EngineerRankVO) session.getAttribute(Const.CURRENT_RANK);
+            if (engineerRankVO == null)
+                return ServerResponse.createByErrorMessage("当前工程没有等级");
+            return orderInfoService.caughtCamOrder(orderId,engineerRankVO,curEngineerInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/orderuploadfile.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse orderUploadFile(@RequestParam(value = "upload_file",required = false) MultipartFile file, HttpSession session, Integer orderId, HttpServletRequest request){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null) {
+            EngineerRankVO engineerRankVO = (EngineerRankVO) session.getAttribute(Const.CURRENT_RANK);
+            if (engineerRankVO == null)
+                return ServerResponse.createByErrorMessage("当前工程没有等级");
+            String path = request.getSession().getServletContext().getRealPath("upload");
+            return orderInfoService.orderUploadFile(orderId,curEngineerInfo,file,path);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
+
 
 
 }
