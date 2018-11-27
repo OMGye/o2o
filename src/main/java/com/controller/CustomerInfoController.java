@@ -290,4 +290,47 @@ public class CustomerInfoController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
+
+    @RequestMapping(value = "orderInfo/engineerdefriend.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse engineerDefriend(HttpSession session, Integer engineerId){
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null) {
+            return customerInfoService.engineerDefriend(curCustomerInfo.getCustomerId(), engineerId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
+
+    @RequestMapping(value = "orderInfo/refusetoengineer.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse refuse(HttpSession session, String refuseDec, Integer orderId){
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null) {
+            return orderInfoService.refuseToEnigneer(refuseDec, orderId, curCustomerInfo.getCustomerId());
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/comfirmorder.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse comfirmOrder(HttpSession session, Integer orderId){
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null) {
+            return orderInfoService.comfirmOrder(orderId, curCustomerInfo.getCustomerId());
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/orderdeduct.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse orderDeduct(HttpSession session, Integer orderId){
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null) {
+            return orderInfoService.comfirmOrder(orderId, curCustomerInfo.getCustomerId());
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
 }

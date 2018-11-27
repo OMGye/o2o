@@ -9,7 +9,7 @@ public class Const {
 
     public static final String CURRENT_RANK = "currentRank";
 
-    public static final Long TIMER = (long)300000;
+    public static final Long TIMER = (long)60000;
 
     public static final Long TIMER_FOR_SEND_EMAIL = (long)30000;
 
@@ -30,9 +30,10 @@ public class Const {
         int PAIED = 1;
         int HAVE_CAUGHT = 2;
         int HAVE_UPLOAD_FILE = 3;
-        int CHECK = 4;
-        int HAVE_REIVER_ORDER = 5;
-        int HAVE_FINISHED = 6;
+        int QAE_HAVE_CAUGHT = 4;
+        int CHECK = 5;
+        int HAVE_REIVER_ORDER = 6;
+        int HAVE_FINISHED = 7;
         int CANNCEL = 10;
     }
 

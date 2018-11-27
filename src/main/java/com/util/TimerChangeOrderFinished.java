@@ -105,13 +105,15 @@ public class TimerChangeOrderFinished extends TimerTask {
        if (orderInfo.getOrderState() == Const.Order.HAVE_REIVER_ORDER){
            orderInfo.setOrderState(Const.Order.HAVE_FINISHED);
            orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+
            CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
-           customerInfo.setOrderCount(customerInfo.getOrderCount() == null ? 1 : customerInfo.getOrderCount() + 1);
+           customerInfo.setOrderCount(customerInfo.getOrderCount() + 1);
            customerInfoMapper.updateByPrimaryKeySelective(customerInfo);
+
            EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerId());
            BigDecimal orderPrice = BigDecimalUtil.mul(orderInfo.getOrderPrice().doubleValue(),drawEnginner.doubleValue());
-           engineerInfo.setEngineerBalance(engineerInfo.getEngineerBalance() == null ? orderPrice : BigDecimalUtil.add(engineerInfo.getEngineerBalance().doubleValue(),orderPrice.doubleValue()));
-
+           orderPrice = BigDecimalUtil.sub(orderInfo.getOrderPrice().doubleValue(), orderPrice.doubleValue());
+           engineerInfo.setEngineerBalance(BigDecimalUtil.add(engineerInfo.getEngineerBalance().doubleValue(),orderPrice.doubleValue()));
            engineerInfo.setOrderCount(engineerInfo.getOrderCount() - 1);
            engineerInfoMapper.updateByPrimaryKey(engineerInfo);
 

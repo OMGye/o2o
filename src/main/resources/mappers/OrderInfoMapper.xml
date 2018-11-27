@@ -341,6 +341,16 @@
      </where>
    </select>
 
+  <select id="engineerListOrder" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List" />
+    from order_info
+    <where>
+      <if test="orderState != null"> order_state = #{orderState}</if>
+      <if test="engineerId != null">and engineer_id = #{engineerId}</if>
+    </where>
+  </select>
+
   <select id="engineerCaughtList" parameterType="map" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />

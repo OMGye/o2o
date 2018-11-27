@@ -3,10 +3,7 @@ package com.controller;
 import com.common.Const;
 import com.common.ServerResponse;
 import com.github.pagehelper.PageInfo;
-import com.pojo.AdminInfo;
-import com.pojo.CustomerInfo;
-import com.pojo.EngineerInfo;
-import com.pojo.EngineerRankInfo;
+import com.pojo.*;
 import com.service.EngineerInfoService;
 import com.service.EngineerRankInfoService;
 import com.service.OrderInfoService;
@@ -107,7 +104,7 @@ public class EngineerInfoController {
     private OrderInfoService orderInfoService;
     @RequestMapping(value = "orderInfo/cancaughtlist.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse orderList(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
+    public ServerResponse canCaughtorderList(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
         EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
         if (curEngineerInfo != null) {
             EngineerRankVO engineerRankVO = (EngineerRankVO) session.getAttribute(Const.CURRENT_RANK);
@@ -144,6 +141,36 @@ public class EngineerInfoController {
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
+
+
+    @RequestMapping(value = "orderInfo/ownerlist.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> ownerList(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize, Integer state){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            return orderInfoService.engineerList(pageSize,pageNum,curEngineerInfo,state);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/getorderbyid.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> getOrderById(HttpSession session, Integer orderId){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            ServerResponse response = orderInfoService.getOrderById(orderId);
+            OrderInfo orderInfo = (OrderInfo)response.getData();
+            if (orderInfo != null){
+                if (orderInfo.getEngineerId().intValue() != curEngineerInfo.getEngineerId().intValue())
+                    return ServerResponse.createBySuccess();
+            }
+            return response;
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
+
 
 
 

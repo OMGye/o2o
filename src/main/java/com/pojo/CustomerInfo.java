@@ -30,6 +30,17 @@ public class CustomerInfo {
 
     private Integer orderCount;
 
+    private String engineerDefriend;
+
+    public void setEngineerDefriend(String engineerDefriend) {
+        this.engineerDefriend = engineerDefriend;
+    }
+
+    public String getEngineerDefriend() {
+
+        return engineerDefriend;
+    }
+
     private Date createTime;
 
     private Date updateTime;
@@ -160,8 +171,7 @@ public class CustomerInfo {
         return updateTime;
     }
 
-    public CustomerInfo(Integer customerId, String customerName, String password, String phone, String email, String customerQq, String customerProv, String customerCity, Byte customerState, String customerPayCount, BigDecimal customerBalance, String customerAttention, Integer orderCount, Date createTime, Date updateTime) {
-
+    public CustomerInfo(Integer customerId, String customerName, String password, String phone, String email, String customerQq, String customerProv, String customerCity, Byte customerState, String customerPayCount, BigDecimal customerBalance, String customerAttention, Integer orderCount, String engineerDefriend, Date createTime, Date updateTime) {
         this.customerId = customerId;
         this.customerName = customerName;
         this.password = password;
@@ -175,6 +185,7 @@ public class CustomerInfo {
         this.customerBalance = customerBalance;
         this.customerAttention = customerAttention;
         this.orderCount = orderCount;
+        this.engineerDefriend = engineerDefriend;
         this.createTime = createTime;
         this.updateTime = updateTime;
     }

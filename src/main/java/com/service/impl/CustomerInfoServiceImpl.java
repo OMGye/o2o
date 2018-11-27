@@ -4,18 +4,22 @@ import com.common.Const;
 import com.common.ServerResponse;
 import com.controller.CustomerInfoController;
 import com.dao.CustomerInfoMapper;
+import com.dao.EngineerInfoMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.pojo.CustomerInfo;
 import com.pojo.EngineerInfo;
 import com.service.CustomerInfoService;
+import com.util.JsonUtil;
 import com.util.MailUtil;
+import com.vo.EngineerDefriendJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,6 +30,9 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
 
     @Autowired
     private CustomerInfoMapper customerInfoMapper;
+
+    @Autowired
+    private EngineerInfoMapper engineerInfoMapper;
 
     private static  final Logger logger = LoggerFactory.getLogger(CustomerInfoServiceImpl.class);
 
@@ -161,4 +168,39 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
             return ServerResponse.createBySuccess("审核修改成功");
         return ServerResponse.createByErrorMessage("审核修改失败");
     }
+
+    @Override
+    public ServerResponse engineerDefriend(Integer customerId, Integer engineerId) {
+        if (engineerId == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+        EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(engineerId);
+        if (engineerInfo != null){
+            List<EngineerDefriendJson> list = new ArrayList<>();
+            EngineerDefriendJson engineerDefriendJson = new EngineerDefriendJson();
+            engineerDefriendJson.setEngineerId(engineerId);
+            engineerDefriendJson.setEngineerName(engineerInfo.getEngineerName());
+            list.add(engineerDefriendJson);
+            CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(customerId);
+            if (customerInfo.getEngineerDefriend() == null){
+                customerInfo.setEngineerDefriend(JsonUtil.toJonSting(list));
+                int row  = customerInfoMapper.updateByPrimaryKeySelective(customerInfo);
+                if (row > 0)
+                    return ServerResponse.createBySuccess("拉黑成功");
+                else
+                    return ServerResponse.createByErrorMessage("拉黑失败");
+            }
+            list = JsonUtil.toJsonList(customerInfo.getEngineerDefriend());
+            list.add(engineerDefriendJson);
+            customerInfo.setEngineerDefriend(JsonUtil.toJonSting(list));
+            int row  = customerInfoMapper.updateByPrimaryKeySelective(customerInfo);
+            if (row > 0)
+                return ServerResponse.createBySuccess("拉黑成功");
+            else
+                return ServerResponse.createByErrorMessage("拉黑失败");
+
+        }
+        return ServerResponse.createByErrorMessage("找不到该工程师");
+    }
+
+
 }

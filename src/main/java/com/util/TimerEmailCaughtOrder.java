@@ -49,7 +49,7 @@ public class TimerEmailCaughtOrder extends TimerTask {
     @Override
     public void run() {
         try {
-            MailUtil.sendMail(email, "您的订单已被接单");
+            MailUtil.sendMail(email, msg);
         } catch (Exception e) {
             logger.debug("邮件发送失败");
         }

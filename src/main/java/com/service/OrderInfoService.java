@@ -32,4 +32,15 @@ public interface OrderInfoService {
     ServerResponse orderUploadFile(Integer orderId, EngineerInfo engineerInfo, MultipartFile file, String path);
 
     ServerResponse receiveOrder(Integer orderId, CustomerInfo customerInfo);
+
+    ServerResponse refuseToEnigneer(String refuseDec, Integer orderId, Integer customerId);
+
+    ServerResponse comfirmOrder(Integer orderId, Integer customerId);
+
+    ServerResponse engineerList(int pageSize, int pageNum, EngineerInfo engineerInfo, Integer orderState);
+
+    ServerResponse orderDeduct(Integer orderId, Integer priceDeductId);
+
+
+
 }

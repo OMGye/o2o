@@ -26,4 +26,6 @@ public interface CustomerInfoService {
     ServerResponse comfirmUserNameAndEmail(CustomerInfo customerInfo);
 
     ServerResponse check(CustomerInfo customerInfo);
+
+    ServerResponse engineerDefriend(Integer customerId, Integer engineerId);
 }
