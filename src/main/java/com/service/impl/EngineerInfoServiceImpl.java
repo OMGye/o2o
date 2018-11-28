@@ -87,6 +87,7 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
             engineerInfo.setEngineerFile(PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFile.getName());
         }
 
+        engineerInfo.setOrderCount(0);
         int row = engineerInfoMapper.insert(engineerInfo);
         if (row > 0)
             return ServerResponse.createBySuccess("注册成功，请您等待后台审核通过",engineerInfo);

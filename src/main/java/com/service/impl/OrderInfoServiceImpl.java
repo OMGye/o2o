@@ -473,4 +473,13 @@ public class OrderInfoServiceImpl implements OrderInfoService{
         return null;
     }
 
+    @Override
+    public ServerResponse<PageInfo> engineerQaeCaughtList(int pageSize, int pageNum, EngineerRankVO engineerRankVO) {
+        PageHelper.startPage(pageNum,pageSize);
+        PageHelper.orderBy("update_time desc");
+        List<OrderInfo> list = orderInfoMapper.engineerCaughtList(engineerRankVO.getFirstCategory(),engineerRankVO.getSecondCategories(),engineerRankVO.getMI() == 1 ? null : 0,Const.Order.PAIED);
+        PageInfo pageInfo = new PageInfo(list);
+        return ServerResponse.createBySuccess(pageInfo);
+    }
+
 }

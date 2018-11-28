@@ -41,6 +41,8 @@ public interface OrderInfoService {
 
     ServerResponse orderDeduct(Integer orderId, Integer priceDeductId);
 
+    ServerResponse<PageInfo> engineerQaeCaughtList(int pageSize, int pageNum, EngineerRankVO engineerRankVO);
+
 
 
 }

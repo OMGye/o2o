@@ -39,7 +39,7 @@
     insert into customer_info (customer_id, customer_name, password, 
       phone, email, customer_qq, 
       customer_prov, customer_city, customer_state, 
-      customer_pay_count, customer_balance, customer_attention,order_count,create_time,
+      customer_pay_count, customer_balance, customer_attention,order_count,engineer_defriend,create_time,
       update_time)
     values (#{customerId,jdbcType=INTEGER}, #{customerName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{customerQq,jdbcType=VARCHAR}, 

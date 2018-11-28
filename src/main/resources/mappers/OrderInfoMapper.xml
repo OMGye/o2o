@@ -368,4 +368,21 @@
     </where>
   </select>
 
+  <select id="engineerQaeCaughtList" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from order_info
+    <where>
+      <if test="orderFirstCategory != null"> order_first_category = #{orderFirstCategory,jdbcType=VARCHAR}</if>
+      <if test="secondCategories != null">
+        and order_second_category in
+        <foreach item="item" index="index" open="(" separator="," close=")" collection="secondCategories">
+          #{item}
+        </foreach>
+      </if>
+      <if test="orderQae != null"> and order_qae = #{orderMi}</if>
+      <if test="orderState != null"> and order_state = #{orderState}</if>
+    </where>
+  </select>
+
 </mapper>

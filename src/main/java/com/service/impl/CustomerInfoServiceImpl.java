@@ -55,6 +55,7 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
         }
         customerInfo.setCustomerBalance(new BigDecimal(0));
         customerInfo.setCustomerState(Const.CustomerInfo.ABLE);
+        customerInfo.setOrderCount(0);
         int row = customerInfoMapper.insert(customerInfo);
         if (row > 0)
             return ServerResponse.createBySuccess("注册成功");
