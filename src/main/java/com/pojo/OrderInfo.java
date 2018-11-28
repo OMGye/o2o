@@ -46,6 +46,8 @@ public class OrderInfo {
 
     private BigDecimal orderPrice;
 
+    private BigDecimal orderQaePrice;
+
     private String orderFile;
 
     private String refuseDec;
@@ -63,7 +65,16 @@ public class OrderInfo {
         return refuseDec;
     }
 
-    public OrderInfo(Integer orderId, Integer customerId, String customerName, Integer engineerId, String engineerName, Integer engineerCheckId, String engineerCheckName, String orderFirstCategory, String orderSecondCategory, Integer orderMi, Integer orderQae, String otherParamInfo, Integer basicLayer, Integer priceTogetherNum, String orderDec, Integer orderRush, Integer orderDeductRank, String orderDeductDec, String orderRateDec, Integer orderState, BigDecimal orderPrice, String orderFile, String refuseDec, Date createTime, Date updateTime) {
+    public void setOrderQaePrice(BigDecimal orderQaePrice) {
+        this.orderQaePrice = orderQaePrice;
+    }
+
+    public BigDecimal getOrderQaePrice() {
+
+        return orderQaePrice;
+    }
+
+    public OrderInfo(Integer orderId, Integer customerId, String customerName, Integer engineerId, String engineerName, Integer engineerCheckId, String engineerCheckName, String orderFirstCategory, String orderSecondCategory, Integer orderMi, Integer orderQae, String otherParamInfo, Integer basicLayer, Integer priceTogetherNum, String orderDec, Integer orderRush, Integer orderDeductRank, String orderDeductDec, String orderRateDec, Integer orderState, BigDecimal orderPrice, BigDecimal orderQaePrice, String orderFile, String refuseDec, Date createTime, Date updateTime) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.customerName = customerName;
@@ -85,6 +96,7 @@ public class OrderInfo {
         this.orderRateDec = orderRateDec;
         this.orderState = orderState;
         this.orderPrice = orderPrice;
+        this.orderQaePrice = orderQaePrice;
         this.orderFile = orderFile;
         this.refuseDec = refuseDec;
         this.createTime = createTime;

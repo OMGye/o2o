@@ -188,13 +188,25 @@ public class EngineerInfoController {
         EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
         if (curEngineerInfo != null) {
             EngineerRankVO engineerRankVO = (EngineerRankVO) session.getAttribute(Const.CURRENT_RANK);
-            if (engineerRankVO == null && engineerRankVO.getQAE() == 0)
+            if (engineerRankVO == null || engineerRankVO.getQAE() == 0)
                 return ServerResponse.createByErrorMessage("当前工程师没有等级或无法接审核类订单");
-            return orderInfoService.caughtCamOrder(orderId,engineerRankVO,curEngineerInfo);
+            return orderInfoService.caughtQaeOrder(orderId,engineerRankVO,curEngineerInfo);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
+    @RequestMapping(value = "orderInfo/check.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse qaeCheck(HttpSession session, Integer orderId, Integer state, String refuseDec){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null) {
+            EngineerRankVO engineerRankVO = (EngineerRankVO) session.getAttribute(Const.CURRENT_RANK);
+            if (engineerRankVO == null || engineerRankVO.getQAE() == 0)
+                return ServerResponse.createByErrorMessage("当前工程师没有等级或无法接审核类订单");
+            return orderInfoService.qaeCheck(orderId, state, refuseDec, curEngineerInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
 
 
 }

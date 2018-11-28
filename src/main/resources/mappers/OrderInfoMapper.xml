@@ -24,6 +24,7 @@
       <arg column="order_rate_dec" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="order_state" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="order_price" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <arg column="order_qae_price" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
       <arg column="order_file" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="refuse_dec" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
@@ -34,7 +35,7 @@
     order_id, customer_id, customer_name, engineer_id, engineer_name, engineer_check_id, 
     engineer_check_name, order_first_category, order_second_category, order_mi, order_qae, 
     other_param_info, basic_layer, price_together_num, order_dec, order_rush, order_deduct_rank, 
-    order_deduct_dec, order_rate_dec, order_state, order_price, order_file,refuse_dec, create_time,
+    order_deduct_dec, order_rate_dec, order_state, order_price,order_qae_price, order_file,refuse_dec, create_time,
     update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -55,7 +56,7 @@
       other_param_info, basic_layer, price_together_num, 
       order_dec, order_rush, order_deduct_rank, 
       order_deduct_dec, order_rate_dec, order_state, 
-      order_price, order_file,refuse_dec, create_time,
+      order_price, order_qae_price, order_file,refuse_dec, create_time,
       update_time)
     values (#{orderId,jdbcType=INTEGER}, #{customerId,jdbcType=INTEGER}, #{customerName,jdbcType=VARCHAR}, 
       #{engineerId,jdbcType=INTEGER}, #{engineerName,jdbcType=VARCHAR}, #{engineerCheckId,jdbcType=INTEGER}, 
@@ -64,7 +65,7 @@
       #{otherParamInfo,jdbcType=VARCHAR}, #{basicLayer,jdbcType=INTEGER}, #{priceTogetherNum,jdbcType=INTEGER}, 
       #{orderDec,jdbcType=VARCHAR}, #{orderRush,jdbcType=INTEGER}, #{orderDeductRank,jdbcType=INTEGER}, 
       #{orderDeductDec,jdbcType=VARCHAR}, #{orderRateDec,jdbcType=VARCHAR}, #{orderState,jdbcType=INTEGER}, 
-      #{orderPrice,jdbcType=DECIMAL}, #{orderFile,jdbcType=VARCHAR},#{refuseDec,jdbcType=VARCHAR},
+      #{orderPrice,jdbcType=DECIMAL}, #{orderQaePrice,jdbcType=DECIMAL}, #{orderFile,jdbcType=VARCHAR},#{refuseDec,jdbcType=VARCHAR},
       now(), now())
   </insert>
   <insert id="insertSelective" parameterType="com.pojo.OrderInfo">
@@ -132,6 +133,9 @@
       </if>
       <if test="orderPrice != null">
         order_price,
+      </if>
+      <if test="orderQaePrice != null">
+        order_qae_price,
       </if>
       <if test="orderFile != null">
         order_file,
@@ -210,6 +214,9 @@
       <if test="orderPrice != null">
         #{orderPrice,jdbcType=DECIMAL},
       </if>
+      <if test="orderQaePrice != null">
+        #{orderQaePrice,jdbcType=DECIMAL},
+      </if>
       <if test="orderFile != null">
         #{orderFile,jdbcType=VARCHAR},
       </if>
@@ -287,6 +294,9 @@
       <if test="orderPrice != null">
         order_price = #{orderPrice,jdbcType=DECIMAL},
       </if>
+      <if test="orderQaePrice != null">
+        order_qae_price = #{orderQaePrice,jdbcType=DECIMAL},
+      </if>
       <if test="orderFile != null">
         order_file = #{orderFile,jdbcType=VARCHAR},
       </if>
@@ -324,6 +334,7 @@
       order_rate_dec = #{orderRateDec,jdbcType=VARCHAR},
       order_state = #{orderState,jdbcType=INTEGER},
       order_price = #{orderPrice,jdbcType=DECIMAL},
+      order_qae_price = #{orderQaePrice,jdbcType=DECIMAL},
       order_file = #{orderFile,jdbcType=VARCHAR},
       refuse_dec = #{refuseDec,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},

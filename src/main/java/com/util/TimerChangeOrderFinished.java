@@ -110,12 +110,27 @@ public class TimerChangeOrderFinished extends TimerTask {
            customerInfo.setOrderCount(customerInfo.getOrderCount() + 1);
            customerInfoMapper.updateByPrimaryKeySelective(customerInfo);
 
+
            EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerId());
-           BigDecimal orderPrice = BigDecimalUtil.mul(orderInfo.getOrderPrice().doubleValue(),drawEnginner.doubleValue());
-           orderPrice = BigDecimalUtil.sub(orderInfo.getOrderPrice().doubleValue(), orderPrice.doubleValue());
-           engineerInfo.setEngineerBalance(BigDecimalUtil.add(engineerInfo.getEngineerBalance().doubleValue(),orderPrice.doubleValue()));
+           BigDecimal orderCamPrice = BigDecimalUtil.sub(orderInfo.getOrderPrice().doubleValue(),orderInfo.getOrderQaePrice().doubleValue());
+           orderCamPrice = BigDecimalUtil.sub(orderCamPrice.doubleValue(), BigDecimalUtil.mul(orderCamPrice.doubleValue(), drawEnginner.doubleValue()).doubleValue());
+           engineerInfo.setEngineerBalance(BigDecimalUtil.add(orderCamPrice.doubleValue(),engineerInfo.getEngineerBalance().doubleValue()));
            engineerInfo.setOrderCount(engineerInfo.getOrderCount() - 1);
            engineerInfoMapper.updateByPrimaryKey(engineerInfo);
+
+           if (drawEnginnerQae != null){
+               EngineerInfo qaeEngineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerCheckId());
+               BigDecimal orderQaePrice = orderInfo.getOrderQaePrice();
+               orderQaePrice = BigDecimalUtil.sub(orderQaePrice.doubleValue(), BigDecimalUtil.mul(orderQaePrice.doubleValue(), drawEnginnerQae.doubleValue()).doubleValue());
+               qaeEngineerInfo.setEngineerBalance(BigDecimalUtil.add(qaeEngineerInfo.getEngineerBalance().doubleValue(), orderQaePrice.doubleValue()));
+               qaeEngineerInfo.setOrderCount(qaeEngineerInfo.getOrderCount() - 1);
+               engineerInfoMapper.updateByPrimaryKey(qaeEngineerInfo);
+               try {
+                   MailUtil.sendMail(qaeEngineerInfo.getEmail(), "您的订单已完成");
+               } catch (Exception e) {
+                   logger.debug("邮件发送失败");
+               }
+           }
 
            try {
                MailUtil.sendMail(engineerInfo.getEmail(), "您的订单已完成");
