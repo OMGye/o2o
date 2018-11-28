@@ -380,7 +380,7 @@
           #{item}
         </foreach>
       </if>
-      <if test="orderQae != null"> and order_qae = #{orderMi}</if>
+      <if test="orderQae != null"> and order_qae = 1</if>
       <if test="orderState != null"> and order_state = #{orderState}</if>
     </where>
   </select>

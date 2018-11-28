@@ -303,7 +303,7 @@ public class OrderInfoServiceImpl implements OrderInfoService{
                 }
             }
         }
-        return ServerResponse.createByErrorMessage("该订单等级");
+        return ServerResponse.createByErrorMessage("您不满足该订单等级");
     }
 
     @Override
@@ -396,7 +396,7 @@ public class OrderInfoServiceImpl implements OrderInfoService{
 
     @Override
     public ServerResponse refuseToEnigneer(String refuseDec, Integer orderId, Integer customerId) {
-        if (refuseDec == null && orderId == null)
+        if (refuseDec == null || orderId == null)
             return ServerResponse.createByErrorMessage("参数为空");
 
         OrderInfo orderInfo = orderInfoMapper.selectByPrimaryKey(orderId);
@@ -477,9 +477,66 @@ public class OrderInfoServiceImpl implements OrderInfoService{
     public ServerResponse<PageInfo> engineerQaeCaughtList(int pageSize, int pageNum, EngineerRankVO engineerRankVO) {
         PageHelper.startPage(pageNum,pageSize);
         PageHelper.orderBy("update_time desc");
-        List<OrderInfo> list = orderInfoMapper.engineerCaughtList(engineerRankVO.getFirstCategory(),engineerRankVO.getSecondCategories(),engineerRankVO.getMI() == 1 ? null : 0,Const.Order.PAIED);
+        List<OrderInfo> list = orderInfoMapper.engineerCaughtList(engineerRankVO.getFirstCategory(),engineerRankVO.getSecondCategories(),engineerRankVO.getQAE(), Const.Order.HAVE_UPLOAD_FILE);
         PageInfo pageInfo = new PageInfo(list);
         return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Override
+    public ServerResponse caughtQaeOrder(Integer orderId, EngineerRankVO engineerRankVO, EngineerInfo engineerInfo) {
+        if (orderId == null)
+            return ServerResponse.createByErrorMessage("订单号为空");
+
+        OrderInfo orderInfo = orderInfoMapper.selectByPrimaryKey(orderId);
+        if (orderInfo == null)
+            return ServerResponse.createByErrorMessage("找不到该订单");
+
+        if (orderInfo.getOrderState() != Const.Order.HAVE_UPLOAD_FILE)
+            return ServerResponse.createByErrorMessage("该订单状态不可接");
+
+        CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey
+                (orderInfo.getCustomerId());
+        if (customerInfo.getEngineerDefriend() != null){
+            List<EngineerDefriendJson> list = JsonUtil.toJsonList(customerInfo.getEngineerDefriend());
+            for (EngineerDefriendJson engineerDefriendJson : list){
+                if (engineerDefriendJson.getEngineerId().intValue() == engineerInfo.getEngineerId())
+                    return ServerResponse.createByErrorMessage("您已被该客户拉黑");
+            }
+        }
+
+        EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByPrimaryKey(engineerInfo.getEngineerId());
+        if (dbEngineerInfo != null){
+            if (dbEngineerInfo.getOrderCount() == 3)
+                return ServerResponse.createByErrorMessage("您当前可接订单数已满");
+        }
+
+        if (orderInfo.getOrderFirstCategory().equals(engineerRankVO.getFirstCategory()) &&
+                orderInfo.getOrderQae() == engineerRankVO.getQAE()) {
+            for (String str : engineerRankVO.getSecondCategories()) {
+                if (str.equals(orderInfo.getOrderSecondCategory())) {
+                    orderInfo.setEngineerCheckId(dbEngineerInfo.getEngineerId());
+                    orderInfo.setEngineerCheckName(dbEngineerInfo.getEngineerName());
+                    orderInfo.setOrderState(Const.Order.QAE_HAVE_CAUGHT);
+                    int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+                    if (row > 0) {
+                        Timer timer = new Timer();
+                        TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(customerInfo.getEmail(),"您的订单已被审核工程师接单");
+                        timer.schedule(caughtOrder,Const.TIMER_FOR_SEND_EMAIL);
+
+                        engineerInfo.setOrderCount(dbEngineerInfo.getOrderCount() + 1);
+                        engineerInfoMapper.updateByPrimaryKeySelective(engineerInfo);
+                        return ServerResponse.createBySuccess("接单成功");
+                    }
+                    return ServerResponse.createByErrorMessage("接单失败");
+                }
+            }
+        }
+        return ServerResponse.createByErrorMessage("您不满足该订单等级");
+    }
+
+    @Override
+    public ServerResponse qaeCheck(Integer orderId, Integer state, String refuseDec, EngineerInfo engineerInfo) {
+        return null;
     }
 
 }

@@ -43,6 +43,8 @@ public interface OrderInfoService {
 
     ServerResponse<PageInfo> engineerQaeCaughtList(int pageSize, int pageNum, EngineerRankVO engineerRankVO);
 
+    ServerResponse caughtQaeOrder(Integer orderId, EngineerRankVO engineerRankVO, EngineerInfo engineerInfo);
 
+    ServerResponse qaeCheck(Integer orderId, Integer state, String refuseDec, EngineerInfo engineerInfo);
 
 }

@@ -26,4 +26,6 @@ public interface CustomerInfoMapper {
     CustomerInfo login(@Param("customerName") String customerName, @Param("password") String password);
 
     List<CustomerInfo> list(@Param("state") Integer state);
+
+
 }

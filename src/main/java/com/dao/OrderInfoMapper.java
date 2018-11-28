@@ -26,4 +26,9 @@ public interface OrderInfoMapper {
                                        @Param("secondCategories")List<String> secondCategories,
                                        @Param("orderMi")Integer orderMi,
                                        @Param("orderState")Integer orderState);
+
+    List<OrderInfo> engineerQaeCaughtList(@Param("orderFirstCategory") String orderFirstCategory,
+                                          @Param("secondCategories") List<String> secondCategories,
+                                          @Param("orderQae") Integer orderQae,
+                                          @Param("orderState") Integer orderState);
 }

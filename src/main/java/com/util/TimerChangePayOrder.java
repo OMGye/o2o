@@ -25,9 +25,10 @@ public class TimerChangePayOrder extends TimerTask {
     @Override
     public void run() {
         OrderInfo orderInfo = orderInfoMapper.selectByPrimaryKey(orderId);
-        if (orderInfo.getOrderState() == Const.Order.PAYING)
+        if (orderInfo.getOrderState() == Const.Order.PAYING) {
             orderInfo.setOrderState(Const.Order.CANNCEL);
-        orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+            orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+        }
     }
 
     public TimerChangePayOrder() {

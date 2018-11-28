@@ -122,7 +122,7 @@ public class EngineerInfoController {
         if (curEngineerInfo != null) {
             EngineerRankVO engineerRankVO = (EngineerRankVO) session.getAttribute(Const.CURRENT_RANK);
             if (engineerRankVO == null)
-                return ServerResponse.createByErrorMessage("当前工程没有等级");
+                return ServerResponse.createByErrorMessage("当前工程师没有等级");
             return orderInfoService.caughtCamOrder(orderId,engineerRankVO,curEngineerInfo);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
@@ -161,18 +161,43 @@ public class EngineerInfoController {
             ServerResponse response = orderInfoService.getOrderById(orderId);
             OrderInfo orderInfo = (OrderInfo)response.getData();
             if (orderInfo != null){
-                if (orderInfo.getEngineerId().intValue() != curEngineerInfo.getEngineerId().intValue())
-                    return ServerResponse.createBySuccess();
+                if (orderInfo.getEngineerId() != null && orderInfo.getEngineerId().intValue() == curEngineerInfo.getEngineerId().intValue())
+                    return response;
             }
-            return response;
+            return ServerResponse.createByErrorMessage("找不到该订单");
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
 
+    @RequestMapping(value = "orderInfo/canqaecaughtlist.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse canCaughtQaeorderList(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null) {
+            EngineerRankVO engineerRankVO = (EngineerRankVO) session.getAttribute(Const.CURRENT_RANK);
+            if (engineerRankVO == null)
+                return ServerResponse.createByErrorMessage("当前工程师没有等级");
+            if (engineerRankVO.getQAE() == 1)
+                return orderInfoService.engineerQaeCaughtList(pageSize,pageNum,engineerRankVO);
+            return ServerResponse.createByErrorMessage("您当前不能接审核类订单");
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
 
 
-
+    @RequestMapping(value = "orderInfo/qaecaughtcamorder.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse caughtQaeOrder(HttpSession session, Integer orderId){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null) {
+            EngineerRankVO engineerRankVO = (EngineerRankVO) session.getAttribute(Const.CURRENT_RANK);
+            if (engineerRankVO == null && engineerRankVO.getQAE() == 0)
+                return ServerResponse.createByErrorMessage("当前工程师没有等级或无法接审核类订单");
+            return orderInfoService.caughtCamOrder(orderId,engineerRankVO,curEngineerInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
 
 
 
