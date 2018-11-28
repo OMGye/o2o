@@ -160,11 +160,7 @@ public class EngineerInfoController {
         if (curEngineerInfo != null){
             ServerResponse response = orderInfoService.getOrderById(orderId);
             OrderInfo orderInfo = (OrderInfo)response.getData();
-            if (orderInfo != null){
-                if (orderInfo.getEngineerId() != null && orderInfo.getEngineerId().intValue() == curEngineerInfo.getEngineerId().intValue())
-                    return response;
-            }
-            return ServerResponse.createByErrorMessage("找不到该订单");
+            return response;
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
