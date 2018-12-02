@@ -153,6 +153,17 @@ public class EngineerInfoController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
+
+    @RequestMapping(value = "orderInfo/ownerqaelist.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> ownerQaeList(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize, Integer state){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            return orderInfoService.engineerQaeList(pageSize,pageNum,curEngineerInfo,state);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
     @RequestMapping(value = "orderInfo/getorderbyid.do", method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse<PageInfo> getOrderById(HttpSession session, Integer orderId){
@@ -208,5 +219,44 @@ public class EngineerInfoController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
+    @RequestMapping(value = "orderInfo/engineercancle.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<PageInfo> engineerCancle(HttpSession session, Integer orderId){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            return orderInfoService.engineerCancleOrder(orderId,curEngineerInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/engineerqaecancle.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<PageInfo> engineerQaeCancle(HttpSession session, Integer orderId){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            return orderInfoService.engineerCheckCancleOrder(orderId,curEngineerInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/engineercomfirmorcomplain.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<PageInfo> comfirmOrComplain(HttpSession session, Integer orderId, Integer complain, String dec){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            return orderInfoService.engineerComfirmDeductOrComplain(orderId,curEngineerInfo, complain, dec);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/engineerqaecomfirmorcomplain.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<PageInfo> qaeComfirmOrComplain(HttpSession session, Integer orderId, Integer complain, String dec){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            return orderInfoService.engineerCheckComfirmDeductOrComplain(orderId,curEngineerInfo, complain, dec);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
 
 }

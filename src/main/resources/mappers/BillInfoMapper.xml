@@ -31,7 +31,7 @@
       create_time)
     values (#{billId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{userType,jdbcType=INTEGER}, 
       #{userName,jdbcType=VARCHAR}, #{billMoney,jdbcType=DECIMAL}, #{billDec,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP})
+     now())
   </insert>
   <insert id="insertSelective" parameterType="com.pojo.BillInfo" >
     insert into bill_info

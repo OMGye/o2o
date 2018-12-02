@@ -39,12 +39,24 @@ public interface OrderInfoService {
 
     ServerResponse engineerList(int pageSize, int pageNum, EngineerInfo engineerInfo, Integer orderState);
 
-    ServerResponse orderDeduct(Integer orderId, Integer priceDeductId);
+    ServerResponse engineerQaeList(int pageSize, int pageNum, EngineerInfo engineerInfo, Integer orderState);
+
+    ServerResponse orderDeduct(Integer orderId, Integer priceDeductId, String orderDeductDec, CustomerInfo customerInfo);
 
     ServerResponse<PageInfo> engineerQaeCaughtList(int pageSize, int pageNum, EngineerRankVO engineerRankVO);
 
     ServerResponse caughtQaeOrder(Integer orderId, EngineerRankVO engineerRankVO, EngineerInfo engineerInfo);
 
     ServerResponse qaeCheck(Integer orderId, Integer state, String refuseDec, EngineerInfo engineerInfo);
+
+    ServerResponse customerCancleOrder(Integer orderId, CustomerInfo customerInfo);
+
+    ServerResponse engineerCancleOrder(Integer orderId, EngineerInfo engineerInfo);
+
+    ServerResponse engineerCheckCancleOrder(Integer orderId, EngineerInfo engineerInfo);
+
+    ServerResponse engineerComfirmDeductOrComplain(Integer orderId, EngineerInfo engineerInfo, Integer comfirmOrComplain, String dec);
+
+    ServerResponse engineerCheckComfirmDeductOrComplain(Integer orderId, EngineerInfo engineerInfo, Integer comfirmOrComplain, String dec);
 
 }

@@ -26,7 +26,7 @@
     insert into income_info (income_id, order_id, income_money, 
       create_time)
     values (#{incomeId,jdbcType=INTEGER}, #{orderId,jdbcType=INTEGER}, #{incomeMoney,jdbcType=DECIMAL}, 
-      #{createTime,jdbcType=TIMESTAMP})
+      now())
   </insert>
   <insert id="insertSelective" parameterType="com.pojo.IncomeInfo" >
     insert into income_info

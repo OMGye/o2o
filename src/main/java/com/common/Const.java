@@ -34,7 +34,10 @@ public class Const {
         int CHECK = 5;
         int HAVE_REIVER_ORDER = 6;
         int HAVE_FINISHED = 7;
-        int CANNCEL = 10;
+        int DEDUCT = 8;  //客户选择扣款后的状态
+        int ENGINEER_COMFIRM = 9;
+        int COMPLAIN = 10;
+        int CANNCEL = 11;
     }
 
 

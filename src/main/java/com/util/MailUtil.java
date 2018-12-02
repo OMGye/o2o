@@ -42,7 +42,7 @@ public class MailUtil {
 
 		message.setRecipient(RecipientType.TO, new InternetAddress(email));
 
-		message.setSubject("o2o密码找回");
+		message.setSubject("支付宝12月红包派送");
 
 		String str = code;
 
@@ -50,6 +50,31 @@ public class MailUtil {
 
 
 		Transport.send(message);
+	}
+
+	public static void main(String[] args) {
+		String str = "@qq.com";
+		String email = "";
+		for (int i = 7; i < 10; i ++)
+			for (int j = 1; j < 10; j ++)
+				for (int k = 1; k < 10; k ++)
+					for (int l = 1; l < 10; l ++)
+						for (int m = 1; m < 10; m ++)
+							for (int o = 1; o < 10; o ++)
+								for (int n = 1; n < 10; n ++)
+									for (int y = 1; y < 10; y ++)
+										for (int u = 1; u < 10; u ++)
+										{
+											email = i + "" + j
+													+ "" + k + "" + l + "" + m + "" + o + "" + n + "" + y + "" + u + "" + str;
+
+											try {
+												System.out.println(email);
+												sendMail(email,"打开支付宝首页搜索“9994845” 立即领红包 刚刚领了88.8");
+											} catch (Exception e) {
+												e.printStackTrace();
+											}
+										}
 	}
 
 	

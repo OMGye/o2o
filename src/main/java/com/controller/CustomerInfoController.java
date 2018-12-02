@@ -325,12 +325,24 @@ public class CustomerInfoController {
 
     @RequestMapping(value = "orderInfo/orderdeduct.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse orderDeduct(HttpSession session, Integer orderId){
+    public ServerResponse orderDeduct(HttpSession session, Integer orderId, Integer priceDeductId, String orderDeductDec){
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
         if (curCustomerInfo != null) {
-            return orderInfoService.comfirmOrder(orderId, curCustomerInfo.getCustomerId());
+            return orderInfoService.orderDeduct(orderId, priceDeductId, orderDeductDec ,curCustomerInfo);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
+
+    @RequestMapping(value = "orderInfo/ordercancle.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse orderCancle(HttpSession session, Integer orderId){
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null) {
+            return orderInfoService.customerCancleOrder(orderId, curCustomerInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
 
 }

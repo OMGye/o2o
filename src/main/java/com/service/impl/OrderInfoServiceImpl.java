@@ -47,13 +47,22 @@ public class OrderInfoServiceImpl implements OrderInfoService{
     private CustomerInfoMapper customerInfoMapper;
 
     @Autowired
-    private O2oPayInfoMapper o2oPayInfoMapper;
+    private PayInfoMapper payInfoMapper;
 
     @Autowired
     private EngineerInfoMapper engineerInfoMapper;
 
     @Autowired
     private QuantityInfoMapper quantityInfoMapper;
+
+    @Autowired
+    private PriceDeductInfoMapper priceDeductInfoMapper;
+
+    @Autowired
+    private BillInfoMapper billInfoMapper;
+
+    @Autowired
+    private IncomeInfoMapper incomeInfoMapper;
 
 
 
@@ -234,14 +243,26 @@ public class OrderInfoServiceImpl implements OrderInfoService{
                 order.setOrderState(Const.Order.PAIED);
                 orderInfoMapper.updateByPrimaryKeySelective(order);
             }
-            O2oPayInfo payInfo = new O2oPayInfo();
+
+            CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(order.getCustomerId());
+
+            PayInfo payInfo = new PayInfo();
             payInfo.setUserId(order.getCustomerId());
             payInfo.setOrderNo((long) order.getOrderId());
             payInfo.setPayPlatform(Const.PayPlatformEnum.ALIPAY.getCode());
             payInfo.setPlatformNumber(tradeNo);
             payInfo.setPlatformStatus(tradeStatus);
+            payInfo.setUserName(customerInfo.getCustomerName());
+            payInfo.setPrice(order.getOrderPrice());
+            payInfoMapper.insert(payInfo);
 
-            o2oPayInfoMapper.insert(payInfo);
+            BillInfo billInfo = new BillInfo();
+            billInfo.setUserId(customerInfo.getCustomerId());
+            billInfo.setBillMoney(BigDecimalUtil.div(order.getOrderPrice().doubleValue(),BigDecimalUtil.add(order.getOrderPrice().doubleValue(),order.getOrderPrice().doubleValue()).doubleValue()));
+            billInfo.setUserName(customerInfo.getCustomerName());
+            billInfo.setUserType(0);
+            billInfo.setBillDec("支付订单 :" + order.getOrderId());
+            billInfoMapper.insert(billInfo);
         }catch (Exception e){
             logger.debug("支付宝验证回调异常",e);
         }
@@ -308,8 +329,8 @@ public class OrderInfoServiceImpl implements OrderInfoService{
                         TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(customerInfo.getEmail(),"您的订单已被接单");
                         timer.schedule(caughtOrder,Const.TIMER_FOR_SEND_EMAIL);
 
-                        engineerInfo.setOrderCount(dbEngineerInfo.getOrderCount() + 1);
-                        engineerInfoMapper.updateByPrimaryKeySelective(engineerInfo);
+                        dbEngineerInfo.setOrderCount(dbEngineerInfo.getOrderCount() + 1);
+                        engineerInfoMapper.updateByPrimaryKeySelective(dbEngineerInfo);
                         return ServerResponse.createBySuccess("接单成功");
                     }
                     return ServerResponse.createByErrorMessage("接单失败");
@@ -430,7 +451,7 @@ public class OrderInfoServiceImpl implements OrderInfoService{
                     drawEnginner = qaeQuantity.getQuantityDraw();
                 }
                 Timer newTimer = new Timer();
-                TimerChangeOrderFinished timerChangeOrderFinished = new TimerChangeOrderFinished(orderId,orderInfoMapper, engineerInfoMapper,customerInfoMapper,drawEnginner, maxQuantity.getQuantityDraw());
+                TimerChangeOrderFinished timerChangeOrderFinished = new TimerChangeOrderFinished(orderId,orderInfoMapper, engineerInfoMapper,customerInfoMapper,drawEnginner, maxQuantity.getQuantityDraw(),billInfoMapper, incomeInfoMapper);
                 newTimer.schedule(timerChangeOrderFinished,Const.TIMER);
 
                 return ServerResponse.createBySuccess("确认下载附件成功");
@@ -492,9 +513,25 @@ public class OrderInfoServiceImpl implements OrderInfoService{
                 engineerInfo.setOrderCount(engineerInfo.getOrderCount() - 1);
                 engineerInfoMapper.updateByPrimaryKey(engineerInfo);
 
+                //客户完成的订单加1
                 CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
                 customerInfo.setOrderCount(customerInfo.getOrderCount() + 1);
                 customerInfoMapper.updateByPrimaryKeySelective(customerInfo);
+
+                //个人账单
+                BillInfo billInfo = new BillInfo();
+                billInfo.setUserId(engineerInfo.getEngineerId());
+                billInfo.setBillMoney(orderCamPrice);
+                billInfo.setUserName(engineerInfo.getEngineerName());
+                billInfo.setUserType(1);
+                billInfo.setBillDec("订单收入 :" + orderInfo.getOrderId());
+                billInfoMapper.insert(billInfo);
+
+                //系统收入
+                IncomeInfo incomeInfo = new IncomeInfo();
+                incomeInfo.setOrderId(orderId);
+                incomeInfo.setIncomeMoney(BigDecimalUtil.sub(orderInfo.getOrderPrice().doubleValue(), orderCamPrice.doubleValue()));
+                incomeInfoMapper.insert(incomeInfo);
 
                 Timer timer = new Timer();
                 TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(engineerInfo.getEmail(), "您的订单已被客户确认，金额已经转入您的账户");
@@ -521,6 +558,14 @@ public class OrderInfoServiceImpl implements OrderInfoService{
                 engineerInfo.setOrderCount(engineerInfo.getOrderCount() - 1);
                 engineerInfoMapper.updateByPrimaryKey(engineerInfo);
 
+                BillInfo billInfo = new BillInfo();
+                billInfo.setUserId(engineerInfo.getEngineerId());
+                billInfo.setBillMoney(orderCamPrice);
+                billInfo.setUserName(engineerInfo.getEngineerName());
+                billInfo.setUserType(1);
+                billInfo.setBillDec("订单收入 :" + orderInfo.getOrderId());
+                billInfoMapper.insert(billInfo);
+
                 EngineerInfo qaeEngineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerCheckId());
                 List<QuantityInfo> listQae = quantityInfoMapper.selectByQuantiy(qaeEngineerInfo.getEngineerQuantity());
                 QuantityInfo maxQuantityQae = listQae.get(0);
@@ -529,6 +574,20 @@ public class OrderInfoServiceImpl implements OrderInfoService{
                 qaeEngineerInfo.setEngineerBalance(BigDecimalUtil.add(qaeEngineerInfo.getEngineerBalance().doubleValue(), orderQaePrice.doubleValue()));
                 qaeEngineerInfo.setOrderCount(qaeEngineerInfo.getOrderCount() - 1);
                 engineerInfoMapper.updateByPrimaryKey(qaeEngineerInfo);
+
+                BillInfo billInfoQae = new BillInfo();
+                billInfoQae.setUserId(qaeEngineerInfo.getEngineerId());
+                billInfoQae.setBillMoney(orderQaePrice);
+                billInfoQae.setUserName(qaeEngineerInfo.getEngineerName());
+                billInfoQae.setUserType(1);
+                billInfoQae.setBillDec("审核订单收入 :" + orderInfo.getOrderId());
+                billInfoMapper.insert(billInfoQae);
+
+                BigDecimal engineerAllPrice = BigDecimalUtil.add(orderQaePrice.doubleValue(),orderCamPrice.doubleValue());
+                IncomeInfo incomeInfo = new IncomeInfo();
+                incomeInfo.setOrderId(orderId);
+                incomeInfo.setIncomeMoney(BigDecimalUtil.sub(orderInfo.getOrderPrice().doubleValue(), engineerAllPrice.doubleValue()));
+                incomeInfoMapper.insert(incomeInfo);
 
                 Timer timer = new Timer();
                 TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(engineerInfo.getEmail(), "您的订单已被客户确认，金额已经转入您的账户");
@@ -553,8 +612,43 @@ public class OrderInfoServiceImpl implements OrderInfoService{
     }
 
     @Override
-    public ServerResponse orderDeduct(Integer orderId, Integer priceDeductId) {
-        return null;
+    public ServerResponse engineerQaeList(int pageSize, int pageNum, EngineerInfo engineerInfo, Integer orderState) {
+        PageHelper.startPage(pageNum,pageSize);
+        PageHelper.orderBy("update_time desc");
+        List<OrderInfo> list = orderInfoMapper.engineerQaeListOrder(engineerInfo.getEngineerId(),orderState);
+        PageInfo pageInfo = new PageInfo(list);
+        return ServerResponse.createBySuccess(pageInfo);
+    }
+
+
+    @Override
+    public ServerResponse orderDeduct(Integer orderId, Integer priceDeductId, String orderDeductDec, CustomerInfo customerInfo) {
+        if (orderId == null || priceDeductId == null || orderDeductDec == null)
+            return ServerResponse.createByErrorMessage("参数不能为空");
+
+        OrderInfo orderInfo = orderInfoMapper.selectByPrimaryKey(orderId);
+        if (orderInfo == null)
+            return ServerResponse.createByErrorMessage("找不到该订单");
+
+        PriceDeductInfo priceDeductInfo = priceDeductInfoMapper.selectByPrimaryKey(priceDeductId);
+        if (priceDeductInfo == null)
+            return ServerResponse.createByErrorMessage("找不到扣款等级");
+
+        if(customerInfo.getCustomerId().intValue() == orderInfo.getCustomerId().intValue() && orderInfo.getOrderState() == Const.Order.HAVE_REIVER_ORDER){
+            orderInfo.setOrderState(Const.Order.DEDUCT);
+            orderInfo.setOrderDeductRank(priceDeductInfo.getPriceDeductRank());
+            orderInfo.setOrderDeductDec(orderDeductDec);
+            int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+            if (row > 0) {
+                EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerId());
+                Timer timer = new Timer();
+                TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(engineerInfo.getEmail(), "您的订单被客户扣款，请您速去确认，如有问题可以点击投诉");
+                timer.schedule(caughtOrder, Const.TIMER_FOR_SEND_EMAIL);
+
+                return ServerResponse.createBySuccess("选择扣款成功");
+            }
+        }
+        return ServerResponse.createByErrorMessage("选择扣款失败");
     }
 
     @Override
@@ -672,4 +766,308 @@ public class OrderInfoServiceImpl implements OrderInfoService{
 
         return ServerResponse.createByErrorMessage("参数异常");
     }
+
+    @Override
+    public ServerResponse customerCancleOrder(Integer orderId, CustomerInfo customerInfo) {
+        if (orderId == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+
+        OrderInfo orderInfo = orderInfoMapper.selectByPrimaryKey(orderId);
+        if (orderInfo == null)
+            return ServerResponse.createByErrorMessage("找不到该订单");
+
+        if (orderInfo.getOrderState() == Const.Order.PAIED && customerInfo.getCustomerId().intValue() == orderInfo.getCustomerId().intValue()) {
+            orderInfo.setOrderState(Const.Order.CANNCEL);
+            int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+            if (row > 0) {
+                CustomerInfo dbCustomerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
+                dbCustomerInfo.setCustomerBalance(BigDecimalUtil.add(dbCustomerInfo.getCustomerBalance().doubleValue(), orderInfo.getOrderPrice().doubleValue()));
+                customerInfoMapper.updateByPrimaryKeySelective(dbCustomerInfo);
+
+                BillInfo billInfo = new BillInfo();
+                billInfo.setUserId(customerInfo.getCustomerId());
+                billInfo.setBillMoney(orderInfo.getOrderPrice());
+                billInfo.setUserName(customerInfo.getCustomerName());
+                billInfo.setUserType(0);
+                billInfo.setBillDec("取消订单收入 :" + orderInfo.getOrderId());
+                billInfoMapper.insert(billInfo);
+
+                return ServerResponse.createBySuccess("取消成功");
+            }
+        }
+        return ServerResponse.createByErrorMessage("取消失败");
+    }
+
+    @Override
+    public ServerResponse engineerCancleOrder(Integer orderId, EngineerInfo engineerInfo) {
+        if (orderId == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+
+        OrderInfo orderInfo = orderInfoMapper.selectByPrimaryKey(orderId);
+        if (orderInfo == null)
+            return ServerResponse.createByErrorMessage("找不到该订单");
+
+        if (orderInfo.getEngineerId().intValue() == engineerInfo.getEngineerId().intValue()
+                && orderInfo.getOrderState() == Const.Order.HAVE_CAUGHT) {
+            EngineerInfo dbEngineer = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerId());
+            dbEngineer.setOrderCount(dbEngineer.getOrderCount() - 1);
+            dbEngineer.setEngineerQuantity(BigDecimalUtil.sub(dbEngineer.getEngineerQuantity().doubleValue(), new BigDecimal("0.01").doubleValue()));
+            engineerInfoMapper.updateByPrimaryKeySelective(dbEngineer);
+
+            CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
+            Timer timer = new Timer();
+            TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(customerInfo.getEmail(), "您的订单已被工程师取消，等待下次接单");
+            timer.schedule(caughtOrder, Const.TIMER_FOR_SEND_EMAIL);
+
+            orderInfo.setOrderState(Const.Order.PAIED);
+            orderInfo.setEngineerId(null);
+            orderInfo.setEngineerName(null);
+            orderInfo.setOrderFile(null);
+            int row = orderInfoMapper.updateByPrimaryKey(orderInfo);
+            if (row > 0) {
+                return ServerResponse.createBySuccess("取消成功");
+            }
+        }
+        return ServerResponse.createByErrorMessage("取消失败");
+    }
+
+    @Override
+    public ServerResponse engineerCheckCancleOrder(Integer orderId, EngineerInfo engineerInfo) {
+        if (orderId == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+
+        OrderInfo orderInfo = orderInfoMapper.selectByPrimaryKey(orderId);
+        if (orderInfo == null)
+            return ServerResponse.createByErrorMessage("找不到该订单");
+
+        if (orderInfo.getEngineerCheckId().intValue() == engineerInfo.getEngineerId().intValue() && orderInfo.getOrderState() == Const.Order.QAE_HAVE_CAUGHT) {
+
+            EngineerInfo dbEngineer = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerCheckId());
+            dbEngineer.setOrderCount(dbEngineer.getOrderCount() - 1);
+            dbEngineer.setEngineerQuantity(BigDecimalUtil.sub(dbEngineer.getEngineerQuantity().doubleValue(), new BigDecimal("0.01").doubleValue()));
+            engineerInfoMapper.updateByPrimaryKeySelective(dbEngineer);
+
+            CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
+            Timer timer = new Timer();
+            TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(customerInfo.getEmail(), "您的订单已被审核工程师取消，等待下次接单");
+            timer.schedule(caughtOrder, Const.TIMER_FOR_SEND_EMAIL);
+
+            EngineerInfo engineerInfo1 = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerId());
+            Timer timer1 = new Timer();
+            TimerEmailCaughtOrder caughtOrder1 = new TimerEmailCaughtOrder(engineerInfo1.getEmail(), "您的订单已被审核工程师取消，等待下次接单");
+            timer1.schedule(caughtOrder1, Const.TIMER_FOR_SEND_EMAIL);
+            orderInfo.setOrderState(Const.Order.HAVE_UPLOAD_FILE);
+            orderInfo.setEngineerCheckId(null);
+            orderInfo.setEngineerCheckName(null);
+            int row = orderInfoMapper.updateByPrimaryKey(orderInfo);
+            if (row > 0) {
+                return ServerResponse.createBySuccess("取消成功");
+            }
+        }
+        return ServerResponse.createByErrorMessage("取消失败");
+    }
+
+    @Override
+    public ServerResponse engineerComfirmDeductOrComplain(Integer orderId, EngineerInfo engineerInfo, Integer comfirmOrComplain, String dec) {
+        if (orderId == null || comfirmOrComplain == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+
+        OrderInfo orderInfo = orderInfoMapper.selectByPrimaryKey(orderId);
+        if (orderInfo == null)
+            return ServerResponse.createByErrorMessage("找不到该订单");
+
+        if (orderInfo.getEngineerCheckId() == null) {
+            if (orderInfo.getEngineerId().intValue() == engineerInfo.getEngineerId()) {
+                if (orderInfo.getOrderState() == Const.Order.DEDUCT) {
+                    if (comfirmOrComplain == 0) {
+                        orderInfo.setOrderState(Const.Order.HAVE_FINISHED);
+                        int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+                        if (row > 0) {
+                            PriceDeductInfo priceDeductInfo = priceDeductInfoMapper.selectByPriceDeductRank(orderInfo.getOrderDeductRank());
+                            BigDecimal customerDeductPrice = BigDecimalUtil.mul(orderInfo.getOrderPrice().doubleValue(), priceDeductInfo.getPriceDeductPercentage().doubleValue());
+                            CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
+                            customerInfo.setCustomerBalance(BigDecimalUtil.add(customerInfo.getCustomerBalance().doubleValue(), customerDeductPrice.doubleValue()));
+                            customerInfo.setOrderCount(customerInfo.getOrderCount() + 1);
+                            customerInfoMapper.updateByPrimaryKeySelective(customerInfo);
+
+                            BillInfo billInfo = new BillInfo();
+                            billInfo.setUserId(customerInfo.getCustomerId());
+                            billInfo.setBillMoney(customerDeductPrice);
+                            billInfo.setUserName(customerInfo.getCustomerName());
+                            billInfo.setUserType(0);
+                            billInfo.setBillDec("订单扣款收入 :" + orderInfo.getOrderId());
+                            billInfoMapper.insert(billInfo);
+
+
+                            EngineerInfo dbengineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerId());
+                            List<QuantityInfo> list = quantityInfoMapper.selectByQuantiy(dbengineerInfo.getEngineerQuantity());
+                            QuantityInfo maxQuantity = list.get(0);
+                            BigDecimal orderCamPrice = BigDecimalUtil.sub(orderInfo.getOrderPrice().doubleValue(), customerDeductPrice.doubleValue());
+                            orderCamPrice = BigDecimalUtil.sub(orderCamPrice.doubleValue(), BigDecimalUtil.mul(orderCamPrice.doubleValue(), maxQuantity.getQuantityDraw().doubleValue()).doubleValue());
+                            dbengineerInfo.setEngineerBalance(BigDecimalUtil.add(orderCamPrice.doubleValue(), dbengineerInfo.getEngineerBalance().doubleValue()));
+                            dbengineerInfo.setOrderCount(dbengineerInfo.getOrderCount() - 1);
+                            engineerInfoMapper.updateByPrimaryKey(dbengineerInfo);
+
+                            BillInfo billInfoEngineer = new BillInfo();
+                            billInfoEngineer.setUserId(engineerInfo.getEngineerId());
+                            billInfoEngineer.setBillMoney(orderCamPrice);
+                            billInfoEngineer.setUserName(engineerInfo.getEngineerName());
+                            billInfoEngineer.setUserType(1);
+                            billInfoEngineer.setBillDec("订单收入 :" + orderInfo.getOrderId());
+                            billInfoMapper.insert(billInfoEngineer);
+
+                            BigDecimal allPrice = BigDecimalUtil.add(customerDeductPrice.doubleValue(), orderCamPrice.doubleValue());
+                            IncomeInfo incomeInfo = new IncomeInfo();
+                            incomeInfo.setOrderId(orderId);
+                            incomeInfo.setIncomeMoney(BigDecimalUtil.sub(orderInfo.getOrderPrice().doubleValue(), allPrice.doubleValue()));
+                            incomeInfoMapper.insert(incomeInfo);
+
+                            return ServerResponse.createBySuccess("接受成功");
+                        } else
+                            return ServerResponse.createByErrorMessage("接受失败");
+                    }
+                    if (comfirmOrComplain == 1) {
+                        if (dec == null)
+                            return ServerResponse.createByErrorMessage("必须说明投诉原因");
+                        orderInfo.setOrderState(Const.Order.COMPLAIN);
+                        orderInfo.setOrderRateDec(dec);
+                        int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+                        if (row > 0)
+                            return ServerResponse.createBySuccess("投诉成功");
+                        else
+                            return ServerResponse.createByErrorMessage("投诉失败");
+                    }
+                }
+            }
+        }
+        if (orderInfo.getEngineerCheckId() != null) {
+            if (orderInfo.getEngineerId().intValue() == engineerInfo.getEngineerId()) {
+                if (orderInfo.getOrderState() == Const.Order.DEDUCT) {
+                    if (comfirmOrComplain == 0) {
+                        orderInfo.setOrderState(Const.Order.ENGINEER_COMFIRM);
+                        int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+                        if (row > 0) {
+                            EngineerInfo engineerInfoCheck = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerCheckId());
+                            Timer timerCheck = new Timer();
+                            TimerEmailCaughtOrder caughtOrderCheck = new TimerEmailCaughtOrder(engineerInfoCheck.getEmail(), "您的订单被客户扣款，请您速去确认，如有问题可以点击投诉");
+                            timerCheck.schedule(caughtOrderCheck, Const.TIMER_FOR_SEND_EMAIL);
+                            return ServerResponse.createBySuccess("确认成功");
+                        }
+                        else
+                            return ServerResponse.createByErrorMessage("确认失败");
+                    }
+                    if (comfirmOrComplain == 1){
+                        orderInfo.setOrderState(Const.Order.COMPLAIN);
+                        int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+                        if (row > 0) {
+                            EngineerInfo engineerInfoCheck = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerCheckId());
+                            Timer timerCheck = new Timer();
+                            TimerEmailCaughtOrder caughtOrderCheck = new TimerEmailCaughtOrder(engineerInfoCheck.getEmail(), "您的订单被后台介入，请您速去查看");
+                            timerCheck.schedule(caughtOrderCheck, Const.TIMER_FOR_SEND_EMAIL);
+                            return ServerResponse.createBySuccess("投诉成功");
+                        }
+                        else
+                            return ServerResponse.createByErrorMessage("投诉失败");
+                    }
+                }
+            }
+        }
+        return ServerResponse.createByErrorMessage("接受或者投诉失败");
+    }
+
+    @Override
+    public ServerResponse engineerCheckComfirmDeductOrComplain(Integer orderId, EngineerInfo engineerInfo, Integer comfirmOrComplain, String dec) {
+        if (orderId == null || comfirmOrComplain == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+
+        OrderInfo orderInfo = orderInfoMapper.selectByPrimaryKey(orderId);
+        if (orderInfo == null)
+            return ServerResponse.createByErrorMessage("找不到该订单");
+
+        if (orderInfo.getEngineerId().intValue() == engineerInfo.getEngineerId()) {
+            if (orderInfo.getOrderState() == Const.Order.ENGINEER_COMFIRM) {
+                if (comfirmOrComplain == 0) {
+                    orderInfo.setOrderState(Const.Order.HAVE_FINISHED);
+                    int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+                    if (row > 0) {
+                        PriceDeductInfo priceDeductInfo = priceDeductInfoMapper.selectByPriceDeductRank(orderInfo.getOrderDeductRank());
+                        BigDecimal customerDeductPrice = BigDecimalUtil.mul(orderInfo.getOrderPrice().doubleValue(), priceDeductInfo.getPriceDeductPercentage().doubleValue());
+                        CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
+                        customerInfo.setCustomerBalance(BigDecimalUtil.add(customerInfo.getCustomerBalance().doubleValue(), customerDeductPrice.doubleValue()));
+                        customerInfo.setOrderCount(customerInfo.getOrderCount() + 1);
+                        customerInfoMapper.updateByPrimaryKeySelective(customerInfo);
+
+                        BillInfo billInfo = new BillInfo();
+                        billInfo.setUserId(customerInfo.getCustomerId());
+                        billInfo.setBillMoney(customerDeductPrice);
+                        billInfo.setUserName(customerInfo.getCustomerName());
+                        billInfo.setUserType(0);
+                        billInfo.setBillDec("订单扣款收入 :" + orderInfo.getOrderId());
+                        billInfoMapper.insert(billInfo);
+
+
+                        EngineerInfo dbengineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerId());
+                        List<QuantityInfo> list = quantityInfoMapper.selectByQuantiy(dbengineerInfo.getEngineerQuantity());
+                        QuantityInfo maxQuantity = list.get(0);
+                        BigDecimal orderCamPrice = BigDecimalUtil.sub(orderInfo.getOrderPrice().doubleValue(), orderInfo.getOrderQaePrice().doubleValue());
+                        orderCamPrice = BigDecimalUtil.sub(orderCamPrice.doubleValue(), BigDecimalUtil.mul(orderCamPrice.doubleValue(), priceDeductInfo.getPriceDeductPercentage().doubleValue()).doubleValue());
+                        orderCamPrice = BigDecimalUtil.sub(orderCamPrice.doubleValue(), BigDecimalUtil.mul(orderCamPrice.doubleValue(), maxQuantity.getQuantityDraw().doubleValue()).doubleValue());
+                        dbengineerInfo.setEngineerBalance(BigDecimalUtil.add(orderCamPrice.doubleValue(), dbengineerInfo.getEngineerBalance().doubleValue()));
+                        dbengineerInfo.setOrderCount(dbengineerInfo.getOrderCount() - 1);
+                        engineerInfoMapper.updateByPrimaryKey(dbengineerInfo);
+
+                        BillInfo billInfoEngineer = new BillInfo();
+                        billInfoEngineer.setUserId(engineerInfo.getEngineerId());
+                        billInfoEngineer.setBillMoney(orderCamPrice);
+                        billInfoEngineer.setUserName(engineerInfo.getEngineerName());
+                        billInfoEngineer.setUserType(1);
+                        billInfoEngineer.setBillDec("订单收入 :" + orderInfo.getOrderId());
+                        billInfoMapper.insert(billInfoEngineer);
+
+
+                        EngineerInfo dbengineerInfoQae = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerId());
+                        List<QuantityInfo> listQae = quantityInfoMapper.selectByQuantiy(dbengineerInfoQae.getEngineerQuantity());
+                        QuantityInfo maxQuantityQae = listQae.get(0);
+                        BigDecimal orderQaePrice = BigDecimalUtil.sub(orderInfo.getOrderQaePrice().doubleValue(), BigDecimalUtil.mul(orderInfo.getOrderQaePrice().doubleValue(), priceDeductInfo.getPriceDeductPercentage().doubleValue()).doubleValue());
+                        orderQaePrice = BigDecimalUtil.sub(orderQaePrice.doubleValue(), BigDecimalUtil.mul(orderQaePrice.doubleValue(), maxQuantityQae.getQuantityDraw().doubleValue()).doubleValue());
+                        dbengineerInfoQae.setEngineerBalance(BigDecimalUtil.add(orderQaePrice.doubleValue(), dbengineerInfoQae.getEngineerBalance().doubleValue()));
+                        dbengineerInfoQae.setOrderCount(dbengineerInfoQae.getOrderCount() - 1);
+                        engineerInfoMapper.updateByPrimaryKey(dbengineerInfoQae);
+
+                        BillInfo billInfoEngineerQae = new BillInfo();
+                        billInfoEngineerQae.setUserId(engineerInfo.getEngineerId());
+                        billInfoEngineerQae.setBillMoney(orderQaePrice);
+                        billInfoEngineerQae.setUserName(engineerInfo.getEngineerName());
+                        billInfoEngineerQae.setUserType(1);
+                        billInfoEngineerQae.setBillDec("订单收入 :" + orderInfo.getOrderId());
+                        billInfoMapper.insert(billInfoEngineerQae);
+
+                        BigDecimal allPrice = BigDecimalUtil.add(customerDeductPrice.doubleValue(), orderCamPrice.doubleValue());
+                        allPrice = BigDecimalUtil.add(allPrice.doubleValue(), orderQaePrice.doubleValue());
+                        IncomeInfo incomeInfo = new IncomeInfo();
+                        incomeInfo.setOrderId(orderId);
+                        incomeInfo.setIncomeMoney(BigDecimalUtil.sub(orderInfo.getOrderPrice().doubleValue(), allPrice.doubleValue()));
+                        incomeInfoMapper.insert(incomeInfo);
+
+                        return ServerResponse.createBySuccess("接受成功");
+                    } else
+                        return ServerResponse.createByErrorMessage("接受失败");
+                }
+                if (comfirmOrComplain == 1) {
+                    if (dec == null)
+                        return ServerResponse.createByErrorMessage("必须说明投诉原因");
+                    orderInfo.setOrderState(Const.Order.COMPLAIN);
+                    orderInfo.setOrderRateDec(dec);
+                    int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+                    if (row > 0)
+                        return ServerResponse.createBySuccess("投诉成功");
+                    else
+                        return ServerResponse.createByErrorMessage("投诉失败");
+                }
+            }
+        }
+        return ServerResponse.createByErrorMessage("接受或者投诉失败");
+    }
+
+
 }

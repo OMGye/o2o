@@ -22,6 +22,8 @@ public interface OrderInfoMapper {
 
     List<OrderInfo> engineerListOrder(@Param("engineerId")Integer engineerId, @Param("orderState")Integer orderState);
 
+    List<OrderInfo> engineerQaeListOrder(@Param("engineerId")Integer engineerId, @Param("orderState")Integer orderState);
+
     List<OrderInfo> engineerCaughtList(@Param("orderFirstCategory")String orderFirstCategory,
                                        @Param("secondCategories")List<String> secondCategories,
                                        @Param("orderMi")Integer orderMi,

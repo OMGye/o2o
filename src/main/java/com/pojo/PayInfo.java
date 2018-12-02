@@ -1,13 +1,14 @@
 package com.pojo;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
-public class O2oPayInfo {
+public class PayInfo {
     private Integer payInfoId;
 
     private Integer userId;
 
-    private Integer userType;
+    private BigDecimal price;
 
     private String userName;
 
@@ -23,10 +24,10 @@ public class O2oPayInfo {
 
     private Date updateTime;
 
-    public O2oPayInfo(Integer payInfoId, Integer userId, Integer userType, String userName, Long orderNo, Integer payPlatform, String platformNumber, String platformStatus, Date createTime, Date updateTime) {
+    public PayInfo(Integer payInfoId, Integer userId, BigDecimal price, String userName, Long orderNo, Integer payPlatform, String platformNumber, String platformStatus, Date createTime, Date updateTime) {
         this.payInfoId = payInfoId;
         this.userId = userId;
-        this.userType = userType;
+        this.price = price;
         this.userName = userName;
         this.orderNo = orderNo;
         this.payPlatform = payPlatform;
@@ -36,7 +37,7 @@ public class O2oPayInfo {
         this.updateTime = updateTime;
     }
 
-    public O2oPayInfo() {
+    public PayInfo() {
         super();
     }
 
@@ -56,12 +57,12 @@ public class O2oPayInfo {
         this.userId = userId;
     }
 
-    public Integer getUserType() {
-        return userType;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public void setUserType(Integer userType) {
-        this.userType = userType;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
     public String getUserName() {

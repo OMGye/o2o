@@ -245,12 +245,7 @@ public class AdminController {
     @RequestMapping(value = "priceDeductInfo/list.do",method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse listPriceDeductInfo(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize){
-        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
-        if (adminInfo != null){
             return priceDeductInfoService.list(pageSize,pageNum);
-        }
-        return ServerResponse.createByErrorMessage("请登入管理员账户");
-
     }
 
     @RequestMapping(value = "priceDeductInfo/add.do",method = RequestMethod.POST)
@@ -267,12 +262,7 @@ public class AdminController {
     @RequestMapping(value = "priceDeductInfo/getbyid.do",method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse getByIdPriceDeductInfo(HttpSession session, Integer priceDeductId){
-        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
-        if (adminInfo != null){
             return priceDeductInfoService.getById(priceDeductId);
-        }
-        return ServerResponse.createByErrorMessage("请登入管理员账户");
-
     }
 
 
