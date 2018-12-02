@@ -81,4 +81,13 @@
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where income_id = #{incomeId,jdbcType=INTEGER}
   </update>
+
+  <select id="list" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from bill_info
+    <where>
+      <if test="orderId != null"> order_id = #{orderId}</if>
+    </where>
+  </select>
 </mapper>

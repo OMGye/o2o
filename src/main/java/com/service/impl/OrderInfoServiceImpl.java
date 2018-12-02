@@ -655,7 +655,7 @@ public class OrderInfoServiceImpl implements OrderInfoService{
     public ServerResponse<PageInfo> engineerQaeCaughtList(int pageSize, int pageNum, EngineerRankVO engineerRankVO) {
         PageHelper.startPage(pageNum,pageSize);
         PageHelper.orderBy("update_time desc");
-        List<OrderInfo> list = orderInfoMapper.engineerCaughtList(engineerRankVO.getFirstCategory(),engineerRankVO.getSecondCategories(),engineerRankVO.getQAE(), Const.Order.HAVE_UPLOAD_FILE);
+        List<OrderInfo> list = orderInfoMapper.engineerQaeCaughtList(engineerRankVO.getFirstCategory(),engineerRankVO.getSecondCategories(),engineerRankVO.getQAE(), Const.Order.HAVE_UPLOAD_FILE);
         PageInfo pageInfo = new PageInfo(list);
         return ServerResponse.createBySuccess(pageInfo);
     }
@@ -895,7 +895,7 @@ public class OrderInfoServiceImpl implements OrderInfoService{
                             billInfo.setBillMoney(customerDeductPrice);
                             billInfo.setUserName(customerInfo.getCustomerName());
                             billInfo.setUserType(0);
-                            billInfo.setBillDec("订单扣款收入 :" + orderInfo.getOrderId());
+                            billInfo.setBillDec("订单收入 :" + orderInfo.getOrderId());
                             billInfoMapper.insert(billInfo);
 
 
@@ -984,7 +984,7 @@ public class OrderInfoServiceImpl implements OrderInfoService{
         if (orderInfo == null)
             return ServerResponse.createByErrorMessage("找不到该订单");
 
-        if (orderInfo.getEngineerId().intValue() == engineerInfo.getEngineerId()) {
+        if (orderInfo.getEngineerCheckId().intValue() == engineerInfo.getEngineerId().intValue()) {
             if (orderInfo.getOrderState() == Const.Order.ENGINEER_COMFIRM) {
                 if (comfirmOrComplain == 0) {
                     orderInfo.setOrderState(Const.Order.HAVE_FINISHED);
@@ -1002,7 +1002,7 @@ public class OrderInfoServiceImpl implements OrderInfoService{
                         billInfo.setBillMoney(customerDeductPrice);
                         billInfo.setUserName(customerInfo.getCustomerName());
                         billInfo.setUserType(0);
-                        billInfo.setBillDec("订单扣款收入 :" + orderInfo.getOrderId());
+                        billInfo.setBillDec("订单收入 :" + orderInfo.getOrderId());
                         billInfoMapper.insert(billInfo);
 
 
@@ -1025,7 +1025,7 @@ public class OrderInfoServiceImpl implements OrderInfoService{
                         billInfoMapper.insert(billInfoEngineer);
 
 
-                        EngineerInfo dbengineerInfoQae = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerId());
+                        EngineerInfo dbengineerInfoQae = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerCheckId());
                         List<QuantityInfo> listQae = quantityInfoMapper.selectByQuantiy(dbengineerInfoQae.getEngineerQuantity());
                         QuantityInfo maxQuantityQae = listQae.get(0);
                         BigDecimal orderQaePrice = BigDecimalUtil.sub(orderInfo.getOrderQaePrice().doubleValue(), BigDecimalUtil.mul(orderInfo.getOrderQaePrice().doubleValue(), priceDeductInfo.getPriceDeductPercentage().doubleValue()).doubleValue());
@@ -1067,6 +1067,128 @@ public class OrderInfoServiceImpl implements OrderInfoService{
             }
         }
         return ServerResponse.createByErrorMessage("接受或者投诉失败");
+    }
+
+    @Override
+    public ServerResponse<PageInfo> adminOrderList(int pageSize, int pageNum, Integer state, Integer firstCategory, Integer orderQae) {
+        String orderFirstCategory = "";
+        if(firstCategory == 0)
+            orderFirstCategory = "PCB";
+        else
+            orderFirstCategory = "FPC";
+
+        PageHelper.startPage(pageNum,pageSize);
+        PageHelper.orderBy("update_time desc");
+        List<OrderInfo> list = orderInfoMapper.adminOrderList(state,orderFirstCategory,orderQae);
+        PageInfo pageInfo = new PageInfo(list);
+        return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Override
+    public ServerResponse dealOrder(Integer orderId, BigDecimal customerPrice, BigDecimal engineerPrice, BigDecimal engineerQaePrice) {
+        if (orderId == null || customerPrice == null || engineerPrice == null ||engineerQaePrice == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+
+        OrderInfo orderInfo = orderInfoMapper.selectByPrimaryKey(orderId);
+        if (orderInfo == null)
+            return ServerResponse.createByErrorMessage("找不到该订单");
+
+        if (orderInfo.getOrderQae() == 0) {
+            BigDecimal allPrice = BigDecimalUtil.add(customerPrice.doubleValue(), engineerPrice.doubleValue());
+            if (allPrice.doubleValue() > orderInfo.getOrderPrice().doubleValue()) {
+                return ServerResponse.createByErrorMessage("价格不合理");
+            }
+            orderInfo.setOrderState(Const.Order.HAVE_FINISHED);
+            int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+            if (row > 0){
+                CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
+                customerInfo.setCustomerBalance(BigDecimalUtil.add(customerPrice.doubleValue(), customerInfo.getCustomerBalance().doubleValue()));
+                customerInfo.setOrderCount(customerInfo.getOrderCount());
+                customerInfoMapper.updateByPrimaryKeySelective(customerInfo);
+
+                BillInfo customerBillInfo = new BillInfo();
+                customerBillInfo.setUserType(0);
+                customerBillInfo.setUserName(customerInfo.getCustomerName());
+                customerBillInfo.setBillMoney(customerPrice);
+                customerBillInfo.setBillDec("订单收入 :" + orderInfo.getOrderId());
+                billInfoMapper.insert(customerBillInfo);
+
+                EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerId());
+                engineerInfo.setEngineerBalance(BigDecimalUtil.add(engineerInfo.getEngineerBalance().doubleValue(), engineerPrice.doubleValue()));
+                engineerInfo.setOrderCount(engineerInfo.getOrderCount() - 1);
+                engineerInfoMapper.updateByPrimaryKeySelective(engineerInfo);
+
+                BillInfo engineerBillInfo = new BillInfo();
+                engineerBillInfo.setUserType(1);
+                engineerBillInfo.setUserName(engineerInfo.getEngineerName());
+                engineerBillInfo.setBillMoney(engineerPrice);
+                engineerBillInfo.setBillDec("订单收入 :" + orderInfo.getOrderId());
+                billInfoMapper.insert(engineerBillInfo);
+
+                IncomeInfo incomeInfo = new IncomeInfo();
+                incomeInfo.setIncomeMoney(BigDecimalUtil.sub(orderInfo.getOrderPrice().doubleValue(), allPrice.doubleValue()));
+                incomeInfo.setOrderId(orderId);
+                incomeInfoMapper.insert(incomeInfo);
+                return ServerResponse.createBySuccess("操作成功");
+            }
+            return ServerResponse.createByErrorMessage("操作失败");
+        }
+        if (orderInfo.getEngineerCheckId() != null){
+            BigDecimal allPrice = BigDecimalUtil.add(customerPrice.doubleValue(), engineerPrice.doubleValue());
+            allPrice = BigDecimalUtil.add(allPrice.doubleValue(), engineerQaePrice.doubleValue());
+            if (allPrice.doubleValue() > orderInfo.getOrderPrice().doubleValue()) {
+                return ServerResponse.createByErrorMessage("价格不合理");
+            }
+            orderInfo.setOrderState(Const.Order.HAVE_FINISHED);
+            int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+            if (row > 0){
+                CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
+                customerInfo.setCustomerBalance(BigDecimalUtil.add(customerPrice.doubleValue(), customerInfo.getCustomerBalance().doubleValue()));
+                customerInfo.setOrderCount(customerInfo.getOrderCount());
+                customerInfoMapper.updateByPrimaryKeySelective(customerInfo);
+
+                BillInfo customerBillInfo = new BillInfo();
+                customerBillInfo.setUserType(0);
+                customerBillInfo.setUserName(customerInfo.getCustomerName());
+                customerBillInfo.setBillMoney(customerPrice);
+                customerBillInfo.setBillDec("订单收入 :" + orderInfo.getOrderId());
+                billInfoMapper.insert(customerBillInfo);
+
+                EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerId());
+                engineerInfo.setEngineerBalance(BigDecimalUtil.add(engineerInfo.getEngineerBalance().doubleValue(), engineerPrice.doubleValue()));
+                engineerInfo.setOrderCount(engineerInfo.getOrderCount() - 1);
+                engineerInfoMapper.updateByPrimaryKeySelective(engineerInfo);
+
+                BillInfo engineerBillInfo = new BillInfo();
+                engineerBillInfo.setUserType(1);
+                engineerBillInfo.setUserName(engineerInfo.getEngineerName());
+                engineerBillInfo.setBillMoney(engineerPrice);
+                engineerBillInfo.setBillDec("订单收入 :" + orderInfo.getOrderId());
+                billInfoMapper.insert(engineerBillInfo);
+
+                EngineerInfo engineerQaeInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerCheckId());
+                engineerQaeInfo.setEngineerBalance(BigDecimalUtil.add(engineerQaeInfo.getEngineerBalance().doubleValue(), engineerQaePrice.doubleValue()));
+                engineerQaeInfo.setOrderCount(engineerQaeInfo.getOrderCount() - 1);
+                engineerInfoMapper.updateByPrimaryKeySelective(engineerQaeInfo);
+
+                BillInfo engineerQaeInfoBillInfo = new BillInfo();
+                engineerQaeInfoBillInfo.setUserType(1);
+                engineerQaeInfoBillInfo.setUserName(engineerQaeInfo.getEngineerName());
+                engineerQaeInfoBillInfo.setBillMoney(engineerQaePrice);
+                engineerQaeInfoBillInfo.setBillDec("订单收入 :" + orderInfo.getOrderId());
+                billInfoMapper.insert(engineerQaeInfoBillInfo);
+
+                IncomeInfo incomeInfo = new IncomeInfo();
+                incomeInfo.setIncomeMoney(BigDecimalUtil.sub(orderInfo.getOrderPrice().doubleValue(), allPrice.doubleValue()));
+                incomeInfo.setOrderId(orderId);
+                incomeInfoMapper.insert(incomeInfo);
+                return ServerResponse.createBySuccess("操作成功");
+            }
+            return ServerResponse.createByErrorMessage("操作失败");
+
+        }
+
+        return ServerResponse.createByErrorMessage("操作失败");
     }
 
 

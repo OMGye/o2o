@@ -8,6 +8,7 @@ import com.pojo.OrderInfo;
 import com.vo.EngineerRankVO;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 /**
@@ -58,5 +59,9 @@ public interface OrderInfoService {
     ServerResponse engineerComfirmDeductOrComplain(Integer orderId, EngineerInfo engineerInfo, Integer comfirmOrComplain, String dec);
 
     ServerResponse engineerCheckComfirmDeductOrComplain(Integer orderId, EngineerInfo engineerInfo, Integer comfirmOrComplain, String dec);
+
+    ServerResponse<PageInfo> adminOrderList(int pageSize, int pageNum, Integer state, Integer firstCategory, Integer orderQae);
+
+    ServerResponse dealOrder(Integer orderId, BigDecimal customerPrice, BigDecimal engineerPrice, BigDecimal engineerQaePrice);
 
 }

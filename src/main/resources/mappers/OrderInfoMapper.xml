@@ -406,4 +406,15 @@
     </where>
   </select>
 
+  <select id="adminOrderList" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from order_info
+    <where>
+      <if test="orderFirstCategory != null"> order_first_category = #{orderFirstCategory,jdbcType=VARCHAR}</if>
+      <if test="orderQae != null"> and order_qae = 1</if>
+      <if test="orderState != null"> and order_state = #{orderState}</if>
+    </where>
+  </select>
+
 </mapper>

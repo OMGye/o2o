@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 
 /**
  * Created by upupgogogo on 2018/11/12.下午3:53
@@ -513,6 +514,77 @@ public class AdminController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
+    @Autowired
+    private OrderInfoService orderInfoService;
 
+    @RequestMapping(value = "orderInfo/list.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> list(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize, Integer state, Integer firstCategory, Integer orderQae){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return orderInfoService.adminOrderList(pageSize,pageNum,state,firstCategory,orderQae);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/getorderbyid.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> getOrderById(HttpSession session, Integer orderId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return orderInfoService.getOrderById(orderId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/dealorder.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse dealOrder(HttpSession session, Integer orderId, BigDecimal customerPrice, BigDecimal engineerPrice, BigDecimal engineerQaePrice){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return orderInfoService.dealOrder(orderId,customerPrice,engineerPrice,engineerQaePrice);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
+
+    @Autowired
+    private BillInfoService billInfoService;
+
+    @RequestMapping(value = "billInfo/list.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> billInfoList(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize, Integer userId, Integer userType){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return billInfoService.list(pageSize, pageNum, userId, userType);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @Autowired
+    private PayInfoService payInfoService;
+
+    @RequestMapping(value = "payInfo/list.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> payInfoList(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize, Integer userId, String userName){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return payInfoService.list(pageSize, pageNum, userId, userName);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @Autowired
+    private IncomeInfoService incomeInfoService;
+    @RequestMapping(value = "incomeInfo/list.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> incomeInfoList(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize, Integer userId, String userName){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return payInfoService.list(pageSize, pageNum, userId, userName);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
 
 }

@@ -116,4 +116,14 @@
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where bill_id = #{billId,jdbcType=INTEGER}
   </update>
+
+  <select id="list" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from bill_info
+    <where>
+      <if test="userId != null">user_id = #{userId}</if>
+      <if test="userType != null"> and user_type = #{userType}</if>
+    </where>
+  </select>
 </mapper>

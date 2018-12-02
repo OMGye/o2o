@@ -152,4 +152,14 @@
       update_time = now()
     where pay_info_id = #{payInfoId,jdbcType=INTEGER}
   </update>
+
+  <select id="list" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from o2o_pay_info
+    <where>
+      <if test="userId != null">user_id = #{userId}</if>
+      <if test="userName != null"> and user_name LIKE #{userName}</if>
+    </where>
+  </select>
 </mapper>

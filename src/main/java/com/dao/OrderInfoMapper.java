@@ -33,4 +33,6 @@ public interface OrderInfoMapper {
                                           @Param("secondCategories") List<String> secondCategories,
                                           @Param("orderQae") Integer orderQae,
                                           @Param("orderState") Integer orderState);
+
+   List<OrderInfo> adminOrderList(@Param("orderState")Integer orderState, @Param("orderFirstCategory")String orderFirstCategory, @Param("orderQae")Integer orderQae);
 }
