@@ -19,5 +19,5 @@ public interface IncomeInfoMapper {
 
     int updateByPrimaryKey(IncomeInfo record);
 
-    List<IncomeInfo> list(Integer orderId);
+    List<IncomeInfo> list(@Param("orderId") Integer orderId);
 }

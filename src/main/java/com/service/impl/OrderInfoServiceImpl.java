@@ -1074,12 +1074,13 @@ public class OrderInfoServiceImpl implements OrderInfoService{
 
     @Override
     public ServerResponse<PageInfo> adminOrderList(int pageSize, int pageNum, Integer state, Integer firstCategory, Integer orderQae) {
-        String orderFirstCategory = "";
-        if(firstCategory == 0)
-            orderFirstCategory = "PCB";
-        else
-            orderFirstCategory = "FPC";
-
+        String orderFirstCategory = null;
+        if (firstCategory != null) {
+            if ( firstCategory == 0)
+                orderFirstCategory = "PCB";
+            else
+                orderFirstCategory = "FPC";
+        }
         PageHelper.startPage(pageNum,pageSize);
         PageHelper.orderBy("update_time desc");
         List<OrderInfo> list = orderInfoMapper.adminOrderList(state,orderFirstCategory,orderQae);

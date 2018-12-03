@@ -537,7 +537,7 @@ public class AdminController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
-    @RequestMapping(value = "orderInfo/dealorder.do",method = RequestMethod.GET)
+    @RequestMapping(value = "orderInfo/dealorder.do",method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse dealOrder(HttpSession session, Integer orderId, BigDecimal customerPrice, BigDecimal engineerPrice, BigDecimal engineerQaePrice){
         AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
@@ -579,10 +579,10 @@ public class AdminController {
     private IncomeInfoService incomeInfoService;
     @RequestMapping(value = "incomeInfo/list.do",method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<PageInfo> incomeInfoList(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize, Integer userId, String userName){
+    public ServerResponse<PageInfo> incomeInfoList(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize, Integer orderId){
         AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
         if (adminInfo != null){
-            return payInfoService.list(pageSize, pageNum, userId, userName);
+            return incomeInfoService.list(pageSize, pageNum,orderId);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
