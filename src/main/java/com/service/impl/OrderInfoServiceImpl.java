@@ -259,7 +259,7 @@ public class OrderInfoServiceImpl implements OrderInfoService{
 
             BillInfo billInfo = new BillInfo();
             billInfo.setUserId(customerInfo.getCustomerId());
-            billInfo.setBillMoney(BigDecimalUtil.div(order.getOrderPrice().doubleValue(),BigDecimalUtil.add(order.getOrderPrice().doubleValue(),order.getOrderPrice().doubleValue()).doubleValue()));
+            billInfo.setBillMoney(BigDecimalUtil.sub(order.getOrderPrice().doubleValue(),BigDecimalUtil.add(order.getOrderPrice().doubleValue(),order.getOrderPrice().doubleValue()).doubleValue()));
             billInfo.setUserName(customerInfo.getCustomerName());
             billInfo.setUserType(0);
             billInfo.setBillDec("支付订单 :" + order.getOrderId());
