@@ -6,10 +6,8 @@ import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.common.Const;
 import com.common.ServerResponse;
-import com.pojo.AdminInfo;
-import com.pojo.BasicPriceInfo;
-import com.pojo.CustomerInfo;
-import com.pojo.OrderInfo;
+import com.github.pagehelper.PageInfo;
+import com.pojo.*;
 import com.service.*;
 
 import com.util.AlipayConfig;
@@ -343,6 +341,36 @@ public class CustomerInfoController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
+    @RequestMapping(value = "orderInfo/addansorque.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse addAnsOrQue(HttpSession session, Integer orderId, String orderAnsqueContent){
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null){
+            return orderInfoService.addAnsOrQue(orderId,curCustomerInfo.getCustomerId(),0, curCustomerInfo.getCustomerName(),orderAnsqueContent);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
 
+    @RequestMapping(value = "orderInfo/listansorque.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> listAnsOrQue(HttpSession session, Integer orderId, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null){
+            return orderInfoService.listOrderAnsqueInfoByOrderId(pageNum,pageSize,orderId,curCustomerInfo.getCustomerId(),0);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
 
+    @Autowired
+    private BillInfoService billInfoService;
+
+    @RequestMapping(value = "billInfo/list.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> billInfoList(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize){
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null){
+            return billInfoService.list(pageSize, pageNum, curCustomerInfo.getCustomerId(), 0);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
 }

@@ -4,10 +4,7 @@ import com.common.Const;
 import com.common.ServerResponse;
 import com.github.pagehelper.PageInfo;
 import com.pojo.*;
-import com.service.EngineerInfoService;
-import com.service.EngineerRankInfoService;
-import com.service.OrderInfoService;
-import com.service.OtherParamInfoService;
+import com.service.*;
 import com.vo.EngineerRankVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -221,7 +218,7 @@ public class EngineerInfoController {
 
     @RequestMapping(value = "orderInfo/engineercancle.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<PageInfo> engineerCancle(HttpSession session, Integer orderId){
+    public ServerResponse engineerCancle(HttpSession session, Integer orderId){
         EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
         if (curEngineerInfo != null){
             return orderInfoService.engineerCancleOrder(orderId,curEngineerInfo);
@@ -231,7 +228,7 @@ public class EngineerInfoController {
 
     @RequestMapping(value = "orderInfo/engineerqaecancle.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<PageInfo> engineerQaeCancle(HttpSession session, Integer orderId){
+    public ServerResponse engineerQaeCancle(HttpSession session, Integer orderId){
         EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
         if (curEngineerInfo != null){
             return orderInfoService.engineerCheckCancleOrder(orderId,curEngineerInfo);
@@ -241,7 +238,7 @@ public class EngineerInfoController {
 
     @RequestMapping(value = "orderInfo/engineercomfirmorcomplain.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<PageInfo> comfirmOrComplain(HttpSession session, Integer orderId, Integer complain, String dec){
+    public ServerResponse comfirmOrComplain(HttpSession session, Integer orderId, Integer complain, String dec){
         EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
         if (curEngineerInfo != null){
             return orderInfoService.engineerComfirmDeductOrComplain(orderId,curEngineerInfo, complain, dec);
@@ -251,12 +248,51 @@ public class EngineerInfoController {
 
     @RequestMapping(value = "orderInfo/engineerqaecomfirmorcomplain.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<PageInfo> qaeComfirmOrComplain(HttpSession session, Integer orderId, Integer complain, String dec){
+    public ServerResponse qaeComfirmOrComplain(HttpSession session, Integer orderId, Integer complain, String dec){
         EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
         if (curEngineerInfo != null){
             return orderInfoService.engineerCheckComfirmDeductOrComplain(orderId,curEngineerInfo, complain, dec);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
+
+    @RequestMapping(value = "orderInfo/addansorque.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse addAnsOrQue(HttpSession session, Integer orderId, String orderAnsqueContent){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            return orderInfoService.addAnsOrQue(orderId,curEngineerInfo.getEngineerId(),1, curEngineerInfo.getEngineerName(),orderAnsqueContent);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/listansorque.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> listAnsOrQue(HttpSession session, Integer orderId,  @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            return orderInfoService.listOrderAnsqueInfoByOrderId(pageNum,pageSize,orderId,curEngineerInfo.getEngineerId(),1);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
+
+    @Autowired
+    private BillInfoService billInfoService;
+
+    @RequestMapping(value = "billInfo/list.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> billInfoList(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            return billInfoService.list(pageSize, pageNum, curEngineerInfo.getEngineerId(), 1);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
+
+
 
 }

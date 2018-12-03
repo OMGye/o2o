@@ -1,6 +1,9 @@
 package com.dao;
 
 import com.pojo.OrderAnsqueInfo;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface OrderAnsqueInfoMapper {
     int deleteByPrimaryKey(Integer orderAnsqueId);
@@ -14,4 +17,6 @@ public interface OrderAnsqueInfoMapper {
     int updateByPrimaryKeySelective(OrderAnsqueInfo record);
 
     int updateByPrimaryKey(OrderAnsqueInfo record);
+
+    List<OrderAnsqueInfo> list(@Param("orderId")Integer orderId);
 }

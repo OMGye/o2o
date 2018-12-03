@@ -31,7 +31,7 @@
       create_time)
     values (#{orderAnsqueId,jdbcType=INTEGER}, #{orderId,jdbcType=INTEGER}, #{userType,jdbcType=INTEGER}, 
       #{userId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{orderAnsqueContent,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP})
+      now())
   </insert>
   <insert id="insertSelective" parameterType="com.pojo.OrderAnsqueInfo" >
     insert into order_ansque_info
@@ -116,4 +116,11 @@
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where order_ansque_id = #{orderAnsqueId,jdbcType=INTEGER}
   </update>
+
+  <select id="list" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from bill_info
+    where order_id = #{orderId};
+  </select>
 </mapper>

@@ -65,6 +65,9 @@ public class OrderInfoServiceImpl implements OrderInfoService{
     @Autowired
     private IncomeInfoMapper incomeInfoMapper;
 
+    @Autowired
+    private OrderAnsqueInfoMapper orderAnsqueInfoMapper;
+
 
 
    private static  final Logger logger = LoggerFactory.getLogger(OrderInfoServiceImpl.class);
@@ -1202,6 +1205,61 @@ public class OrderInfoServiceImpl implements OrderInfoService{
         }
 
         return ServerResponse.createByErrorMessage("操作失败");
+    }
+
+    @Override
+    public ServerResponse addAnsOrQue(Integer orderId, Integer userId, Integer type, String userName, String orderAnsqueContent) {
+        if (orderId == null || orderAnsqueContent == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+
+        OrderInfo orderInfo = orderInfoMapper.selectByPrimaryKey(orderId);
+        if (orderInfo == null)
+            return ServerResponse.createByErrorMessage("找不到该订单");
+
+        if (orderInfo.getOrderState() == Const.Order.HAVE_FINISHED || orderInfo.getOrderState() == Const.Order.CANNCEL)
+            return ServerResponse.createByErrorMessage("订单已完成或者已取消");
+
+        if (type == 0 && userId.intValue() != orderInfo.getCustomerId().intValue())
+            return ServerResponse.createByErrorMessage("您不属于该订单");
+
+        if (type == 1 && userId.intValue() != orderInfo.getEngineerId().intValue())
+            return ServerResponse.createByErrorMessage("您不属于该订单");
+
+        OrderAnsqueInfo orderAnsqueInfo = new OrderAnsqueInfo();
+        orderAnsqueInfo.setOrderAnsqueContent(orderAnsqueContent);
+        orderAnsqueInfo.setOrderId(orderId);
+        orderAnsqueInfo.setUserId(userId);
+        orderAnsqueInfo.setUserName(userName);
+        orderAnsqueInfo.setUserType(type);
+
+        int row = orderAnsqueInfoMapper.insert(orderAnsqueInfo);
+        if (row > 0)
+            return ServerResponse.createBySuccess("操作成功");
+        return ServerResponse.createByErrorMessage("操作失败");
+    }
+
+    @Override
+    public ServerResponse<PageInfo> listOrderAnsqueInfoByOrderId(int pageNum, int pageSize, Integer orderId, Integer userId, Integer type) {
+        if (orderId == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+
+        OrderInfo orderInfo = orderInfoMapper.selectByPrimaryKey(orderId);
+        if (orderInfo == null)
+            return ServerResponse.createByErrorMessage("找不到该订单");
+
+        if (orderInfo.getOrderState() == Const.Order.HAVE_FINISHED || orderInfo.getOrderState() == Const.Order.CANNCEL)
+            return ServerResponse.createByErrorMessage("订单已完成或者已取消");
+
+        if (type == 0 && userId.intValue() != orderInfo.getCustomerId().intValue())
+            return ServerResponse.createByErrorMessage("您不属于该订单");
+
+        if (type == 1 && userId.intValue() != orderInfo.getEngineerId().intValue())
+            return ServerResponse.createByErrorMessage("您不属于该订单");
+        PageHelper.startPage(pageNum,pageSize);
+        PageHelper.orderBy("create_time asc");
+        List<OrderAnsqueInfo> list = orderAnsqueInfoMapper.list(orderId);
+        PageInfo pageInfo = new PageInfo(list);
+        return ServerResponse.createBySuccess(pageInfo);
     }
 
 

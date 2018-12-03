@@ -64,4 +64,9 @@ public interface OrderInfoService {
 
     ServerResponse dealOrder(Integer orderId, BigDecimal customerPrice, BigDecimal engineerPrice, BigDecimal engineerQaePrice);
 
+
+    ServerResponse addAnsOrQue(Integer orderId, Integer userId, Integer type, String userName, String orderAnsqueContent);
+
+    ServerResponse<PageInfo> listOrderAnsqueInfoByOrderId(int pageNum, int pageSize, Integer orderId, Integer userId, Integer type);
+
 }
