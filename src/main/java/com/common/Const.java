@@ -9,7 +9,7 @@ public class Const {
 
     public static final String CURRENT_RANK = "currentRank";
 
-    public static final Long TIMER = (long)1800000;
+    public static final Long TIMER = (long)30000;
 
     public static final Long TIMER_FOR_SEND_EMAIL = (long)30000;
 
