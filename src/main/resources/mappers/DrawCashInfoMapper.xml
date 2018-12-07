@@ -36,8 +36,8 @@
       update_time)
     values (#{drawCashId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{userType,jdbcType=INTEGER}, 
       #{userName,jdbcType=VARCHAR}, #{drawCashMoney,jdbcType=DECIMAL}, #{drawDec,jdbcType=VARCHAR}, 
-      #{drawAccount,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP})
+      #{drawAccount,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, now(),
+      now())
   </insert>
   <insert id="insertSelective" parameterType="com.pojo.DrawCashInfo" >
     insert into draw_cash_info
@@ -133,9 +133,9 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
+
+        update_time = now(),
+
     </set>
     where draw_cash_id = #{drawCashId,jdbcType=INTEGER}
   </update>
@@ -149,7 +149,18 @@
       draw_account = #{drawAccount,jdbcType=VARCHAR},
       state = #{state,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = now()
     where draw_cash_id = #{drawCashId,jdbcType=INTEGER}
   </update>
+
+  <select id="list" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from draw_cash_info
+    <where>
+      <if test="userId != null">user_id = #{userId}</if>
+      <if test="type != null"> and user_type = #{type}</if>
+      <if test="state != null"> and state = #{state}</if>
+    </where>
+  </select>
 </mapper>

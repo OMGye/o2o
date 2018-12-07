@@ -1,6 +1,10 @@
 package com.dao;
 
+import com.pojo.DrawCashInfo;
 import com.pojo.ProposeInfo;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface ProposeInfoMapper {
     int deleteByPrimaryKey(Integer proposeId);
@@ -14,4 +18,6 @@ public interface ProposeInfoMapper {
     int updateByPrimaryKeySelective(ProposeInfo record);
 
     int updateByPrimaryKey(ProposeInfo record);
+
+    List<ProposeInfo> list();
 }

@@ -1104,7 +1104,7 @@ public class OrderInfoServiceImpl implements OrderInfoService{
         if (orderInfo.getOrderState() == Const.Order.HAVE_FINISHED || orderInfo.getOrderState() == Const.Order.CANNCEL || orderInfo.getOrderState() == Const.Order.PAYING)
             return ServerResponse.createByErrorMessage("异常操作");
 
-        if (orderInfo.getOrderQae() == 0) {
+        if (orderInfo.getEngineerCheckId() == null) {
             BigDecimal allPrice = BigDecimalUtil.add(customerPrice.doubleValue(), engineerPrice.doubleValue());
             if (allPrice.doubleValue() > orderInfo.getOrderPrice().doubleValue()) {
                 return ServerResponse.createByErrorMessage("价格不合理");
@@ -1255,6 +1255,22 @@ public class OrderInfoServiceImpl implements OrderInfoService{
 
         if (type == 1 && userId.intValue() != orderInfo.getEngineerId().intValue())
             return ServerResponse.createByErrorMessage("您不属于该订单");
+        PageHelper.startPage(pageNum,pageSize);
+        PageHelper.orderBy("create_time asc");
+        List<OrderAnsqueInfo> list = orderAnsqueInfoMapper.list(orderId);
+        PageInfo pageInfo = new PageInfo(list);
+        return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Override
+    public ServerResponse<PageInfo> listOrderAnsqueInfoByOrderId(int pageNum, int pageSize, Integer orderId) {
+        if (orderId == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+
+        OrderInfo orderInfo = orderInfoMapper.selectByPrimaryKey(orderId);
+        if (orderInfo == null)
+            return ServerResponse.createByErrorMessage("找不到该订单");
+
         PageHelper.startPage(pageNum,pageSize);
         PageHelper.orderBy("create_time asc");
         List<OrderAnsqueInfo> list = orderAnsqueInfoMapper.list(orderId);

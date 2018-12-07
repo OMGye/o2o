@@ -292,7 +292,55 @@ public class EngineerInfoController {
     }
 
 
+    @Autowired
+    private DrawCashInfoService drawCashInfoService;
 
+    @RequestMapping(value = "drawCashInfo/list.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> list(HttpSession session,  Integer state,  @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            return drawCashInfoService.list(pageSize, pageNum, curEngineerInfo.getEngineerId(), 1, state);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "drawCashInfo/add.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<PageInfo> add(HttpSession session, DrawCashInfo drawCashInfo, String password) {
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null) {
+            if (curEngineerInfo.getPassword().equals(password)) {
+                return drawCashInfoService.add(drawCashInfo, curEngineerInfo.getEngineerId(), 1, curEngineerInfo.getEngineerName());
+            }
+            return ServerResponse.createByErrorMessage("密码错误");
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
+    @Autowired
+    private ProposeInfoService proposeInfoService;
+
+    @RequestMapping(value = "proposeInfo/add.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<PageInfo> add(HttpSession session, ProposeInfo proposeInfo){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null) {
+            return proposeInfoService.add(proposeInfo,1,curEngineerInfo.getEngineerId());
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "proposeInfo/delete.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<PageInfo> delete(HttpSession session, Integer proposeId){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null) {
+            return proposeInfoService.delete(proposeId,curEngineerInfo.getEngineerId(),1);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
 
 
 }

@@ -29,7 +29,7 @@
       user_name, propose_content, create_time
       )
     values (#{proposeId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{userType,jdbcType=INTEGER}, 
-      #{userName,jdbcType=VARCHAR}, #{proposeContent,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+      #{userName,jdbcType=VARCHAR}, #{proposeContent,jdbcType=VARCHAR}, now()
       )
   </insert>
   <insert id="insertSelective" parameterType="com.pojo.ProposeInfo" >
@@ -105,4 +105,10 @@
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where propose_id = #{proposeId,jdbcType=INTEGER}
   </update>
+
+  <select id="list" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from draw_cash_info
+  </select>
 </mapper>

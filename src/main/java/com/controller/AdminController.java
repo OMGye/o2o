@@ -587,4 +587,78 @@ public class AdminController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
+
+    @RequestMapping(value = "orderInfo/listansorque.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> listAnsOrQue(HttpSession session, Integer orderId,  @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return orderInfoService.listOrderAnsqueInfoByOrderId(pageNum,pageSize,orderId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
+    @Autowired
+    private DrawCashInfoService drawCashInfoService;
+
+    @RequestMapping(value = "drawCashInfo/list.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> list(HttpSession session, Integer type, Integer userId, Integer state,  @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return drawCashInfoService.list(pageSize, pageNum, userId, type, state);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
+    @RequestMapping(value = "drawCashInfo/check.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> check(HttpSession session, Integer drawCashId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return drawCashInfoService.check(drawCashId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "drawCashInfo/getbyid.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> getById(HttpSession session, Integer drawCashId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return drawCashInfoService.getById(drawCashId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
+    @Autowired
+    private ProposeInfoService proposeInfoService;
+
+    @RequestMapping(value = "proposeInfo/list.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> list(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
+
+            return proposeInfoService.list(pageSize, pageNum);
+    }
+
+    @RequestMapping(value = "proposeInfo/getbyid.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> getByProposeId(HttpSession session, Integer proposeId){
+
+        return proposeInfoService.getById(proposeId);
+    }
+
+    @RequestMapping(value = "proposeInfo/delete.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<PageInfo> delete(HttpSession session, Integer proposeId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return proposeInfoService.delete(proposeId,null,null);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
 }

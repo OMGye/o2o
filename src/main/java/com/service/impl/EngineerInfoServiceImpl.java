@@ -37,7 +37,7 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
 
 
     @Override
-    public ServerResponse<EngineerInfo> register(EngineerInfo engineerInfo, MultipartFile file, String path) {
+    public synchronized ServerResponse<EngineerInfo> register(EngineerInfo engineerInfo, MultipartFile file, String path) {
         if (file == null)
             return ServerResponse.createByErrorMessage("必须上传附件");
 

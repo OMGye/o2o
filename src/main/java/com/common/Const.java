@@ -73,23 +73,13 @@ public class Const {
         byte ABLE = 1;
         byte BAN = 10;
     }
-    public interface User{
-        int ACTIVATE = 1;
-        int UNACTIVATE = 0;
+
+
+    public interface Draw{
+
+        int UN_DEAL = 0;
+        int DEAL = 1;
     }
 
-    public interface Item{
-        int WORKING = 0;
-        int FINISHED = 1;
-    }
-
-
-    public interface RecordConst{
-        int UNCHECK = 0;
-        int FIRST_CHECK = 1;
-        int Last_CHECK = 2;
-
-        int RECORD_REFUSE = 10;
-    }
 
 }

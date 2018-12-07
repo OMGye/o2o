@@ -373,4 +373,54 @@ public class CustomerInfoController {
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
+
+
+    @Autowired
+    private DrawCashInfoService drawCashInfoService;
+
+    @RequestMapping(value = "drawCashInfo/list.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> list(HttpSession session,  Integer state,  @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null){
+            return drawCashInfoService.list(pageSize, pageNum, curCustomerInfo.getCustomerId(), 0, state);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "drawCashInfo/add.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> add(HttpSession session, DrawCashInfo drawCashInfo, String password) {
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null){
+            if (curCustomerInfo.getPassword().equals(password)) {
+                return drawCashInfoService.add(drawCashInfo, curCustomerInfo.getCustomerId(), 0, curCustomerInfo.getCustomerName());
+            }
+            return ServerResponse.createByErrorMessage("密码错误");
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @Autowired
+    private ProposeInfoService proposeInfoService;
+
+    @RequestMapping(value = "proposeInfo/add.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<PageInfo> add(HttpSession session, ProposeInfo proposeInfo){
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null){
+            return proposeInfoService.add(proposeInfo,0,curCustomerInfo.getCustomerId());
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "proposeInfo/delete.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<PageInfo> delete(HttpSession session, Integer proposeId){
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null){
+            return proposeInfoService.delete(proposeId,curCustomerInfo.getCustomerId(),0);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
 }
