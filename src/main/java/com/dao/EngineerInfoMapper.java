@@ -1,5 +1,6 @@
 package com.dao;
 
+import com.pojo.CustomerInfo;
 import com.pojo.EngineerInfo;
 import org.apache.ibatis.annotations.Param;
 
@@ -22,5 +23,7 @@ public interface EngineerInfoMapper {
 
     EngineerInfo login(@Param("userName") String userName, @Param("password") String password);
 
-    EngineerInfo selectByUserName(@Param("userName") String userName, @Param("engineerId") Integer engineerId, @Param("email") String email);
+    EngineerInfo selectByUserName(@Param("userName") String userName, @Param("engineerId") Integer engineerId, @Param("email") String email, @Param("phone") String phone, @Param("personCode") String personCode);
+
+    EngineerInfo loginByPhone(@Param("phone") String phone, @Param("password") String password);
 }

@@ -6,12 +6,14 @@ import com.dao.EngineerInfoMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
+import com.pojo.CustomerInfo;
 import com.pojo.EngineerInfo;
 import com.pojo.QuantityInfo;
 import com.service.EngineerInfoService;
 import com.util.FTPUtil;
 import com.util.MailUtil;
 import com.util.PropertiesUtil;
+import com.util.TimerEmailCaughtOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Timer;
 import java.util.UUID;
 
 /**
@@ -41,16 +44,24 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
         if (file == null)
             return ServerResponse.createByErrorMessage("必须上传附件");
 
-        if (engineerInfo.getEngineerName() == null|| engineerInfo.getPassword() == null || engineerInfo.getPhone() == null || engineerInfo.getEmail() == null)
+        if (engineerInfo.getEngineerName() == null|| engineerInfo.getPassword() == null || engineerInfo.getPhone() == null || engineerInfo.getEmail() == null || engineerInfo.getPersonCode() == null)
             return ServerResponse.createByErrorMessage("参数不能为空");
 
-        EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByUserName(engineerInfo.getEngineerName(),null,null);
+        EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByUserName(engineerInfo.getEngineerName(),null,null, null, null);
         if (dbEngineerInfo != null)
             return ServerResponse.createByErrorMessage("该用户名已存在");
 
-        EngineerInfo dbEngineerInfoByEmail = engineerInfoMapper.selectByUserName(null,null,engineerInfo.getEmail());
+        EngineerInfo dbEngineerInfoByEmail = engineerInfoMapper.selectByUserName(null,null,engineerInfo.getEmail(), null, null);
         if (dbEngineerInfoByEmail != null)
             return ServerResponse.createByErrorMessage("该邮箱已存在");
+
+        EngineerInfo dbEngineerInfoByPhone = engineerInfoMapper.selectByUserName(null,null,null, engineerInfo.getPhone(), null);
+        if (dbEngineerInfoByPhone != null)
+            return ServerResponse.createByErrorMessage("该电话已存在");
+
+        EngineerInfo dbEngineerInfoByPersonCode = engineerInfoMapper.selectByUserName(null,null,null, null, engineerInfo.getPersonCode());
+        if (dbEngineerInfoByPersonCode != null)
+            return ServerResponse.createByErrorMessage("该身份证已存在");
 
         engineerInfo.setEngineerBalance(new BigDecimal(0));
         engineerInfo.setEngineerQuantity(new BigDecimal(1));
@@ -121,7 +132,9 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
         if (engineerInfo.getEngineerState() != null && engineerInfo.getEngineerState() == Const.EngineerInfo.ABLE){
             try {
                 EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByPrimaryKey(engineerInfo.getEngineerId());
-                MailUtil.sendMail(dbEngineerInfo.getEmail(),"您的账户已激活");
+                Timer timer = new Timer();
+                TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(dbEngineerInfo.getEmail(), "您的账户已激活");
+                timer.schedule(caughtOrder, Const.TIMER_FOR_SEND_EMAIL);
             }catch (Exception e){
                 return ServerResponse.createByErrorMessage("邮件发送失败"+ e);
             }
@@ -132,6 +145,8 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
         newEngineerInfo.setEngineerClassfy(engineerInfo.getEngineerClassfy());
         newEngineerInfo.setEngineerRank(engineerInfo.getEngineerRank());
         newEngineerInfo.setPassword(engineerInfo.getPassword());
+        newEngineerInfo.setPhone(engineerInfo.getPhone());
+        newEngineerInfo.setPersonCode(engineerInfo.getPersonCode());
         int row = engineerInfoMapper.updateByPrimaryKeySelective(newEngineerInfo);
         if (row > 0)
             return ServerResponse.createBySuccess("审核修改成功");
@@ -139,12 +154,15 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
     }
 
     @Override
-    public ServerResponse<EngineerInfo> login(EngineerInfo engineerInfo) {
-        if (engineerInfo == null || engineerInfo.getEngineerName() == null || engineerInfo.getPassword() == null)
+    public ServerResponse<EngineerInfo> login(String engineerName, String password) {
+        if (engineerName == null || password == null)
             return ServerResponse.createByErrorMessage("参数不能为空");
-        EngineerInfo dbEngineerInfo = engineerInfoMapper.login(engineerInfo.getEngineerName(),engineerInfo.getPassword());
-        if (dbEngineerInfo == null)
-            return ServerResponse.createByErrorMessage("您的用户名或者密码错误");
+        EngineerInfo dbEngineerInfo = engineerInfoMapper.login(engineerName,password);
+        if (dbEngineerInfo == null){
+            dbEngineerInfo = engineerInfoMapper.loginByPhone(engineerName, password);
+            if (dbEngineerInfo == null)
+                return ServerResponse.createByErrorMessage("您的用户名或者密码错误");
+        }
         if (dbEngineerInfo != null){
             if (dbEngineerInfo.getEngineerState() == Const.EngineerInfo.UNABLE)
                 return ServerResponse.createByErrorMessage("您的账号正处于审核中");
@@ -165,19 +183,18 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
         newEngineerInfo.setEmail(engineerInfo.getEmail());
         newEngineerInfo.setEngineerPayCount(engineerInfo.getEngineerPayCount());
         newEngineerInfo.setEngineerQq(engineerInfo.getEngineerQq());
-        newEngineerInfo.setPhone(engineerInfo.getPhone());
         newEngineerInfo.setEngineerCity(engineerInfo.getEngineerCity());
         newEngineerInfo.setEngineerProv(engineerInfo.getEngineerProv());
         newEngineerInfo.setEngineerId(engineerInfo.getEngineerId());
 
         if(engineerInfo.getEngineerName() != null){
-        EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByUserName(engineerInfo.getEngineerName(),engineerInfo.getEngineerId(),null);
+        EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByUserName(engineerInfo.getEngineerName(),engineerInfo.getEngineerId(),null, null, null);
         if (dbEngineerInfo != null)
             return ServerResponse.createByErrorMessage("该用户名已存在");
         }
 
         if(engineerInfo.getEmail() != null) {
-            EngineerInfo dbEngineerInfoByEmail = engineerInfoMapper.selectByUserName(null, engineerInfo.getEngineerId(), engineerInfo.getEmail());
+            EngineerInfo dbEngineerInfoByEmail = engineerInfoMapper.selectByUserName(null, engineerInfo.getEngineerId(), engineerInfo.getEmail(), null, null);
             if (dbEngineerInfoByEmail != null)
                 return ServerResponse.createByErrorMessage("该邮箱已存在");
         }
@@ -192,7 +209,7 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
     public ServerResponse getPassword(EngineerInfo engineerInfo) {
         if (engineerInfo == null || engineerInfo.getEngineerName() == null || engineerInfo.getEmail() == null)
             return ServerResponse.createByErrorMessage("参数不能为空");
-        EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByUserName(engineerInfo.getEngineerName(),null,engineerInfo.getEmail());
+        EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByUserName(engineerInfo.getEngineerName(),null,engineerInfo.getEmail(), null, null);
         if (dbEngineerInfo  == null)
             return ServerResponse.createByErrorMessage("您的用户名和邮箱不匹配");
 
@@ -207,12 +224,32 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
 
     @Override
     public ServerResponse comfirmUserNameAndEmail(EngineerInfo engineerInfo) {
-        if (engineerInfo == null && engineerInfo.getEngineerName() == null && engineerInfo.getEmail() == null)
+        if (engineerInfo == null && engineerInfo.getEngineerName() == null && engineerInfo.getEmail() == null && engineerInfo.getPhone() == null && engineerInfo.getPersonCode() == null)
             return ServerResponse.createByErrorMessage("参数不能为空");
-        EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByUserName(engineerInfo.getEngineerName(),engineerInfo.getEngineerId(),engineerInfo.getEmail());
-       if (dbEngineerInfo != null)
-           return ServerResponse.createByErrorMessage("已存在用户名或者邮箱");
-       return ServerResponse.createBySuccess("不存在用户名或者邮箱");
+        if(engineerInfo.getEngineerName() != null){
+            EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByUserName(engineerInfo.getEngineerName(),null,null, null, null);
+            if (dbEngineerInfo != null)
+                return ServerResponse.createByErrorMessage("该用户名已存在");
+        }
+
+        if(engineerInfo.getEmail() != null){
+            EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByUserName(null,null,engineerInfo.getEmail(), null, null);
+            if (dbEngineerInfo != null)
+                return ServerResponse.createByErrorMessage("该邮箱已存在");
+        }
+
+        if(engineerInfo.getPhone() != null){
+            EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByUserName(null,null,null, engineerInfo.getPhone(), null);
+            if (dbEngineerInfo != null)
+                return ServerResponse.createByErrorMessage("该电话已存在");
+        }
+
+        if(engineerInfo.getPersonCode() != null){
+            EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByUserName(null,null,null, null, engineerInfo.getPersonCode());
+            if (dbEngineerInfo != null)
+                return ServerResponse.createByErrorMessage("该身份证已存在");
+        }
+        return ServerResponse.createBySuccess("验证成功");
     }
 
 

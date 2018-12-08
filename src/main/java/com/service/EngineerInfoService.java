@@ -18,7 +18,7 @@ public interface EngineerInfoService {
 
     ServerResponse check(EngineerInfo engineerInfo);
 
-    ServerResponse<EngineerInfo> login(EngineerInfo engineerInfo);
+    ServerResponse<EngineerInfo> login(String engineerName, String password);
 
     ServerResponse update(EngineerInfo engineerInfo);
 

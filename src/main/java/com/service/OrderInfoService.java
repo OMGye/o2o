@@ -6,6 +6,7 @@ import com.pojo.CustomerInfo;
 import com.pojo.EngineerInfo;
 import com.pojo.OrderInfo;
 import com.vo.EngineerRankVO;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
@@ -16,7 +17,7 @@ import java.util.Map;
  */
 public interface OrderInfoService {
 
-    ServerResponse createOrder(OrderInfo order, CustomerInfo customerInfo, Integer params[],  Integer rushId);
+    ServerResponse createOrder(OrderInfo order, CustomerInfo customerInfo, Integer params[],  Integer rushId, MultipartFile file, String path);
 
     ServerResponse getOrderById(Integer orderId);
 
@@ -67,8 +68,14 @@ public interface OrderInfoService {
 
     ServerResponse addAnsOrQue(Integer orderId, Integer userId, Integer type, String userName, String orderAnsqueContent);
 
+    ServerResponse uploadAnsOrQue(Integer orderId, Integer userId, Integer type, String userName, MultipartFile file, String path);
+
     ServerResponse<PageInfo> listOrderAnsqueInfoByOrderId(int pageNum, int pageSize, Integer orderId, Integer userId, Integer type);
 
     ServerResponse<PageInfo> listOrderAnsqueInfoByOrderId(int pageNum, int pageSize, Integer orderId);
+
+    XSSFWorkbook exportExcelInfo(String startTime, String endTime);
+
+
 
 }

@@ -5,6 +5,7 @@ import com.common.ServerResponse;
 import com.github.pagehelper.PageInfo;
 import com.pojo.*;
 import com.service.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +13,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 
 /**
@@ -661,4 +666,24 @@ public class AdminController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
+
+
+    @RequestMapping(value = "orderInfo/export.do", method = RequestMethod.GET)
+    public void export(HttpSession session, HttpServletResponse response, String startTime, String endTime) {
+        AdminInfo adminInfo = (AdminInfo) session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null) {
+            response.setContentType("application/vnd.ms-excel");
+            response.setHeader("Content-disposition", "attachment;filename=order.xlsx;charset=UTF-8");
+            XSSFWorkbook workbook = orderInfoService.exportExcelInfo(startTime, endTime);
+            try {
+                OutputStream output = response.getOutputStream();
+                BufferedOutputStream bufferedOutPut = new BufferedOutputStream(output);
+                workbook.write(bufferedOutPut);
+                bufferedOutPut.flush();
+                bufferedOutPut.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

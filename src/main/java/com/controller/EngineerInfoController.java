@@ -37,11 +37,12 @@ public class EngineerInfoController {
         String path = request.getSession().getServletContext().getRealPath("upload");
         return engineerInfoService.register(engineerInfo,file,path);
     }
+    
 
     @RequestMapping(value = "engineerInfo/login.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse login(EngineerInfo engineerInfo, HttpSession session){
-        ServerResponse<EngineerInfo> response = engineerInfoService.login(engineerInfo);
+    public ServerResponse login(String engineerName, String password, HttpSession session){
+        ServerResponse<EngineerInfo> response = engineerInfoService.login(engineerName, password);
         if(response.isSuccess()){
             session.setAttribute(Const.CURRENT_USER,response.getData());
             EngineerInfo curEngineerInfo = (EngineerInfo)response.getData();
@@ -262,6 +263,17 @@ public class EngineerInfoController {
         EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
         if (curEngineerInfo != null){
             return orderInfoService.addAnsOrQue(orderId,curEngineerInfo.getEngineerId(),1, curEngineerInfo.getEngineerName(),orderAnsqueContent);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/uploadansorque.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse uploadAnsOrQue(HttpSession session, Integer orderId, @RequestParam(value = "upload_file",required = false) MultipartFile file,  HttpServletRequest request){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            String path = request.getSession().getServletContext().getRealPath("upload");
+            return orderInfoService.uploadAnsOrQue(orderId,curEngineerInfo.getEngineerId(),1, curEngineerInfo.getEngineerName(),file, path);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }

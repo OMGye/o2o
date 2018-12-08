@@ -3,6 +3,7 @@ package com.dao;
 import com.pojo.OrderInfo;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 public interface OrderInfoMapper {
@@ -35,4 +36,7 @@ public interface OrderInfoMapper {
                                           @Param("orderState") Integer orderState);
 
    List<OrderInfo> adminOrderList(@Param("orderState")Integer orderState, @Param("orderFirstCategory")String orderFirstCategory, @Param("orderQae")Integer orderQae);
+
+
+   List<OrderInfo> selectByTime(@Param("startDate")Date startDate, @Param("endDate")Date endDate);
 }

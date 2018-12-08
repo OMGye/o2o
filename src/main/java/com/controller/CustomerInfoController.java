@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,8 +51,8 @@ public class CustomerInfoController {
 
     @RequestMapping(value = "customerInfo/login.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse login(CustomerInfo customerInfo, HttpSession session) {
-        ServerResponse<CustomerInfo> response = customerInfoService.login(customerInfo);
+    public ServerResponse login(String customerName, String password ,HttpSession session) {
+        ServerResponse<CustomerInfo> response = customerInfoService.login(customerName, password);
         if (response.isSuccess()) {
             session.setAttribute(Const.CURRENT_USER, response.getData());
         }
@@ -142,10 +143,11 @@ public class CustomerInfoController {
 
     @RequestMapping(value = "orderInfo/createorder.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse createOrder(HttpSession session, OrderInfo orderInfo, Integer rushId, Integer[] params) {
+    public ServerResponse createOrder(@RequestParam(value = "upload_file",required = false) MultipartFile file, HttpSession session, OrderInfo orderInfo, Integer rushId, Integer[] params, HttpServletRequest request) {
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
         if (curCustomerInfo != null) {
-            return orderInfoService.createOrder(orderInfo, curCustomerInfo, params, rushId);
+            String path = request.getSession().getServletContext().getRealPath("upload");
+            return orderInfoService.createOrder(orderInfo, curCustomerInfo, params, rushId, file, path);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
@@ -351,6 +353,17 @@ public class CustomerInfoController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
+    @RequestMapping(value = "orderInfo/uploadansorque.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse uploadAnsOrQue(HttpSession session, Integer orderId, @RequestParam(value = "upload_file",required = false) MultipartFile file,  HttpServletRequest request){
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null){
+            String path = request.getSession().getServletContext().getRealPath("upload");
+            return orderInfoService.uploadAnsOrQue(orderId,curCustomerInfo.getCustomerId(),0, curCustomerInfo.getCustomerName(),file, path);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
     @RequestMapping(value = "orderInfo/listansorque.do", method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse<PageInfo> listAnsOrQue(HttpSession session, Integer orderId, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
@@ -388,7 +401,7 @@ public class CustomerInfoController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
-    @RequestMapping(value = "drawCashInfo/add.do", method = RequestMethod.GET)
+    @RequestMapping(value = "drawCashInfo/add.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<PageInfo> add(HttpSession session, DrawCashInfo drawCashInfo, String password) {
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
@@ -400,6 +413,8 @@ public class CustomerInfoController {
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
+
+
 
     @Autowired
     private ProposeInfoService proposeInfoService;

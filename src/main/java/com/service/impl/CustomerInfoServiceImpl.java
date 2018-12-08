@@ -39,19 +39,31 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
 
     @Override
     public ServerResponse register(CustomerInfo customerInfo) {
-        if (customerInfo == null || customerInfo.getCustomerName() == null || customerInfo.getPassword() == null || customerInfo.getPhone() == null || customerInfo.getEmail() == null)
+        if (customerInfo == null || customerInfo.getCustomerName() == null || customerInfo.getPassword() == null || customerInfo.getPhone() == null || customerInfo.getEmail() == null || customerInfo.getPersonCode() == null)
             return ServerResponse.createByErrorMessage("参数不能为空");
 
         if(customerInfo.getCustomerName() != null){
-            CustomerInfo dbCustomer = customerInfoMapper.selectByUserName(customerInfo.getCustomerName(),customerInfo.getCustomerId(),null);
+            CustomerInfo dbCustomer = customerInfoMapper.selectByUserName(customerInfo.getCustomerName(),null,null,null,null);
             if (dbCustomer != null)
                 return ServerResponse.createByErrorMessage("该用户名已存在");
         }
 
         if(customerInfo.getEmail() != null){
-            CustomerInfo dbCustomer = customerInfoMapper.selectByUserName(null,customerInfo.getCustomerId(),customerInfo.getEmail());
+            CustomerInfo dbCustomer = customerInfoMapper.selectByUserName(null,null,customerInfo.getEmail(),null, null);
             if (dbCustomer != null)
                 return ServerResponse.createByErrorMessage("该邮箱已存在");
+        }
+
+        if(customerInfo.getPhone() != null){
+            CustomerInfo dbCustomer = customerInfoMapper.selectByUserName(null,null,null,customerInfo.getPhone(), null);
+            if (dbCustomer != null)
+                return ServerResponse.createByErrorMessage("该电话已存在");
+        }
+
+        if(customerInfo.getPersonCode() != null){
+            CustomerInfo dbCustomer = customerInfoMapper.selectByUserName(null,null,null,null, customerInfo.getPersonCode());
+            if (dbCustomer != null)
+                return ServerResponse.createByErrorMessage("该身份证已存在");
         }
         customerInfo.setCustomerBalance(new BigDecimal(0));
         customerInfo.setCustomerState(Const.CustomerInfo.ABLE);
@@ -83,12 +95,15 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
     }
 
     @Override
-    public ServerResponse<CustomerInfo> login(CustomerInfo customerInfo) {
-        if (customerInfo == null || customerInfo.getCustomerName() == null || customerInfo.getPassword() == null)
+    public ServerResponse<CustomerInfo> login(String customerName, String password) {
+        if (customerName == null || password == null)
             return ServerResponse.createByErrorMessage("参数不能为空");
-        CustomerInfo dbCurtomerInfo = customerInfoMapper.login(customerInfo.getCustomerName(),customerInfo.getPassword());
-        if (dbCurtomerInfo == null)
-            return ServerResponse.createByErrorMessage("您的用户名或者密码错误");
+        CustomerInfo dbCurtomerInfo = customerInfoMapper.login(customerName,password);
+        if (dbCurtomerInfo == null){
+            dbCurtomerInfo = customerInfoMapper.loginByPhone(customerName, password);
+            if (dbCurtomerInfo == null)
+                return ServerResponse.createByErrorMessage("您的用户名或者密码错误");
+        }
         if (dbCurtomerInfo != null){
             if (dbCurtomerInfo.getCustomerState() == Const.CustomerInfo.BAN)
                 return ServerResponse.createByErrorMessage("您的账号已被停止使用");
@@ -103,7 +118,6 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
         CustomerInfo newCustomerInfo = new CustomerInfo();
         newCustomerInfo.setCustomerName(customerInfo.getCustomerName());
         newCustomerInfo.setPassword(customerInfo.getPassword());
-        newCustomerInfo.setPhone(customerInfo.getPhone());
         newCustomerInfo.setEmail(customerInfo.getEmail());
         newCustomerInfo.setCustomerCity(customerInfo.getCustomerCity());
         newCustomerInfo.setCustomerProv(customerInfo.getCustomerProv());
@@ -112,13 +126,13 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
         newCustomerInfo.setCustomerAttention(customerInfo.getCustomerAttention());
         newCustomerInfo.setCustomerId(customerInfo.getCustomerId());
         if(customerInfo.getCustomerName() != null){
-            CustomerInfo dbCustomer = customerInfoMapper.selectByUserName(customerInfo.getCustomerName(),customerInfo.getCustomerId(),null);
+            CustomerInfo dbCustomer = customerInfoMapper.selectByUserName(customerInfo.getCustomerName(),customerInfo.getCustomerId(),null,null, null);
             if (dbCustomer != null)
                 return ServerResponse.createByErrorMessage("该用户名已存在");
         }
 
         if(customerInfo.getEmail() != null){
-            CustomerInfo dbCustomer = customerInfoMapper.selectByUserName(null,customerInfo.getCustomerId(),customerInfo.getEmail());
+            CustomerInfo dbCustomer = customerInfoMapper.selectByUserName(null,customerInfo.getCustomerId(),customerInfo.getEmail(), null , null);
             if (dbCustomer != null)
                 return ServerResponse.createByErrorMessage("该邮箱已存在");
         }
@@ -133,7 +147,7 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
     public ServerResponse getPassword(CustomerInfo customerInfo) {
         if (customerInfo == null || customerInfo.getCustomerName() == null || customerInfo.getEmail() == null)
             return ServerResponse.createByErrorMessage("参数不能为空");
-        CustomerInfo dbCustomerInfo = customerInfoMapper.selectByUserName(customerInfo.getCustomerName(),null,customerInfo.getEmail());
+        CustomerInfo dbCustomerInfo = customerInfoMapper.selectByUserName(customerInfo.getCustomerName(),null,customerInfo.getEmail(), null, null);
         if (dbCustomerInfo  == null)
             return ServerResponse.createByErrorMessage("您的用户名和邮箱不匹配");
         try {
@@ -148,12 +162,32 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
 
     @Override
     public ServerResponse comfirmUserNameAndEmail(CustomerInfo customerInfo) {
-        if (customerInfo == null && customerInfo.getCustomerName() == null && customerInfo.getEmail() == null)
+        if (customerInfo == null && customerInfo.getCustomerName() == null && customerInfo.getEmail() == null && customerInfo.getPersonCode() == null && customerInfo.getPhone() == null)
             return ServerResponse.createByErrorMessage("参数不能为空");
-        CustomerInfo dbCustomer = customerInfoMapper.selectByUserName(customerInfo.getCustomerName(),customerInfo.getCustomerId(),customerInfo.getEmail());
-        if (dbCustomer != null)
-            return ServerResponse.createByErrorMessage("已存在用户名或者邮箱");
-        return ServerResponse.createBySuccess("不存在用户名或者邮箱");
+        if(customerInfo.getCustomerName() != null){
+            CustomerInfo dbCustomer = customerInfoMapper.selectByUserName(customerInfo.getCustomerName(),null,null,null,null);
+            if (dbCustomer != null)
+                return ServerResponse.createByErrorMessage("该用户名已存在");
+        }
+
+        if(customerInfo.getEmail() != null){
+            CustomerInfo dbCustomer = customerInfoMapper.selectByUserName(null,null,customerInfo.getEmail(),null, null);
+            if (dbCustomer != null)
+                return ServerResponse.createByErrorMessage("该邮箱已存在");
+        }
+
+        if(customerInfo.getPhone() != null){
+            CustomerInfo dbCustomer = customerInfoMapper.selectByUserName(null,null,null,customerInfo.getPhone(), null);
+            if (dbCustomer != null)
+                return ServerResponse.createByErrorMessage("该电话已存在");
+        }
+
+        if(customerInfo.getPersonCode() != null){
+            CustomerInfo dbCustomer = customerInfoMapper.selectByUserName(null,null,null,null, customerInfo.getPersonCode());
+            if (dbCustomer != null)
+                return ServerResponse.createByErrorMessage("该身份证已存在");
+        }
+        return ServerResponse.createBySuccess("验证成功");
     }
 
     @Override
@@ -164,6 +198,8 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
         newCustomerInfo.setCustomerId(customerInfo.getCustomerId());
         newCustomerInfo.setCustomerState(customerInfo.getCustomerState());
         newCustomerInfo.setPassword(customerInfo.getPassword());
+        newCustomerInfo.setPhone(customerInfo.getPhone());
+        newCustomerInfo.setPersonCode(customerInfo.getPersonCode());
         int row = customerInfoMapper.updateByPrimaryKeySelective(newCustomerInfo);
         if (row > 0)
             return ServerResponse.createBySuccess("审核修改成功");

@@ -14,6 +14,8 @@ public class EngineerInfo {
 
     private String email;
 
+    private String personCode;
+
     private String engineerQq;
 
     private String engineerProv;
@@ -49,13 +51,22 @@ public class EngineerInfo {
         return orderCount;
     }
 
-    public EngineerInfo(Integer engineerId, String engineerName, String password, String phone, String email, String engineerQq, String engineerProv, String engineerCity, Byte engineerState, String engineerPayCount, BigDecimal engineerBalance, String engineerFile, Integer engineerRank, String engineerClassfy, BigDecimal engineerQuantity, Integer orderCount, Date createTime, Date updateTime) {
+    public void setPersonCode(String personCode) {
+        this.personCode = personCode;
+    }
 
+    public String getPersonCode() {
+
+        return personCode;
+    }
+
+    public EngineerInfo(Integer engineerId, String engineerName, String password, String phone, String email, String personCode, String engineerQq, String engineerProv, String engineerCity, Byte engineerState, String engineerPayCount, BigDecimal engineerBalance, String engineerFile, Integer engineerRank, String engineerClassfy, BigDecimal engineerQuantity, Integer orderCount, Date createTime, Date updateTime) {
         this.engineerId = engineerId;
         this.engineerName = engineerName;
         this.password = password;
         this.phone = phone;
         this.email = email;
+        this.personCode = personCode;
         this.engineerQq = engineerQq;
         this.engineerProv = engineerProv;
         this.engineerCity = engineerCity;

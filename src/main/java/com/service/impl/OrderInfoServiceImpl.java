@@ -13,8 +13,10 @@ import com.service.OrderInfoService;
 import com.util.*;
 import com.vo.EngineerDefriendJson;
 import com.vo.EngineerRankVO;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,9 +75,9 @@ public class OrderInfoServiceImpl implements OrderInfoService{
    private static  final Logger logger = LoggerFactory.getLogger(OrderInfoServiceImpl.class);
 
     @Override
-    public ServerResponse createOrder(OrderInfo order, CustomerInfo customerInfo, Integer params[], Integer rushId) {
+    public ServerResponse createOrder(OrderInfo order, CustomerInfo customerInfo, Integer params[], Integer rushId, MultipartFile file, String path) {
         if (order.getOrderFirstCategory() == null || order.getOrderSecondCategory() == null ||
-                order.getOrderMi() == null || order.getOrderQae() == null || order.getBasicLayer() == null || order.getPriceTogetherNum() == null )
+                order.getOrderMi() == null || order.getOrderQae() == null || order.getBasicLayer() == null || order.getPriceTogetherNum() == null || file == null)
             return ServerResponse.createByErrorMessage("参数不能为空");
 
         //1.得到CAM的基础价格
@@ -207,6 +209,37 @@ public class OrderInfoServiceImpl implements OrderInfoService{
         order.setCustomerName(customerInfo.getCustomerName());
         order.setOrderState(Const.Order.PAYING);
         order.setOrderPrice(allCount);
+
+        String fileName = file.getOriginalFilename();
+        //扩展名
+        //abc.jpg
+        String fileExtensionName = fileName.substring(fileName.lastIndexOf(".") + 1);
+        String uploadFileName = UUID.randomUUID().toString() + "." + fileExtensionName;
+        logger.info("开始上传文件,上传文件的文件名:{},上传的路径:{},新文件名:{}", fileName, path, uploadFileName);
+
+        File fileDir = new File(path);
+        if (!fileDir.exists()) {
+            fileDir.setWritable(true);
+            fileDir.mkdirs();
+        }
+        File targetFile = new File(path, uploadFileName);
+
+
+        try {
+            file.transferTo(targetFile);
+            //文件已经上传成功了
+
+            FTPUtil.uploadFile(Lists.newArrayList(targetFile));
+            //已经上传到ftp服务器上
+
+            targetFile.delete();
+        } catch (IOException e) {
+            logger.error("上传文件异常", e);
+            return ServerResponse.createByErrorMessage("上传文件异常");
+        }
+        order.setOrderFile(PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFile.getName());
+
+
 
         int row = orderInfoMapper.insert(order);
         if (row > 0){
@@ -1239,6 +1272,65 @@ public class OrderInfoServiceImpl implements OrderInfoService{
     }
 
     @Override
+    public ServerResponse uploadAnsOrQue(Integer orderId, Integer userId, Integer type, String userName, MultipartFile file, String path) {
+        if (orderId == null || file == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+
+        OrderInfo orderInfo = orderInfoMapper.selectByPrimaryKey(orderId);
+        if (orderInfo == null)
+            return ServerResponse.createByErrorMessage("找不到该订单");
+
+        if (orderInfo.getOrderState() == Const.Order.HAVE_FINISHED || orderInfo.getOrderState() == Const.Order.CANNCEL)
+            return ServerResponse.createByErrorMessage("订单已完成或者已取消");
+
+        if (type == 0 && userId.intValue() != orderInfo.getCustomerId().intValue())
+            return ServerResponse.createByErrorMessage("您不属于该订单");
+
+        if (type == 1 && userId.intValue() != orderInfo.getEngineerId().intValue())
+            return ServerResponse.createByErrorMessage("您不属于该订单");
+
+        String fileName = file.getOriginalFilename();
+        //扩展名
+        //abc.jpg
+        String fileExtensionName = fileName.substring(fileName.lastIndexOf(".") + 1);
+        String uploadFileName = UUID.randomUUID().toString() + "." + fileExtensionName;
+        logger.info("开始上传文件,上传文件的文件名:{},上传的路径:{},新文件名:{}", fileName, path, uploadFileName);
+
+        File fileDir = new File(path);
+        if (!fileDir.exists()) {
+            fileDir.setWritable(true);
+            fileDir.mkdirs();
+        }
+        File targetFile = new File(path, uploadFileName);
+
+
+        try {
+            file.transferTo(targetFile);
+            //文件已经上传成功了
+
+            FTPUtil.uploadFile(Lists.newArrayList(targetFile));
+            //已经上传到ftp服务器上
+
+            targetFile.delete();
+        } catch (IOException e) {
+            logger.error("上传文件异常", e);
+            return ServerResponse.createByErrorMessage("上传文件异常");
+        }
+
+        OrderAnsqueInfo orderAnsqueInfo = new OrderAnsqueInfo();
+        orderAnsqueInfo.setOrderAnsqueContent(PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFile.getName());
+        orderAnsqueInfo.setOrderId(orderId);
+        orderAnsqueInfo.setUserId(userId);
+        orderAnsqueInfo.setUserName(userName);
+        orderAnsqueInfo.setUserType(type);
+
+        int row = orderAnsqueInfoMapper.insert(orderAnsqueInfo);
+        if (row > 0)
+            return ServerResponse.createBySuccess("操作成功");
+        return ServerResponse.createByErrorMessage("操作失败");
+    }
+
+    @Override
     public ServerResponse<PageInfo> listOrderAnsqueInfoByOrderId(int pageNum, int pageSize, Integer orderId, Integer userId, Integer type) {
         if (orderId == null)
             return ServerResponse.createByErrorMessage("参数为空");
@@ -1276,6 +1368,42 @@ public class OrderInfoServiceImpl implements OrderInfoService{
         List<OrderAnsqueInfo> list = orderAnsqueInfoMapper.list(orderId);
         PageInfo pageInfo = new PageInfo(list);
         return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Override
+    public XSSFWorkbook exportExcelInfo(String startTime, String endTime) {
+        if (startTime == null || endTime == null)
+            return null;
+        try {
+            //根据ID查找数据
+            Date startDate = DateTimeUtil.strToDate(startTime,"yyyy-MM-dd");
+            Date endDate = DateTimeUtil.strToDate(endTime, "yyyy-MM-dd");
+            List<OrderInfo> orderInfoList = orderInfoMapper.selectByTime(startDate, endDate);
+
+            XSSFWorkbook xssfWorkbook=null;
+            List<ExcelBean> excel=new ArrayList<>();
+            Map<Integer,List<ExcelBean>> map=new LinkedHashMap<>();
+            //设置标题栏
+            excel.add(new ExcelBean("订单id","orderId",0));
+            excel.add(new ExcelBean("订单金额","orderPrice",0));
+            excel.add(new ExcelBean("客户文件","orderCustomerFile",0));
+            excel.add(new ExcelBean("工程师完单文件","orderFile",0));
+            excel.add(new ExcelBean(" PCB种类","orderFirstCategory",0));
+            excel.add(new ExcelBean("订单种类","orderSecondCategory",0));
+            excel.add(new ExcelBean("MI","orderMi",0));
+            excel.add(new ExcelBean("QAE","orderQae",0));
+            excel.add(new ExcelBean("参数","otherParamInfo",0));
+            excel.add(new ExcelBean("层数","basicLayer",0));
+            excel.add(new ExcelBean("拼款数","priceTogetherNum",0));
+            excel.add(new ExcelBean("下订单的时间","createTime",0));
+            excel.add(new ExcelBean("完成时间","updateTime",0));
+            map.put(0, excel);
+            String sheetName ="order";
+            xssfWorkbook = ExcelUtil.createExcelFile(OrderInfo.class, orderInfoList, map, sheetName);
+            return xssfWorkbook;
+        }catch (Exception e){
+            return null;
+        }
     }
 
 

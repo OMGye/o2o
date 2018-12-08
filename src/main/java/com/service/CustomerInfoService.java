@@ -17,7 +17,7 @@ public interface CustomerInfoService {
 
     ServerResponse<CustomerInfo> getEngineerInfoById(Integer customerId);
 
-    ServerResponse<CustomerInfo> login(CustomerInfo customerInfo);
+    ServerResponse<CustomerInfo> login(String customerName, String password);
 
     ServerResponse update(CustomerInfo customerInfo);
 

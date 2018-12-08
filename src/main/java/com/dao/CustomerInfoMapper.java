@@ -21,9 +21,11 @@ public interface CustomerInfoMapper {
 
     int updateByPrimaryKey(CustomerInfo record);
 
-    CustomerInfo selectByUserName(@Param("customerName") String customerName, @Param("customerId") Integer customerId, @Param("email") String email);
+    CustomerInfo selectByUserName(@Param("customerName") String customerName, @Param("customerId") Integer customerId, @Param("email") String email,@Param("phone") String phone, @Param("personCode") String personCode);
 
     CustomerInfo login(@Param("customerName") String customerName, @Param("password") String password);
+
+    CustomerInfo loginByPhone(@Param("phone") String phone, @Param("password") String password);
 
     List<CustomerInfo> list(@Param("state") Integer state);
 

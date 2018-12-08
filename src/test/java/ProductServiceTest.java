@@ -1,11 +1,13 @@
 
-import com.pojo.CustomerInfo;
-import com.service.OrderInfoService;
-import com.vo.EngineerRankVO;
+import com.dao.OrderInfoMapper;
+
+import com.pojo.OrderInfo;
+import com.util.DateTimeUtil;
+
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -14,13 +16,15 @@ import java.util.List;
 public class ProductServiceTest extends TestBase {
 
     @Autowired
-    private OrderInfoService orderInfoService;
+    private OrderInfoMapper orderInfoMapper;
 
     @Test
     public void testIProductService(){
-        CustomerInfo customerInfo = new CustomerInfo();
-        customerInfo.setCustomerId(1001);
-        orderInfoService.customerList(100,1,customerInfo,null);
+        Date startDate = DateTimeUtil.strToDate("2018-12-01","yyyy-MM-dd");
+        Date endDate = DateTimeUtil.strToDate("2018-12-06","yyyy-MM-dd");
+
+        List<OrderInfo> orderInfoList = orderInfoMapper.selectByTime(startDate, endDate);
+        System.out.println(orderInfoList.size());
     }
 
 

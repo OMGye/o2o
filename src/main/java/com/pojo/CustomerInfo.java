@@ -14,6 +14,8 @@ public class CustomerInfo {
 
     private String email;
 
+    private String personCode;
+
     private String customerQq;
 
     private String customerProv;
@@ -32,25 +34,12 @@ public class CustomerInfo {
 
     private String engineerDefriend;
 
-    public void setEngineerDefriend(String engineerDefriend) {
-        this.engineerDefriend = engineerDefriend;
-    }
-
-    public String getEngineerDefriend() {
-
-        return engineerDefriend;
-    }
-
     private Date createTime;
 
     private Date updateTime;
 
 
-    public CustomerInfo() {
-    }
-
     public void setCustomerId(Integer customerId) {
-
         this.customerId = customerId;
     }
 
@@ -68,6 +57,10 @@ public class CustomerInfo {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setPersonCode(String personCode) {
+        this.personCode = personCode;
     }
 
     public void setCustomerQq(String customerQq) {
@@ -102,6 +95,10 @@ public class CustomerInfo {
         this.orderCount = orderCount;
     }
 
+    public void setEngineerDefriend(String engineerDefriend) {
+        this.engineerDefriend = engineerDefriend;
+    }
+
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
@@ -129,6 +126,10 @@ public class CustomerInfo {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getPersonCode() {
+        return personCode;
     }
 
     public String getCustomerQq() {
@@ -163,6 +164,10 @@ public class CustomerInfo {
         return orderCount;
     }
 
+    public String getEngineerDefriend() {
+        return engineerDefriend;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -171,12 +176,14 @@ public class CustomerInfo {
         return updateTime;
     }
 
-    public CustomerInfo(Integer customerId, String customerName, String password, String phone, String email, String customerQq, String customerProv, String customerCity, Byte customerState, String customerPayCount, BigDecimal customerBalance, String customerAttention, Integer orderCount, String engineerDefriend, Date createTime, Date updateTime) {
+    public CustomerInfo(Integer customerId, String customerName, String password, String phone, String email, String personCode, String customerQq, String customerProv, String customerCity, Byte customerState, String customerPayCount, BigDecimal customerBalance, String customerAttention, Integer orderCount, String engineerDefriend, Date createTime, Date updateTime) {
+
         this.customerId = customerId;
         this.customerName = customerName;
         this.password = password;
         this.phone = phone;
         this.email = email;
+        this.personCode = personCode;
         this.customerQq = customerQq;
         this.customerProv = customerProv;
         this.customerCity = customerCity;
@@ -188,5 +195,9 @@ public class CustomerInfo {
         this.engineerDefriend = engineerDefriend;
         this.createTime = createTime;
         this.updateTime = updateTime;
+    }
+
+    public CustomerInfo() {
+
     }
 }

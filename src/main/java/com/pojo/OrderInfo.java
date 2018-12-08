@@ -50,6 +50,8 @@ public class OrderInfo {
 
     private String orderFile;
 
+    private String orderCustomerFile;
+
     private String refuseDec;
 
     private Date createTime;
@@ -74,7 +76,16 @@ public class OrderInfo {
         return orderQaePrice;
     }
 
-    public OrderInfo(Integer orderId, Integer customerId, String customerName, Integer engineerId, String engineerName, Integer engineerCheckId, String engineerCheckName, String orderFirstCategory, String orderSecondCategory, Integer orderMi, Integer orderQae, String otherParamInfo, Integer basicLayer, Integer priceTogetherNum, String orderDec, Integer orderRush, Integer orderDeductRank, String orderDeductDec, String orderRateDec, Integer orderState, BigDecimal orderPrice, BigDecimal orderQaePrice, String orderFile, String refuseDec, Date createTime, Date updateTime) {
+    public void setOrderCustomerFile(String orderCustomerFile) {
+        this.orderCustomerFile = orderCustomerFile;
+    }
+
+    public String getOrderCustomerFile() {
+
+        return orderCustomerFile;
+    }
+
+    public OrderInfo(Integer orderId, Integer customerId, String customerName, Integer engineerId, String engineerName, Integer engineerCheckId, String engineerCheckName, String orderFirstCategory, String orderSecondCategory, Integer orderMi, Integer orderQae, String otherParamInfo, Integer basicLayer, Integer priceTogetherNum, String orderDec, Integer orderRush, Integer orderDeductRank, String orderDeductDec, String orderRateDec, Integer orderState, BigDecimal orderPrice, BigDecimal orderQaePrice, String orderFile, String orderCustomerFile, String refuseDec, Date createTime, Date updateTime) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.customerName = customerName;
@@ -98,6 +109,7 @@ public class OrderInfo {
         this.orderPrice = orderPrice;
         this.orderQaePrice = orderQaePrice;
         this.orderFile = orderFile;
+        this.orderCustomerFile = orderCustomerFile;
         this.refuseDec = refuseDec;
         this.createTime = createTime;
         this.updateTime = updateTime;

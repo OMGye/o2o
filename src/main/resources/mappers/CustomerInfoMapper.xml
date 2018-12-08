@@ -8,6 +8,7 @@
       <arg column="password" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="phone" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="email" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="person_code" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="customer_qq" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="customer_prov" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="customer_city" jdbcType="VARCHAR" javaType="java.lang.String" />
@@ -22,7 +23,7 @@
     </constructor>
   </resultMap>
   <sql id="Base_Column_List" >
-    customer_id, customer_name, password, phone, email, customer_qq, customer_prov, customer_city,
+    customer_id, customer_name, password, phone, email,person_code, customer_qq, customer_prov, customer_city,
     customer_state, customer_pay_count, customer_balance, customer_attention, order_count,engineer_defriend, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -37,12 +38,12 @@
   </delete>
   <insert id="insert" parameterType="com.pojo.CustomerInfo" >
     insert into customer_info (customer_id, customer_name, password, 
-      phone, email, customer_qq, 
+      phone, email, person_code,customer_qq,
       customer_prov, customer_city, customer_state, 
       customer_pay_count, customer_balance, customer_attention,order_count,engineer_defriend,create_time,
       update_time)
     values (#{customerId,jdbcType=INTEGER}, #{customerName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
-      #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{customerQq,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{personCode,jdbcType=VARCHAR},#{customerQq,jdbcType=VARCHAR},
       #{customerProv,jdbcType=VARCHAR}, #{customerCity,jdbcType=VARCHAR}, #{customerState,jdbcType=TINYINT}, 
       #{customerPayCount,jdbcType=VARCHAR}, #{customerBalance,jdbcType=DECIMAL},#{customerAttention,jdbcType=LONGVARCHAR} , #{orderCount,jdbcType=INTEGER},#{engineerDefriend,jdbcType=VARCHAR}, now(),
       now())
@@ -64,6 +65,9 @@
       </if>
       <if test="email != null" >
         email,
+      </if>
+      <if test="personCode != null" >
+        person_code,
       </if>
       <if test="customerQq != null" >
         customer_qq,
@@ -114,6 +118,9 @@
       </if>
       <if test="email != null" >
         #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="personCode != null" >
+        #{personCode,jdbcType=VARCHAR},
       </if>
       <if test="customerQq != null" >
         #{customerQq,jdbcType=VARCHAR},
@@ -166,6 +173,9 @@
       <if test="email != null" >
         email = #{email,jdbcType=VARCHAR},
       </if>
+      <if test="personCode != null" >
+        person_code = #{personCode,jdbcType=VARCHAR},
+      </if>
       <if test="customerQq != null" >
         customer_qq = #{customerQq,jdbcType=VARCHAR},
       </if>
@@ -210,6 +220,7 @@
       password = #{password,jdbcType=VARCHAR},
       phone = #{phone,jdbcType=VARCHAR},
       email = #{email,jdbcType=VARCHAR},
+      person_code = #{personCode,jdbcType=VARCHAR},
       customer_qq = #{customerQq,jdbcType=VARCHAR},
       customer_prov = #{customerProv,jdbcType=VARCHAR},
       customer_city = #{customerCity,jdbcType=VARCHAR},
@@ -228,6 +239,7 @@
       password = #{password,jdbcType=VARCHAR},
       phone = #{phone,jdbcType=VARCHAR},
       email = #{email,jdbcType=VARCHAR},
+      person_code = #{personCode,jdbcType=VARCHAR},
       customer_qq = #{customerQq,jdbcType=VARCHAR},
       customer_prov = #{customerProv,jdbcType=VARCHAR},
       customer_city = #{customerCity,jdbcType=VARCHAR},
@@ -250,6 +262,8 @@
       <if test="customerId != null"> customer_id != #{customerId}</if>
       <if test="customerName != null">and customer_name = #{customerName}</if>
       <if test="email != null">and email = #{email}</if>
+      <if test="phone != null">and phone = #{phone}</if>
+      <if test="personCode != null">and person_code = #{person_code}</if>
     </where>
   </select>
 
@@ -258,6 +272,14 @@
     <include refid="Base_Column_List" />
     from customer_info
     where customer_name = #{customerName,jdbcType=VARCHAR}
+    and password = #{password,jdbcType=VARCHAR}
+  </select>
+
+  <select id="loginByPhone" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List" />
+    from customer_info
+    where phone = #{phone,jdbcType=VARCHAR}
     and password = #{password,jdbcType=VARCHAR}
   </select>
 

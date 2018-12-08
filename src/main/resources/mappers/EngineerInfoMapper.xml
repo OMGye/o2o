@@ -8,6 +8,7 @@
       <arg column="password" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="phone" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="email" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="person_code" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="engineer_qq" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="engineer_prov" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="engineer_city" jdbcType="VARCHAR" javaType="java.lang.String" />
@@ -24,7 +25,7 @@
     </constructor>
   </resultMap>
   <sql id="Base_Column_List" >
-    engineer_id, engineer_name, password, phone, email, engineer_qq, engineer_prov, engineer_city, 
+    engineer_id, engineer_name, password, phone, email,person_code, engineer_qq, engineer_prov, engineer_city,
     engineer_state, engineer_pay_count, engineer_balance, engineer_file, engineer_rank, 
     engineer_classfy, engineer_quantity,order_count, create_time, update_time
   </sql>
@@ -40,13 +41,13 @@
   </delete>
   <insert id="insert" parameterType="com.pojo.EngineerInfo" >
     insert into engineer_info (engineer_id, engineer_name, password, 
-      phone, email, engineer_qq, 
+      phone, email, person_code, engineer_qq,
       engineer_prov, engineer_city, engineer_state, 
       engineer_pay_count, engineer_balance, engineer_file, 
       engineer_rank, engineer_classfy, engineer_quantity,order_count ,
       create_time, update_time)
     values (#{engineerId,jdbcType=INTEGER}, #{engineerName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
-      #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{engineerQq,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{personCode,jdbcType=VARCHAR},#{engineerQq,jdbcType=VARCHAR},
       #{engineerProv,jdbcType=VARCHAR}, #{engineerCity,jdbcType=VARCHAR}, #{engineerState,jdbcType=TINYINT}, 
       #{engineerPayCount,jdbcType=VARCHAR}, #{engineerBalance,jdbcType=DECIMAL}, #{engineerFile,jdbcType=VARCHAR}, 
       #{engineerRank,jdbcType=INTEGER}, #{engineerClassfy,jdbcType=VARCHAR}, #{engineerQuantity,jdbcType=DECIMAL}, #{orderCount,jdbcType=INTEGER},
@@ -69,6 +70,9 @@
       </if>
       <if test="email != null" >
         email,
+      </if>
+      <if test="personCode != null" >
+        person_code,
       </if>
       <if test="engineerQq != null" >
         engineer_qq,
@@ -126,6 +130,9 @@
       <if test="email != null" >
         #{email,jdbcType=VARCHAR},
       </if>
+      <if test="personCode != null" >
+        #{personCode,jdbcType=VARCHAR},
+      </if>
       <if test="engineerQq != null" >
         #{engineerQq,jdbcType=VARCHAR},
       </if>
@@ -182,6 +189,9 @@
       <if test="email != null" >
         email = #{email,jdbcType=VARCHAR},
       </if>
+      <if test="personCode != null" >
+        person_code = #{personCode,jdbcType=VARCHAR},
+      </if>
       <if test="engineerQq != null" >
         engineer_qq = #{engineerQq,jdbcType=VARCHAR},
       </if>
@@ -230,6 +240,7 @@
       password = #{password,jdbcType=VARCHAR},
       phone = #{phone,jdbcType=VARCHAR},
       email = #{email,jdbcType=VARCHAR},
+      person_code = #{personCode,jdbcType=VARCHAR},
       engineer_qq = #{engineerQq,jdbcType=VARCHAR},
       engineer_prov = #{engineerProv,jdbcType=VARCHAR},
       engineer_city = #{engineerCity,jdbcType=VARCHAR},
@@ -271,6 +282,16 @@
       <if test="engineerId != null"> engineer_id != #{engineerId}</if>
       <if test="userName != null">and engineer_name = #{userName}</if>
       <if test="email != null">and email = #{email}</if>
+      <if test="phone != null">and phone = #{phone}</if>
+      <if test="personCode != null">and person_code = #{personCode}</if>
     </where>
+  </select>
+
+  <select id="loginByPhone" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List" />
+    from engineer_info
+    where phone = #{phone,jdbcType=VARCHAR}
+    and password = #{password,jdbcType=VARCHAR}
   </select>
 </mapper>
