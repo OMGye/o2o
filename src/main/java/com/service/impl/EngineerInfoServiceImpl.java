@@ -136,7 +136,7 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
                 TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(dbEngineerInfo.getEmail(), "您的账户已激活");
                 timer.schedule(caughtOrder, Const.TIMER_FOR_SEND_EMAIL);
             }catch (Exception e){
-                return ServerResponse.createByErrorMessage("邮件发送失败"+ e);
+                logger.debug("邮件发送失败"+ e);
             }
         }
         EngineerInfo newEngineerInfo = new EngineerInfo();
