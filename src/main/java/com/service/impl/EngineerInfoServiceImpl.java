@@ -132,11 +132,9 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
         if (engineerInfo.getEngineerState() != null && engineerInfo.getEngineerState() == Const.EngineerInfo.ABLE){
             try {
                 EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByPrimaryKey(engineerInfo.getEngineerId());
-                Timer timer = new Timer();
-                TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(dbEngineerInfo.getEmail(), "您的账户已激活");
-                timer.schedule(caughtOrder, Const.TIMER_FOR_SEND_EMAIL);
+                MailUtil.sendMail(dbEngineerInfo.getEmail(),"您的账户已经被激活");
             }catch (Exception e){
-                logger.debug("邮件发送失败"+ e);
+                return ServerResponse.createByErrorMessage("邮件发送失败"+ e);
             }
         }
         EngineerInfo newEngineerInfo = new EngineerInfo();
