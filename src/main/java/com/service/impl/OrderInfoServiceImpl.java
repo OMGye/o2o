@@ -237,7 +237,7 @@ public class OrderInfoServiceImpl implements OrderInfoService{
             logger.error("上传文件异常", e);
             return ServerResponse.createByErrorMessage("上传文件异常");
         }
-        order.setOrderFile(PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFile.getName());
+        order.setOrderCustomerFile(PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFile.getName());
 
 
 
