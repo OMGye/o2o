@@ -142,9 +142,9 @@ public class DrawCashInfoServiceImpl implements DrawCashInfoService {
             Date endDate = DateTimeUtil.strToDate(endTime, "yyyy-MM-dd");
             List<DrawCashInfo> drawCashInfoList = drawCashInfoMapper.selectByTime(startDate, endDate);
 
-            XSSFWorkbook xssfWorkbook=null;
-            List<ExcelBean> excel=new ArrayList<>();
-            Map<Integer,List<ExcelBean>> map=new LinkedHashMap<>();
+            XSSFWorkbook xssfWorkbook = null;
+            List<ExcelBean> excel = new ArrayList<>();
+            Map<Integer,List<ExcelBean>> map = new LinkedHashMap<>();
             //设置标题栏
             excel.add(new ExcelBean("提现记录id","drawCashId",0));
             excel.add(new ExcelBean("用户id","userId",0));
