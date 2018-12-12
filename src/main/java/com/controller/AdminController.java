@@ -686,4 +686,22 @@ public class AdminController {
             }
         }
     }
+
+
+    @RequestMapping(value = "drawCashInfo/export.do", method = RequestMethod.GET)
+    public void drawCashInfoExport(HttpSession session, HttpServletResponse response, String startTime, String endTime) {
+
+            response.setContentType("application/vnd.ms-excel");
+            response.setHeader("Content-disposition", "attachment;filename=drawCash.xlsx;charset=UTF-8");
+            XSSFWorkbook workbook = drawCashInfoService.exportExcelInfo(startTime, endTime);
+            try {
+                OutputStream output = response.getOutputStream();
+                BufferedOutputStream bufferedOutPut = new BufferedOutputStream(output);
+                workbook.write(bufferedOutPut);
+                bufferedOutPut.flush();
+                bufferedOutPut.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+    }
 }

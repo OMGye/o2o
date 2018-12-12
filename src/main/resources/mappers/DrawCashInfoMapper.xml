@@ -163,4 +163,14 @@
       <if test="state != null"> and state = #{state}</if>
     </where>
   </select>
+
+    <select id="selectByTime" parameterType="map" resultType="com.pojo.DrawCashInfo">
+      select
+      <include refid="Base_Column_List" />
+      from draw_cash_info
+      where
+      create_time <![CDATA[>=]]> #{startDate}
+      and create_time <![CDATA[<=]]> #{endDate}
+      and order_state = 0
+    </select>
 </mapper>

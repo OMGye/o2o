@@ -19,13 +19,14 @@ public class MailUtil {
 
 		Properties props = new Properties();
 
-		props.setProperty("mail.host", "smtp.163.com");
+		props.setProperty("mail.smtp.host", "smtp.exmail.qq.com");
 
-//		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-//		props.put("mail.smtp.socketFactory.fallback", "false");
-//		props.put("mail.smtp.port", "465");
-//		props.put("mail.smtp.socketFactory.port", "465");
-//		props.put("mail.smtp.localhost", "127.0.0.1");
+
+		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+		props.put("mail.smtp.socketFactory.fallback", "false");
+		props.put("mail.smtp.port", "465");
+		props.put("mail.smtp.socketFactory.port", "465");
+		props.put("mail.smtp.localhost", "127.0.0.1");
 
 		props.setProperty("mail.smtp.auth", "true");
 
@@ -34,7 +35,7 @@ public class MailUtil {
 			@Override
 			public PasswordAuthentication getPasswordAuthentication() {
 
-				return new PasswordAuthentication("upupgogogoservice@163.com", "omg147258");
+				return new PasswordAuthentication("yycam@chuannanjia.com", "owrcGtMq2K8fAxqW");
 			}
 		};
 
@@ -44,7 +45,7 @@ public class MailUtil {
 
 		Message message = new MimeMessage(session);
 
-		message.setFrom(new InternetAddress("upupgogogoservice@163.com"));
+		message.setFrom(new InternetAddress("yycam@chuannanjia.com"));
 
 		message.setRecipient(RecipientType.TO, new InternetAddress(email));
 
