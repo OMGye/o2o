@@ -263,7 +263,7 @@
       <if test="customerName != null">and customer_name = #{customerName}</if>
       <if test="email != null">and email = #{email}</if>
       <if test="phone != null">and phone = #{phone}</if>
-      <if test="personCode != null">and person_code = #{person_code}</if>
+      <if test="personCode != null">and person_code = #{personCode}</if>
     </where>
   </select>
 
