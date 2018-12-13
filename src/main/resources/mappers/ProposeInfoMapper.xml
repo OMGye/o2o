@@ -109,6 +109,6 @@
   <select id="list" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from draw_cash_info
+    from propose_info
   </select>
 </mapper>
