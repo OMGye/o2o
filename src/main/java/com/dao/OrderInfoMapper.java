@@ -39,4 +39,6 @@ public interface OrderInfoMapper {
 
 
    List<OrderInfo> selectByTime(@Param("startDate")Date startDate, @Param("endDate")Date endDate);
+
+    List<OrderInfo> selectByIdLike(@Param("orderIdString")String orderIdString);
 }

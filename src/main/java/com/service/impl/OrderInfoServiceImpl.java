@@ -1371,6 +1371,18 @@ public class OrderInfoServiceImpl implements OrderInfoService{
     }
 
     @Override
+    public ServerResponse<PageInfo> selectByIdLike(int pageNum, int pageSize, Integer orderId) {
+        if (orderId == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+        String orderIdString = "" + orderId + "%";
+        PageHelper.startPage(pageNum,pageSize);
+        PageHelper.orderBy("create_time asc");
+        List<OrderInfo> list = orderInfoMapper.selectByIdLike(orderIdString);
+        PageInfo pageInfo = new PageInfo(list);
+        return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Override
     public XSSFWorkbook exportExcelInfo(String startTime, String endTime) {
         if (startTime == null || endTime == null)
             return null;
@@ -1404,6 +1416,8 @@ public class OrderInfoServiceImpl implements OrderInfoService{
         }catch (Exception e){
             return null;
         }
+
+
     }
 
 

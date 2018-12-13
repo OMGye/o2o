@@ -610,6 +610,16 @@ public class AdminController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
+    @RequestMapping(value = "orderInfo/getByOrderIdLike.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> selectByIdLike(HttpSession session, Integer orderId,  @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return orderInfoService.selectByIdLike(pageNum,pageSize,orderId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
 
     @Autowired
     private DrawCashInfoService drawCashInfoService;

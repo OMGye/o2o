@@ -20,10 +20,9 @@ public class ProductServiceTest extends TestBase {
 
     @Test
     public void testIProductService(){
-        Date startDate = DateTimeUtil.strToDate("2018-12-01","yyyy-MM-dd");
-        Date endDate = DateTimeUtil.strToDate("2018-12-06","yyyy-MM-dd");
 
-        List<OrderInfo> orderInfoList = orderInfoMapper.selectByTime(startDate, endDate);
+
+        List<OrderInfo> orderInfoList = orderInfoMapper.selectByIdLike("103%");
         System.out.println(orderInfoList.size());
     }
 

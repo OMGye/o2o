@@ -129,23 +129,16 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
     public ServerResponse check(EngineerInfo engineerInfo) {
         if (engineerInfo == null || engineerInfo.getEngineerId() == null)
             return ServerResponse.createByErrorMessage("参数不能为空");
-        if (engineerInfo.getEngineerState() != null && engineerInfo.getEngineerState() == Const.EngineerInfo.ABLE){
-            try {
-                EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByPrimaryKey(engineerInfo.getEngineerId());
-                MailUtil.sendMail(dbEngineerInfo.getEmail(),"您的账户已经被激活");
-            }catch (Exception e){
-                return ServerResponse.createByErrorMessage("邮件发送失败"+ e);
-            }
+        if (engineerInfo.getEngineerState() != null && engineerInfo.getEngineerState() == Const.EngineerInfo.ABLE) {
+            EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByPrimaryKey(engineerInfo.getEngineerId());
+            Timer timer = new Timer();
+            TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(dbEngineerInfo.getEmail(), "您的账户已被激活");
+            timer.schedule(caughtOrder, Const.TIMER_FOR_SEND_EMAIL);
+
         }
-        EngineerInfo newEngineerInfo = new EngineerInfo();
-        newEngineerInfo.setEngineerId(engineerInfo.getEngineerId());
-        newEngineerInfo.setEngineerState(engineerInfo.getEngineerState());
-        newEngineerInfo.setEngineerClassfy(engineerInfo.getEngineerClassfy());
-        newEngineerInfo.setEngineerRank(engineerInfo.getEngineerRank());
-        newEngineerInfo.setPassword(engineerInfo.getPassword());
-        newEngineerInfo.setPhone(engineerInfo.getPhone());
-        newEngineerInfo.setPersonCode(engineerInfo.getPersonCode());
-        int row = engineerInfoMapper.updateByPrimaryKeySelective(newEngineerInfo);
+        engineerInfo.setOrderCount(null);
+        engineerInfo.setEngineerBalance(null);
+        int row = engineerInfoMapper.updateByPrimaryKeySelective(engineerInfo);
         if (row > 0)
             return ServerResponse.createBySuccess("审核修改成功");
         return ServerResponse.createByErrorMessage("审核修改失败");

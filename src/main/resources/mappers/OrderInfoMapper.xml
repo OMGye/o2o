@@ -437,5 +437,12 @@
     and update_time <![CDATA[<=]]> #{endDate}
     and order_state = 7
   </select>
+  <select id="selectByIdLike" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from order_info
+    where cast(order_id as char) like #{orderIdString}
+  </select>
+
 
 </mapper>

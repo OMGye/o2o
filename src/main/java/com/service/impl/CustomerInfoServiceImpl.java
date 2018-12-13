@@ -194,13 +194,9 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
     public ServerResponse check(CustomerInfo customerInfo) {
         if (customerInfo == null || customerInfo.getCustomerId() == null)
             return ServerResponse.createByErrorMessage("参数不能为空");
-        CustomerInfo newCustomerInfo = new CustomerInfo();
-        newCustomerInfo.setCustomerId(customerInfo.getCustomerId());
-        newCustomerInfo.setCustomerState(customerInfo.getCustomerState());
-        newCustomerInfo.setPassword(customerInfo.getPassword());
-        newCustomerInfo.setPhone(customerInfo.getPhone());
-        newCustomerInfo.setPersonCode(customerInfo.getPersonCode());
-        int row = customerInfoMapper.updateByPrimaryKeySelective(newCustomerInfo);
+        customerInfo.setOrderCount(null);
+        customerInfo.setCustomerBalance(null);
+        int row = customerInfoMapper.updateByPrimaryKeySelective(customerInfo);
         if (row > 0)
             return ServerResponse.createBySuccess("审核修改成功");
         return ServerResponse.createByErrorMessage("审核修改失败");
