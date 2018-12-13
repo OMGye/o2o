@@ -94,6 +94,13 @@ public class CustomerInfoController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
+    @RequestMapping(value = "customerInfo/logout.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse logout(HttpSession session) {
+        session.removeAttribute(Const.CURRENT_USER);
+        return ServerResponse.createBySuccess();
+    }
+
 
     @Autowired
     private BasicPriceInfoService basicPriceInfoService;

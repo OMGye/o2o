@@ -58,6 +58,13 @@ public class EngineerInfoController {
         return response;
     }
 
+    @RequestMapping(value = "engineerInfo/logout.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse logout(HttpSession session) {
+        session.removeAttribute(Const.CURRENT_USER);
+        return ServerResponse.createBySuccess();
+    }
+
     @RequestMapping(value = "engineerInfo/update.do",method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse update(EngineerInfo engineerInfo, HttpSession session){
