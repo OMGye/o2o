@@ -8,6 +8,7 @@ import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.pojo.CustomerInfo;
 import com.pojo.EngineerInfo;
+import com.pojo.OrderInfo;
 import com.pojo.QuantityInfo;
 import com.service.EngineerInfoService;
 import com.util.FTPUtil;
@@ -243,6 +244,16 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
         return ServerResponse.createBySuccess("验证成功");
     }
 
-
+    @Override
+    public ServerResponse<PageInfo> selectByIdLike(int pageNum, int pageSize, Integer engineerId) {
+        if (engineerId == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+        String engineerIdString = "" + engineerId + "%";
+        PageHelper.startPage(pageNum,pageSize);
+        PageHelper.orderBy("create_time asc");
+        List<EngineerInfo> list = engineerInfoMapper.selectByIdLike(engineerIdString);
+        PageInfo pageInfo = new PageInfo(list);
+        return ServerResponse.createBySuccess(pageInfo);
+    }
 
 }

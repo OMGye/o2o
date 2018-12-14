@@ -7,6 +7,7 @@ import com.dao.CustomerInfoMapper;
 import com.dao.EngineerInfoMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.pojo.BillInfo;
 import com.pojo.CustomerInfo;
 import com.pojo.EngineerInfo;
 import com.service.CustomerInfoService;
@@ -233,6 +234,19 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
 
         }
         return ServerResponse.createByErrorMessage("找不到该工程师");
+    }
+
+
+    @Override
+    public ServerResponse<PageInfo> selectByIdLike(int pageNum, int pageSize, Integer customerId) {
+        if (customerId == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+        String customerIdString = "" + customerId + "%";
+        PageHelper.startPage(pageNum,pageSize);
+        PageHelper.orderBy("create_time asc");
+        List<CustomerInfo> list = customerInfoMapper.selectByIdLike(customerIdString);
+        PageInfo pageInfo = new PageInfo(list);
+        return ServerResponse.createBySuccess(pageInfo);
     }
 
 

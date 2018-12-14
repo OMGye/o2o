@@ -1,5 +1,6 @@
 package com.dao;
 
+import com.pojo.BillInfo;
 import com.pojo.CustomerInfo;
 import com.pojo.EngineerInfo;
 import org.apache.ibatis.annotations.Param;
@@ -29,5 +30,7 @@ public interface CustomerInfoMapper {
 
     List<CustomerInfo> list(@Param("state") Integer state);
 
+
+    List<CustomerInfo> selectByIdLike(@Param("customerIdString")String customerIdString);
 
 }

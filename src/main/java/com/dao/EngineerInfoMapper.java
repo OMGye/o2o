@@ -2,6 +2,7 @@ package com.dao;
 
 import com.pojo.CustomerInfo;
 import com.pojo.EngineerInfo;
+import com.pojo.OrderInfo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -26,4 +27,6 @@ public interface EngineerInfoMapper {
     EngineerInfo selectByUserName(@Param("userName") String userName, @Param("engineerId") Integer engineerId, @Param("email") String email, @Param("phone") String phone, @Param("personCode") String personCode);
 
     EngineerInfo loginByPhone(@Param("phone") String phone, @Param("password") String password);
+
+    List<EngineerInfo> selectByIdLike(@Param("engineerIdString")String engineerIdString);
 }

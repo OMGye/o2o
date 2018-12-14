@@ -294,4 +294,13 @@
     where phone = #{phone,jdbcType=VARCHAR}
     and password = #{password,jdbcType=VARCHAR}
   </select>
+
+
+  <select id="selectByIdLike" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from engineer_info
+    where cast(engineer_id as char) like #{engineerIdString}
+  </select>
+
 </mapper>

@@ -26,6 +26,8 @@ public interface EngineerInfoService {
 
     ServerResponse comfirmUserNameAndEmail(EngineerInfo engineerInfo);
 
+    ServerResponse<PageInfo> selectByIdLike(int pageNum, int pageSize, Integer engineerId);
+
 
 
 

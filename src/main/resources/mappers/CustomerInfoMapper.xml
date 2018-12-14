@@ -292,4 +292,11 @@
     </where>
   </select>
 
+  <select id="selectByIdLike" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from customer_info
+    where cast(customer_id as char) like #{customerIdString}
+  </select>
+
 </mapper>

@@ -28,4 +28,6 @@ public interface CustomerInfoService {
     ServerResponse check(CustomerInfo customerInfo);
 
     ServerResponse engineerDefriend(Integer customerId, Integer engineerId);
+
+    ServerResponse<PageInfo> selectByIdLike(int pageNum, int pageSize, Integer customerId);
 }

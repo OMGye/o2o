@@ -9,4 +9,6 @@ import com.github.pagehelper.PageInfo;
 public interface BillInfoService {
 
     ServerResponse<PageInfo> list(int pageSize, int pageNum, Integer userId, Integer userType);
+
+    ServerResponse<PageInfo> selectByIdLike(int pageNum, int pageSize, Integer billId);
 }

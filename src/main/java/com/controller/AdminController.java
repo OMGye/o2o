@@ -493,6 +493,8 @@ public class AdminController {
 
 
 
+
+
     @Autowired
     private CustomerInfoService customerInfoService;
 
@@ -610,15 +612,6 @@ public class AdminController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
-    @RequestMapping(value = "orderInfo/getByOrderIdLike.do", method = RequestMethod.GET)
-    @ResponseBody
-    public ServerResponse<PageInfo> selectByIdLike(HttpSession session, Integer orderId,  @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
-        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
-        if (adminInfo != null){
-            return orderInfoService.selectByIdLike(pageNum,pageSize,orderId);
-        }
-        return ServerResponse.createByErrorMessage("请登入管理员账户");
-    }
 
 
     @Autowired
@@ -708,17 +701,59 @@ public class AdminController {
     @RequestMapping(value = "drawCashInfo/export.do", method = RequestMethod.GET)
     public void drawCashInfoExport(HttpSession session, HttpServletResponse response, String startTime, String endTime) {
 
-            response.setContentType("application/vnd.ms-excel");
-            response.setHeader("Content-disposition", "attachment;filename=drawCash.xlsx;charset=UTF-8");
-            XSSFWorkbook workbook = drawCashInfoService.exportExcelInfo(startTime, endTime);
-            try {
-                OutputStream output = response.getOutputStream();
-                BufferedOutputStream bufferedOutPut = new BufferedOutputStream(output);
-                workbook.write(bufferedOutPut);
-                bufferedOutPut.flush();
-                bufferedOutPut.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-disposition", "attachment;filename=drawCash.xlsx;charset=UTF-8");
+        XSSFWorkbook workbook = drawCashInfoService.exportExcelInfo(startTime, endTime);
+        try {
+            OutputStream output = response.getOutputStream();
+            BufferedOutputStream bufferedOutPut = new BufferedOutputStream(output);
+            workbook.write(bufferedOutPut);
+            bufferedOutPut.flush();
+            bufferedOutPut.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
+        @RequestMapping(value = "orderInfo/getByOrderIdLike.do", method = RequestMethod.GET)
+        @ResponseBody
+        public ServerResponse<PageInfo> selectByIdLike(HttpSession session, Integer orderId,  @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
+            AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+            if (adminInfo != null){
+                return orderInfoService.selectByIdLike(pageNum,pageSize,orderId);
+            }
+            return ServerResponse.createByErrorMessage("请登入管理员账户");
+        }
+
+
+    @RequestMapping(value = "customerInfo/getByCustomerIdLike.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> selectCustomerByIdLike(HttpSession session, Integer customerId,  @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return customerInfoService.selectByIdLike(pageNum,pageSize,customerId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "engineerInfo/getByEngineerIdLike.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> selectEngineerByIdLike(HttpSession session, Integer engineerId,  @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return engineerInfoService.selectByIdLike(pageNum,pageSize,engineerId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "billInfo/getByBillIdLike.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> selectBillInfoByIdLike(HttpSession session, Integer billId,  @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return billInfoService.selectByIdLike(pageNum,pageSize,billId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
 }

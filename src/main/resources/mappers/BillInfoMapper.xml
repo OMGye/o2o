@@ -126,4 +126,11 @@
       <if test="userType != null"> and user_type = #{userType}</if>
     </where>
   </select>
+
+  <select id="selectByIdLike" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from bill_info
+    where cast(bill_id as char) like #{billIdString}
+  </select>
 </mapper>
