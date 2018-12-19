@@ -52,6 +52,9 @@ public class CustomerInfoController {
     @RequestMapping(value = "customerInfo/login.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse login(String customerName, String password ,HttpSession session) {
+        //以秒为单位
+        session.setMaxInactiveInterval(1*60);
+
         ServerResponse<CustomerInfo> response = customerInfoService.login(customerName, password);
         if (response.isSuccess()) {
             session.setAttribute(Const.CURRENT_USER, response.getData());
