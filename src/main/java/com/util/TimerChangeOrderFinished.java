@@ -122,7 +122,6 @@ public class TimerChangeOrderFinished extends TimerTask {
        OrderInfo orderInfo = orderInfoMapper.selectByPrimaryKey(orderId);
        if (orderInfo.getOrderState() == Const.Order.HAVE_REIVER_ORDER){
            orderInfo.setOrderState(Const.Order.HAVE_FINISHED);
-           orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
 
            CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
            customerInfo.setOrderCount(customerInfo.getOrderCount() + 1);
@@ -173,6 +172,12 @@ public class TimerChangeOrderFinished extends TimerTask {
            incomeInfo.setOrderId(orderId);
            incomeInfo.setIncomeMoney(BigDecimalUtil.sub(orderInfo.getOrderPrice().doubleValue(), engineerAllPrice.doubleValue()));
            incomeInfoMapper.insert(incomeInfo);
+
+           orderInfo.setEngineerRealPrice(orderCamPrice);
+           orderInfo.setEngineerQaeRealPrice(orderQaePrice);
+           orderInfo.setAdminPrice(BigDecimalUtil.sub(orderInfo.getOrderPrice().doubleValue(), engineerAllPrice.doubleValue()));
+           orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+
 
            try {
                MailUtil.sendMail(engineerInfo.getEmail(), "您的订单已完成");

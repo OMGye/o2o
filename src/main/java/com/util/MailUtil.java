@@ -12,8 +12,6 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-
-
 public class MailUtil {
 	public static void sendMail(String email,String code) throws Exception {
 

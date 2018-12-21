@@ -60,4 +60,10 @@ public class EngineerRankVO {
         this.MI = MI;
         this.QAE = QAE;
     }
+
+    public static void main(String[] args) {
+        String fileName = "ABC.JPG";
+        String fisrtName = fileName.substring(0,fileName.indexOf("."));
+        System.out.println(fisrtName);
+    }
 }

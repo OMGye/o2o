@@ -4,6 +4,7 @@ import com.pojo.BillInfo;
 import com.pojo.PayInfo;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface PayInfoMapper {
@@ -20,4 +21,6 @@ public interface PayInfoMapper {
     int updateByPrimaryKey(PayInfo record);
 
     List<PayInfo> list(@Param("userId") Integer userId, @Param("userName")String userName);
+
+    BigDecimal allPrice();
 }

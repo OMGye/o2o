@@ -6,6 +6,7 @@ import com.github.pagehelper.PageInfo;
 import com.pojo.*;
 import com.service.*;
 import com.vo.EngineerRankVO;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +16,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Created by upupgogogo on 2018/11/16.下午3:39
@@ -43,7 +48,7 @@ public class EngineerInfoController {
     @ResponseBody
     public ServerResponse login(String engineerName, String password, HttpSession session){
         //以秒为单位
-        session.setMaxInactiveInterval(1*60);
+        session.setMaxInactiveInterval(5 * 60);
         ServerResponse<EngineerInfo> response = engineerInfoService.login(engineerName, password);
         if(response.isSuccess()){
             session.setAttribute(Const.CURRENT_USER,response.getData());
@@ -362,6 +367,33 @@ public class EngineerInfoController {
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
+
+
+    @RequestMapping(value = "orderInfo/export.do", method = RequestMethod.GET)
+    public void export(HttpSession session, HttpServletResponse response, String startTime, String endTime, Integer type) {
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null) {
+            response.setContentType("application/vnd.ms-excel");
+            response.setHeader("Content-disposition", "attachment;filename=order.xlsx;charset=UTF-8");
+            XSSFWorkbook workbook = null;
+            if (type == 0){
+           workbook = orderInfoService.customerOrEngineerExportExcelInfo(1, curEngineerInfo.getEngineerId(), startTime, endTime);
+            }
+            if (type == 1){
+                workbook = orderInfoService.customerOrEngineerExportExcelInfo(2, curEngineerInfo.getEngineerId(), startTime, endTime);
+            }
+            try {
+                OutputStream output = response.getOutputStream();
+                BufferedOutputStream bufferedOutPut = new BufferedOutputStream(output);
+                workbook.write(bufferedOutPut);
+                bufferedOutPut.flush();
+                bufferedOutPut.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
 
 }

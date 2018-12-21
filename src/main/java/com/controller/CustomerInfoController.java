@@ -11,6 +11,7 @@ import com.pojo.*;
 import com.service.*;
 
 import com.util.AlipayConfig;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.aspectj.weaver.ast.Or;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,8 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -53,7 +53,7 @@ public class CustomerInfoController {
     @ResponseBody
     public ServerResponse login(String customerName, String password ,HttpSession session) {
         //以秒为单位
-        session.setMaxInactiveInterval(1*60);
+        session.setMaxInactiveInterval(5 * 60);
 
         ServerResponse<CustomerInfo> response = customerInfoService.login(customerName, password);
         if (response.isSuccess()) {
@@ -182,10 +182,10 @@ public class CustomerInfoController {
         OrderInfo orderInfo = (OrderInfo)serverResponse.getData();
         try {
             //商户订单号，商户网站订单系统中唯一订单号，必填
-            out_trade_no = new String((""+orderInfo.getOrderId()).getBytes("ISO-8859-1"), "UTF-8");
+            out_trade_no = new String(("" + orderInfo.getOrderId()).getBytes("ISO-8859-1"), "UTF-8");
 
             //付款金额，必填
-            String total_amount = new String("0.01".getBytes("ISO-8859-1"), "UTF-8");
+            String total_amount = new String(("" + orderInfo.getOrderPrice()).getBytes("ISO-8859-1"), "UTF-8");
             //订单名称，必填
             String subject = new String((""+orderInfo.getOrderPrice()).getBytes("ISO-8859-1"), "UTF-8");
             //商品描述，可空
@@ -447,5 +447,25 @@ public class CustomerInfoController {
             return proposeInfoService.delete(proposeId,curCustomerInfo.getCustomerId(),0);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
+    @RequestMapping(value = "orderInfo/export.do", method = RequestMethod.GET)
+    public void export(HttpSession session, HttpServletResponse response, String startTime, String endTime) {
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null){
+            response.setContentType("application/vnd.ms-excel");
+            response.setHeader("Content-disposition", "attachment;filename=order.xlsx;charset=UTF-8");
+            XSSFWorkbook workbook = orderInfoService.customerOrEngineerExportExcelInfo(0, curCustomerInfo.getCustomerId(), startTime, endTime);
+            try {
+                OutputStream output = response.getOutputStream();
+                BufferedOutputStream bufferedOutPut = new BufferedOutputStream(output);
+                workbook.write(bufferedOutPut);
+                bufferedOutPut.flush();
+                bufferedOutPut.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

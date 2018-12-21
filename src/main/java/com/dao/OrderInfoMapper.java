@@ -3,6 +3,7 @@ package com.dao;
 import com.pojo.OrderInfo;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -40,5 +41,13 @@ public interface OrderInfoMapper {
 
    List<OrderInfo> selectByTime(@Param("startDate")Date startDate, @Param("endDate")Date endDate);
 
+    List<OrderInfo> selectByTimeAndType(@Param("startDate")Date startDate, @Param("endDate")Date endDate, @Param("customerId")Integer customerId, @Param("engineerId")Integer engineerId, @Param("engineerCheckId")Integer engineerCheckId, @Param("orderState")Integer orderState);
+
     List<OrderInfo> selectByIdLike(@Param("orderIdString")String orderIdString);
+
+    List<OrderInfo> selectByOtherIdLike(@Param("customerIdLike")String customerIdLike, @Param("engineerIdLIke")String engineerIdLIke, @Param("engineerCheckIdLike")String engineerCheckIdLike);
+
+    BigDecimal hasFinshedOrder();
+
+    BigDecimal unFinshedOrder();
 }

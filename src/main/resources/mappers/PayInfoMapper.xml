@@ -162,4 +162,10 @@
       <if test="userName != null"> and user_name LIKE #{userName}</if>
     </where>
   </select>
+
+  <select id="allPrice" resultType="java.math.BigDecimal">
+     select
+     sum(price)
+     from o2o_pay_info
+  </select>
 </mapper>

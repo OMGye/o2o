@@ -76,9 +76,14 @@ public interface OrderInfoService {
 
     XSSFWorkbook exportExcelInfo(String startTime, String endTime);
 
+    XSSFWorkbook customerOrEngineerExportExcelInfo(Integer type, Integer id, String startTime, String endTime);
+
 
     ServerResponse<PageInfo> selectByIdLike(int pageNum, int pageSize, Integer orderId);
 
+    ServerResponse<PageInfo> selectByOtherIdLike(int pageNum, int pageSize, Integer id, Integer type);
 
+
+    ServerResponse getAllPrice();
 
 }

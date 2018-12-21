@@ -48,6 +48,12 @@ public class OrderInfo {
 
     private BigDecimal orderQaePrice;
 
+    private BigDecimal engineerRealPrice;
+
+    private BigDecimal engineerQaeRealPrice;
+
+    private BigDecimal adminPrice;
+
     private String orderFile;
 
     private String orderCustomerFile;
@@ -57,6 +63,31 @@ public class OrderInfo {
     private Date createTime;
 
     private Date updateTime;
+
+    public void setEngineerRealPrice(BigDecimal engineerRealPrice) {
+        this.engineerRealPrice = engineerRealPrice;
+    }
+
+    public void setEngineerQaeRealPrice(BigDecimal engineerQaeRealPrice) {
+        this.engineerQaeRealPrice = engineerQaeRealPrice;
+    }
+
+    public void setAdminPrice(BigDecimal adminPrice) {
+        this.adminPrice = adminPrice;
+    }
+
+    public BigDecimal getEngineerRealPrice() {
+
+        return engineerRealPrice;
+    }
+
+    public BigDecimal getEngineerQaeRealPrice() {
+        return engineerQaeRealPrice;
+    }
+
+    public BigDecimal getAdminPrice() {
+        return adminPrice;
+    }
 
     public void setRefuseDec(String refuseDec) {
         this.refuseDec = refuseDec;
@@ -85,7 +116,7 @@ public class OrderInfo {
         return orderCustomerFile;
     }
 
-    public OrderInfo(Integer orderId, Integer customerId, String customerName, Integer engineerId, String engineerName, Integer engineerCheckId, String engineerCheckName, String orderFirstCategory, String orderSecondCategory, Integer orderMi, Integer orderQae, String otherParamInfo, Integer basicLayer, Integer priceTogetherNum, String orderDec, Integer orderRush, Integer orderDeductRank, String orderDeductDec, String orderRateDec, Integer orderState, BigDecimal orderPrice, BigDecimal orderQaePrice, String orderFile, String orderCustomerFile, String refuseDec, Date createTime, Date updateTime) {
+    public OrderInfo(Integer orderId, Integer customerId, String customerName, Integer engineerId, String engineerName, Integer engineerCheckId, String engineerCheckName, String orderFirstCategory, String orderSecondCategory, Integer orderMi, Integer orderQae, String otherParamInfo, Integer basicLayer, Integer priceTogetherNum, String orderDec, Integer orderRush, Integer orderDeductRank, String orderDeductDec, String orderRateDec, Integer orderState, BigDecimal orderPrice, BigDecimal orderQaePrice, BigDecimal engineerRealPrice, BigDecimal engineerQaeRealPrice, BigDecimal adminPrice, String orderFile, String orderCustomerFile, String refuseDec, Date createTime, Date updateTime) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.customerName = customerName;
@@ -108,6 +139,9 @@ public class OrderInfo {
         this.orderState = orderState;
         this.orderPrice = orderPrice;
         this.orderQaePrice = orderQaePrice;
+        this.engineerRealPrice = engineerRealPrice;
+        this.engineerQaeRealPrice = engineerQaeRealPrice;
+        this.adminPrice = adminPrice;
         this.orderFile = orderFile;
         this.orderCustomerFile = orderCustomerFile;
         this.refuseDec = refuseDec;

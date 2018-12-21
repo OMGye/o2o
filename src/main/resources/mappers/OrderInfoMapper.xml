@@ -57,7 +57,7 @@
       other_param_info, basic_layer, price_together_num, 
       order_dec, order_rush, order_deduct_rank, 
       order_deduct_dec, order_rate_dec, order_state, 
-      order_price, order_qae_price, order_file, order_customer_file, refuse_dec, create_time,
+      order_price, order_qae_price, engineer_real_price, engineer_qae_real_price, admin_price, order_file, order_customer_file, refuse_dec, create_time,
       update_time)
     values (#{orderId,jdbcType=INTEGER}, #{customerId,jdbcType=INTEGER}, #{customerName,jdbcType=VARCHAR}, 
       #{engineerId,jdbcType=INTEGER}, #{engineerName,jdbcType=VARCHAR}, #{engineerCheckId,jdbcType=INTEGER}, 
@@ -66,7 +66,7 @@
       #{otherParamInfo,jdbcType=VARCHAR}, #{basicLayer,jdbcType=INTEGER}, #{priceTogetherNum,jdbcType=INTEGER}, 
       #{orderDec,jdbcType=VARCHAR}, #{orderRush,jdbcType=INTEGER}, #{orderDeductRank,jdbcType=INTEGER}, 
       #{orderDeductDec,jdbcType=VARCHAR}, #{orderRateDec,jdbcType=VARCHAR}, #{orderState,jdbcType=INTEGER}, 
-      #{orderPrice,jdbcType=DECIMAL}, #{orderQaePrice,jdbcType=DECIMAL}, #{orderFile,jdbcType=VARCHAR}, #{orderCustomerFile,jdbcType=VARCHAR}, #{refuseDec,jdbcType=VARCHAR},
+      #{orderPrice,jdbcType=DECIMAL}, #{orderQaePrice,jdbcType=DECIMAL}, #{engineerRealPrice,jdbcType=DECIMAL}, #{engineerQaeRealPrice,jdbcType=DECIMAL}, #{adminPrice,jdbcType=DECIMAL}, #{orderFile,jdbcType=VARCHAR}, #{orderCustomerFile,jdbcType=VARCHAR}, #{refuseDec,jdbcType=VARCHAR},
       now(), now())
   </insert>
   <insert id="insertSelective" parameterType="com.pojo.OrderInfo">
@@ -304,6 +304,15 @@
       <if test="orderQaePrice != null">
         order_qae_price = #{orderQaePrice,jdbcType=DECIMAL},
       </if>
+      <if test="engineerRealPrice != null">
+        engineer_real_price = #{engineerRealPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="engineerQaeRealPrice != null">
+        engineer_qae_real_price = #{engineerQaeRealPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="adminPrice != null">
+        admin_price = #{adminPrice,jdbcType=DECIMAL},
+      </if>
       <if test="orderFile != null">
         order_file = #{orderFile,jdbcType=VARCHAR},
       </if>
@@ -438,6 +447,20 @@
     and order_state = 7
   </select>
 
+  <select id="selectByTimeAndType" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from order_info
+    <where>
+      <if test="startDate != null"> update_time <![CDATA[>=]]> #{startDate}</if>
+      <if test="endDate != null"> and update_time <![CDATA[<=]]> #{endDate}</if>
+      <if test="engineerId != null">and engineer_id = #{engineerId}</if>
+      <if test="customerId != null">and customer_id = #{customerId}</if>
+      <if test="engineerCheckId != null">and engineer_check_id = #{engineerCheckId}</if>
+      <if test="orderState != null"> and order_state = 7</if>
+    </where>
+  </select>
+
 
   <select id="selectByIdLike" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
@@ -446,5 +469,30 @@
     where cast(order_id as char) like #{orderIdString}
   </select>
 
+  <select id="selectByOtherIdLike" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from order_info
+    <where>
+    <if test="engineerId != null"> cast(engineer_id as char) like #{engineerIdLIke}</if>
+    <if test="customerId != null">and cast(customer_id as char) like #{customerIdLike}</if>
+    <if test="engineerCheckId != null">and cast(engineer_check_id as char) like #{engineerCheckIdLike}</if>
+    </where>
+    where cast(order_id as char) like #{orderIdString}
+  </select>
+
+  <select id="hasFinshedOrder" resultType="java.math.BigDecimal">
+    select
+    sum(order_price)
+    from order_info
+    where order_state = 7
+  </select>
+
+  <select id="unFinshedOrder" resultType="java.math.BigDecimal">
+    select
+    sum(order_price)
+    from order_info
+    where order_state in (  )
+  </select>
 
 </mapper>

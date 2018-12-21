@@ -426,12 +426,7 @@ public class AdminController {
     @RequestMapping(value = "quantityInfo/list.do",method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse listQuantityInfo(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize){
-        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
-        if (adminInfo != null){
             return quantityInfoService.list(pageSize,pageNum);
-        }
-        return ServerResponse.createByErrorMessage("请登入管理员账户");
-
     }
 
     @RequestMapping(value = "quantityInfo/add.do",method = RequestMethod.POST)
@@ -725,6 +720,15 @@ public class AdminController {
             return ServerResponse.createByErrorMessage("请登入管理员账户");
         }
 
+    @RequestMapping(value = "orderInfo/getByOtherIdLike.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> selectByOtherIdLike(HttpSession session, Integer id,Integer type, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return orderInfoService.selectByOtherIdLike(pageNum,pageSize,id,type);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
 
     @RequestMapping(value = "customerInfo/getByCustomerIdLike.do", method = RequestMethod.GET)
     @ResponseBody
