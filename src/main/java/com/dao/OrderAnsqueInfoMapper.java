@@ -19,4 +19,6 @@ public interface OrderAnsqueInfoMapper {
     int updateByPrimaryKey(OrderAnsqueInfo record);
 
     List<OrderAnsqueInfo> list(@Param("orderId")Integer orderId);
+
+    Integer getUnReadNum(@Param("orderId")Integer orderId, @Param("type")Integer type);
 }
