@@ -23,6 +23,8 @@ public interface OrderInfoService {
 
     ServerResponse aliCallback(Map<String,String> params);
 
+    ServerResponse aliCallbackBalance(Map<String,String> params);
+
     ServerResponse<PageInfo> customerList(int pageSize, int pageNum, CustomerInfo customerInfo, Integer orderState);
 
 

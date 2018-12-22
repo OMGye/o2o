@@ -28,9 +28,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by upupgogogo on 2018/11/17.下午2:36
@@ -49,7 +51,7 @@ public class CustomerInfoController {
         return customerInfoService.register(customerInfo);
     }
 
-    @RequestMapping(value = "customerInfo/login.do", method = RequestMethod.POST)
+    @RequestMapping(value = "customerInfo/login.do", method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse login(String customerName, String password ,HttpSession session) {
 //        //以秒为单位
@@ -187,7 +189,7 @@ public class CustomerInfoController {
             //付款金额，必填
             String total_amount = new String(("" + orderInfo.getOrderPrice()).getBytes("ISO-8859-1"), "UTF-8");
             //订单名称，必填
-            String subject = new String((""+orderInfo.getOrderPrice()).getBytes("ISO-8859-1"), "UTF-8");
+            String subject = new String(("yycam订单支付").getBytes("ISO-8859-1"), "UTF-8");
             //商品描述，可空
             String body = new String("".getBytes("ISO-8859-1"), "UTF-8");
 
@@ -220,6 +222,60 @@ public class CustomerInfoController {
 
     }
 
+    @RequestMapping(value = "orderInfo/paybalance.do", method = RequestMethod.GET)
+    public void payBalance(HttpSession session, HttpServletRequest request, HttpServletResponse response, BigDecimal price) {
+
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null) {
+            //获得初始化的AlipayClient
+            AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.gatewayUrl, AlipayConfig.app_id, AlipayConfig.merchant_private_key, "json", AlipayConfig.charset, AlipayConfig.alipay_public_key, AlipayConfig.sign_type);
+
+            //设置请求参数
+            AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();
+            alipayRequest.setReturnUrl(AlipayConfig.return_url);
+            alipayRequest.setNotifyUrl("http://47.104.225.176:8080/o2o/customer/orderInfo/callbackbalance.do");
+
+
+            String out_trade_no = null;
+            try {
+                //商户订单号，商户网站订单系统中唯一订单号，必填
+                out_trade_no = new String(("" + curCustomerInfo.getCustomerId() + "-" +UUID.randomUUID().toString()).getBytes("ISO-8859-1"), "UTF-8");
+
+                //付款金额，必填
+                String total_amount = new String(("" + price).getBytes("ISO-8859-1"), "UTF-8");
+                //订单名称，必填
+                String subject = new String(("yycam充值支付").getBytes("ISO-8859-1"), "UTF-8");
+                //商品描述，可空
+                String body = new String("".getBytes("ISO-8859-1"), "UTF-8");
+
+                alipayRequest.setBizContent("{\"out_trade_no\":\"" + out_trade_no + "\","
+                        + "\"total_amount\":\"" + total_amount + "\","
+                        + "\"subject\":\"" + subject + "\","
+                        + "\"body\":\"" + body + "\","
+                        + "\"timeout_express\":\"9m\","
+                        + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\"}");
+                //请求
+                response.setContentType("text/html;charset=" + "UTF-8");
+                String result = alipayClient.pageExecute(alipayRequest).getBody();
+
+                //输出
+                PrintWriter out = response.getWriter();
+                out.println(result);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            //若想给BizContent增加其他可选请求参数，以增加自定义超时时间参数timeout_express来举例说明
+            //alipayRequest.setBizContent("{\"out_trade_no\":\""+ out_trade_no +"\","
+            //		+ "\"total_amount\":\""+ total_amount +"\","
+            //		+ "\"subject\":\""+ subject +"\","
+            //		+ "\"body\":\""+ body +"\","
+            //		+ "\"timeout_express\":\"10m\","
+            //		+ "\"product_code\":\"FAST_INSTANT_TRADE_PAY\"}");
+            //请求参数可查阅【电脑网站支付的API文档-alipay.trade.page.pay-请求参数】章节
+
+        }
+    }
 
     private static  final Logger logger = LoggerFactory.getLogger(CustomerInfoController.class);
     @RequestMapping(value = "orderInfo/callback.do", method = RequestMethod.POST)
@@ -261,6 +317,48 @@ public class CustomerInfoController {
 	4、验证app_id是否为该商户本身。
 	*/
         return orderInfoService.aliCallback(params);
+    }
+
+    @RequestMapping(value = "orderInfo/callbackbalance.do", method = RequestMethod.POST)
+    @ResponseBody
+    public Object callBackBalance(HttpServletRequest request) {
+        Map<String,String> params = new HashMap<String,String>();
+        Map<String,String[]> requestParams = request.getParameterMap();
+        for (Iterator<String> iter = requestParams.keySet().iterator(); iter.hasNext();) {
+            String name = (String) iter.next();
+            String[] values = (String[]) requestParams.get(name);
+            String valueStr = "";
+            for (int i = 0; i < values.length; i++) {
+                valueStr = (i == values.length - 1) ? valueStr + values[i]
+                        : valueStr + values[i] + ",";
+            }
+            params.put(name, valueStr);
+        }
+        //乱码解决，这段代码在出现乱码时使用
+        try {
+            boolean signVerified = AlipaySignature.rsaCheckV1(params, AlipayConfig.alipay_public_key, AlipayConfig.charset, AlipayConfig.sign_type);
+
+            logger.info("支付宝回调,sign:{},trade_status:{},参数:{}",params.get("sign"),params.get("trade_status"),params.toString());
+            if(!signVerified) {//验证失败
+                logger.debug("验证失败");
+                return ServerResponse.createByErrorMessage("非法请求,验证不通过,再恶意请求我就报警找网警了");
+            }
+        } catch (Exception e) {
+            logger.error("支付宝验证回调异常",e);
+        }
+
+        //调用SDK验证签名
+
+        //——请在这里编写您的程序（以下代码仅作参考）——
+
+	/* 实际验证过程建议商户务必添加以下校验：
+	1、需要验证该通知数据中的out_trade_no是否为商户系统中创建的订单号，
+	2、判断total_amount是否确实为该订单的实际金额（即商户订单创建时的金额），
+	3、校验通知中的seller_id（或者seller_email) 是否为out_trade_no这笔单据的对应的操作方（有的时候，一个商户可能有多个seller_id/seller_email）
+	4、验证app_id是否为该商户本身。
+	*/
+        orderInfoService.aliCallbackBalance(params);
+        return  "success";
     }
 
     @RequestMapping(value = "orderInfo/list.do", method = RequestMethod.GET)

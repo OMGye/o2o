@@ -297,6 +297,14 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             payInfo.setPrice(order.getOrderPrice());
             payInfoMapper.insert(payInfo);
 
+            BillInfo payBillInfo = new BillInfo();
+            payBillInfo.setUserId(customerInfo.getCustomerId());
+            payBillInfo.setBillMoney(order.getOrderPrice());
+            payBillInfo.setUserName(customerInfo.getCustomerName());
+            payBillInfo.setUserType(0);
+            payBillInfo.setBillDec("充值订单 :" + order.getOrderId());
+            billInfoMapper.insert(payBillInfo);
+
             BillInfo billInfo = new BillInfo();
             billInfo.setUserId(customerInfo.getCustomerId());
             billInfo.setBillMoney(BigDecimalUtil.sub(order.getOrderPrice().doubleValue(), BigDecimalUtil.add(order.getOrderPrice().doubleValue(), order.getOrderPrice().doubleValue()).doubleValue()));
@@ -304,6 +312,47 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             billInfo.setUserType(0);
             billInfo.setBillDec("支付订单 :" + order.getOrderId());
             billInfoMapper.insert(billInfo);
+        } catch (Exception e) {
+            logger.debug("支付宝验证回调异常", e);
+        }
+
+        return ServerResponse.createBySuccess();
+    }
+
+    @Override
+    public ServerResponse aliCallbackBalance(Map<String, String> params) {
+        try {
+            String order = params.get("out_trade_no");
+            Integer customerId = Integer.parseInt(order.substring(0,order.indexOf(".")));
+            String tradeNo = params.get("trade_no");
+            String tradeStatus = params.get("trade_status");
+            BigDecimal price = new BigDecimal(params.get("total_amount"));
+
+            if (!Const.AlipayCallback.TRADE_STATUS_TRADE_SUCCESS.equals(tradeStatus)) {
+                return ServerResponse.createByError();
+            }
+
+            CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(customerId);
+            customerInfo.setCustomerBalance(BigDecimalUtil.add(customerInfo.getCustomerBalance().doubleValue(), price.doubleValue()));
+            customerInfoMapper.updateByPrimaryKey(customerInfo);
+
+            PayInfo payInfo = new PayInfo();
+            payInfo.setUserId(customerId);
+            payInfo.setPayPlatform(Const.PayPlatformEnum.ALIPAY.getCode());
+            payInfo.setPlatformNumber(tradeNo);
+            payInfo.setPlatformStatus(tradeStatus);
+            payInfo.setUserName(customerInfo.getCustomerName());
+            payInfo.setPrice(price);
+            payInfoMapper.insert(payInfo);
+
+            BillInfo payBillInfo = new BillInfo();
+            payBillInfo.setUserId(customerInfo.getCustomerId());
+            payBillInfo.setBillMoney(price);
+            payBillInfo.setUserName(customerInfo.getCustomerName());
+            payBillInfo.setUserType(0);
+            payBillInfo.setBillDec("充值金额");
+            billInfoMapper.insert(payBillInfo);
+
         } catch (Exception e) {
             logger.debug("支付宝验证回调异常", e);
         }
@@ -1449,7 +1498,8 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         PageHelper.orderBy("create_time asc");
         List<OrderInfo> list = null;
         if (type == 0){
-        list = orderInfoMapper.selectByOtherIdLike(idString, null, null);
+        list = orderInfoMapper.selectByOtherIdLike(idString,
+                null, null);
         }
         if (type == 1){
             list = orderInfoMapper.selectByOtherIdLike(null, idString, null);
