@@ -323,7 +323,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     public ServerResponse aliCallbackBalance(Map<String, String> params) {
         try {
             String order = params.get("out_trade_no");
-            Integer customerId = Integer.parseInt(order.substring(0,order.indexOf(".")));
+            Integer customerId = Integer.parseInt(order.substring(0,order.indexOf("-")));
             String tradeNo = params.get("trade_no");
             String tradeStatus = params.get("trade_status");
             BigDecimal price = new BigDecimal(params.get("total_amount"));
