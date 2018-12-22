@@ -299,4 +299,10 @@
     where cast(customer_id as char) like #{customerIdString}
   </select>
 
+  <select id="allPrice" resultType="java.math.BigDecimal">
+    select
+    sum(customer_balance)
+    from customer_info
+  </select>
+
 </mapper>

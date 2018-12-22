@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface BillInfoMapper {
+public interface  BillInfoMapper {
     int deleteByPrimaryKey(Integer billId);
 
     int insert(BillInfo record);

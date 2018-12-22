@@ -47,7 +47,7 @@ public interface OrderInfoMapper {
 
     List<OrderInfo> selectByOtherIdLike(@Param("customerIdLike")String customerIdLike, @Param("engineerIdLIke")String engineerIdLIke, @Param("engineerCheckIdLike")String engineerCheckIdLike);
 
-    BigDecimal hasFinshedOrder();
+    BigDecimal hasFinshedPrice();
 
-    BigDecimal unFinshedOrder();
+    BigDecimal allUnfinishedPrice();
 }

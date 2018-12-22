@@ -303,4 +303,10 @@
     where cast(engineer_id as char) like #{engineerIdString}
   </select>
 
+  <select id="allPrice" resultType="java.math.BigDecimal">
+    select
+    sum(engineer_balance)
+    from engineer_info
+  </select>
+
 </mapper>

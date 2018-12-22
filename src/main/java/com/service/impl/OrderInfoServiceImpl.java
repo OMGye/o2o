@@ -71,6 +71,9 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     @Autowired
     private OrderAnsqueInfoMapper orderAnsqueInfoMapper;
 
+    @Autowired
+    private DrawCashInfoMapper drawCashInfoMapper;
+
 
     private static final Logger logger = LoggerFactory.getLogger(OrderInfoServiceImpl.class);
 
@@ -1419,11 +1422,41 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     }
 
     @Override
-    public ServerResponse getAllPrice() {
-        AdminAllPrice adminAllPrice = new AdminAllPrice();
-        BigDecimal payPrice = payInfoMapper.allPrice();
-        BigDecimal finshedOrderPrice = orderInfoMapper.hasFinshedOrder();
+    public ServerResponse getAllPrice(Integer type) {
+        if (type == 0){
+            BigDecimal payPrice = payInfoMapper.allPrice();
+            return ServerResponse.createBySuccess(payPrice);
+        }
 
+        if (type == 1){
+            BigDecimal drawPrice = drawCashInfoMapper.allPrice();
+            return ServerResponse.createBySuccess(drawPrice);
+        }
+
+        if (type == 2){
+            BigDecimal customerPrice = customerInfoMapper.allPrice();
+            return ServerResponse.createBySuccess(customerPrice);
+        }
+
+        if (type == 3){
+            BigDecimal engineerPrice = engineerInfoMapper.allPrice();
+            return ServerResponse.createBySuccess(engineerPrice);
+        }
+
+        if (type == 4){
+            BigDecimal incomePrice = incomeInfoMapper.allPrice();
+            return ServerResponse.createBySuccess(incomePrice);
+        }
+
+        if (type == 5){
+            BigDecimal unFinishedOrderPrice = orderInfoMapper.allUnfinishedPrice();
+            return ServerResponse.createBySuccess(unFinishedOrderPrice);
+        }
+
+        if (type == 6){
+            BigDecimal finishedOrderPrice = orderInfoMapper.hasFinshedPrice();
+            return ServerResponse.createBySuccess(finishedOrderPrice);
+        }
         return null;
     }
 

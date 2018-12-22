@@ -173,4 +173,10 @@
       and create_time <![CDATA[<=]]> #{endDate}
       and state = 0
     </select>
+
+  <select id="allPrice" resultType="java.math.BigDecimal">
+    select
+    sum(draw_cash_money)
+    from draw_cash_info
+  </select>
 </mapper>

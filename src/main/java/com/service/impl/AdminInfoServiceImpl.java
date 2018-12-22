@@ -20,6 +20,7 @@ public class AdminInfoServiceImpl implements AdminInfoService {
     public ServerResponse<AdminInfo> login(AdminInfo adminInfo) {
         if (adminInfo == null || adminInfo.getAdminName() == null || adminInfo.getPassword() == null)
             return ServerResponse.createByErrorMessage("您未输入账户或密码");
+        System.out.printf(adminInfo.getAdminName());
         AdminInfo curAdminInfo = adminInfoMapper.selectByUserNameAndPassword(adminInfo.getAdminName(),adminInfo.getPassword());
         if (curAdminInfo == null)
             return ServerResponse.createByErrorMessage("账号或密码错误");

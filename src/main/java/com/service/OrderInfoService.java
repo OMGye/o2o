@@ -84,6 +84,6 @@ public interface OrderInfoService {
     ServerResponse<PageInfo> selectByOtherIdLike(int pageNum, int pageSize, Integer id, Integer type);
 
 
-    ServerResponse getAllPrice();
+    ServerResponse getAllPrice(Integer type);
 
 }

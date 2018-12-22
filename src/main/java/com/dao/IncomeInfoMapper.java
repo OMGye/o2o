@@ -4,6 +4,7 @@ import com.pojo.BillInfo;
 import com.pojo.IncomeInfo;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface IncomeInfoMapper {
@@ -20,4 +21,6 @@ public interface IncomeInfoMapper {
     int updateByPrimaryKey(IncomeInfo record);
 
     List<IncomeInfo> list(@Param("orderId") Integer orderId);
+
+    BigDecimal allPrice();
 }

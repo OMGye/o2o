@@ -5,6 +5,7 @@ import com.pojo.EngineerInfo;
 import com.pojo.OrderInfo;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface EngineerInfoMapper {
@@ -29,4 +30,6 @@ public interface EngineerInfoMapper {
     EngineerInfo loginByPhone(@Param("phone") String phone, @Param("password") String password);
 
     List<EngineerInfo> selectByIdLike(@Param("engineerIdString")String engineerIdString);
+
+    BigDecimal allPrice();
 }

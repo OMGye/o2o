@@ -61,7 +61,7 @@ public class DrawCashInfoServiceImpl implements DrawCashInfoService {
                     billInfo.setUserId(customerInfo.getCustomerId());
                     billInfo.setUserName(customerInfo.getCustomerName());
                     billInfo.setBillDec("提现操作");
-                    billInfo.setBillMoney(drawCashInfo.getDrawCashMoney());
+                    billInfo.setBillMoney(BigDecimalUtil.sub(drawCashInfo.getDrawCashMoney().doubleValue(),BigDecimalUtil.mul(drawCashInfo.getDrawCashMoney().doubleValue(),(double)2).doubleValue()));
                     billInfo.setUserType(0);
 
                     billInfoMapper.insert(billInfo);

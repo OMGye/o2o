@@ -90,4 +90,11 @@
       <if test="orderId != null"> order_id = #{orderId}</if>
     </where>
   </select>
+
+  <select id="allPrice" resultType="java.math.BigDecimal">
+    select
+    sum(income_money)
+    from income_info
+  </select>
+
 </mapper>

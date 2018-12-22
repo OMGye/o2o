@@ -25,6 +25,9 @@
       <arg column="order_state" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="order_price" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
       <arg column="order_qae_price" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <arg column="engineer_real_price" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <arg column="engineer_qae_real_price" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <arg column="admin_price" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
       <arg column="order_file" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="order_customer_file" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="refuse_dec" javaType="java.lang.String" jdbcType="VARCHAR" />
@@ -36,7 +39,7 @@
     order_id, customer_id, customer_name, engineer_id, engineer_name, engineer_check_id, 
     engineer_check_name, order_first_category, order_second_category, order_mi, order_qae, 
     other_param_info, basic_layer, price_together_num, order_dec, order_rush, order_deduct_rank, 
-    order_deduct_dec, order_rate_dec, order_state, order_price,order_qae_price, order_file,order_customer_file, refuse_dec, create_time,
+    order_deduct_dec, order_rate_dec, order_state, order_price,order_qae_price, engineer_real_price, engineer_qae_real_price, admin_price, order_file,order_customer_file, refuse_dec, create_time,
     update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -481,18 +484,20 @@
     where cast(order_id as char) like #{orderIdString}
   </select>
 
-  <select id="hasFinshedOrder" resultType="java.math.BigDecimal">
+  <select id="hasFinshedPrice" resultType="java.math.BigDecimal">
     select
     sum(order_price)
     from order_info
     where order_state = 7
   </select>
 
-  <select id="unFinshedOrder" resultType="java.math.BigDecimal">
+
+
+  <select id="allUnfinishedPrice" resultType="java.math.BigDecimal">
     select
     sum(order_price)
     from order_info
-    where order_state in (  )
+    where order_state != 0 and order_state != 7 and order_state != 11
   </select>
 
 </mapper>

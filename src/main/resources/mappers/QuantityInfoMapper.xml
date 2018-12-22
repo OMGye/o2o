@@ -137,7 +137,7 @@
     <include refid="Base_Column_List" />
     from quantity_info
     where #{quantityPercentage,jdbcType=DECIMAL} >= quantity_percentage
-    ORDER BY quantiy_rank ASC
+    ORDER BY quantity_draw asc
   </select>
 
 
