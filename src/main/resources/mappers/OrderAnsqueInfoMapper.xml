@@ -133,8 +133,16 @@
     COUNT(*)
     from order_ansque_info
     where order_id = #{orderId}
-    and user_type = #{type,jdbcType=INTEGER}
-    and state = 1
+    and user_type != #{type,jdbcType=INTEGER}
+    and state = 0
   </select>
+
+  <update id="updateMessAgeState" parameterType="map">
+    update order_ansque_info
+    set state = 1,
+    create_time = now()
+    where order_id = #{orderId}
+    and user_type != #{type}
+  </update>
 
 </mapper>

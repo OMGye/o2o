@@ -14,6 +14,7 @@ import com.util.*;
 import com.vo.AdminAllPrice;
 import com.vo.EngineerDefriendJson;
 import com.vo.EngineerRankVO;
+import com.vo.OrderAndMessagenumVo;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -315,7 +316,15 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         PageHelper.startPage(pageNum, pageSize);
         PageHelper.orderBy("update_time desc");
         List<OrderInfo> list = orderInfoMapper.customerListOrder(customerInfo.getCustomerId(), orderState);
-        PageInfo pageInfo = new PageInfo(list);
+        List<OrderAndMessagenumVo> listVo = new ArrayList<>();
+        for (OrderInfo orderInfo : list){
+            OrderAndMessagenumVo orderAndMessagenumVo = new OrderAndMessagenumVo();
+            BeanUtils.copyProperties(orderInfo,orderAndMessagenumVo);
+            Integer num = orderAnsqueInfoMapper.getUnReadNum(orderInfo.getOrderId(), 0);
+            orderAndMessagenumVo.setUnReadMessage(num);
+            listVo.add(orderAndMessagenumVo);
+        }
+        PageInfo pageInfo = new PageInfo(listVo );
         return ServerResponse.createBySuccess(pageInfo);
     }
 
@@ -656,7 +665,15 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         PageHelper.startPage(pageNum, pageSize);
         PageHelper.orderBy("update_time desc");
         List<OrderInfo> list = orderInfoMapper.engineerListOrder(engineerInfo.getEngineerId(), orderState);
-        PageInfo pageInfo = new PageInfo(list);
+        List<OrderAndMessagenumVo> listVo = new ArrayList<>();
+        for (OrderInfo orderInfo : list){
+            OrderAndMessagenumVo orderAndMessagenumVo = new OrderAndMessagenumVo();
+            BeanUtils.copyProperties(orderInfo,orderAndMessagenumVo);
+            Integer num = orderAnsqueInfoMapper.getUnReadNum(orderInfo.getOrderId(), 1);
+            orderAndMessagenumVo.setUnReadMessage(num);
+            listVo.add(orderAndMessagenumVo);
+        }
+        PageInfo pageInfo = new PageInfo(listVo);
         return ServerResponse.createBySuccess(pageInfo);
     }
 
@@ -665,7 +682,15 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         PageHelper.startPage(pageNum, pageSize);
         PageHelper.orderBy("update_time desc");
         List<OrderInfo> list = orderInfoMapper.engineerQaeListOrder(engineerInfo.getEngineerId(), orderState);
-        PageInfo pageInfo = new PageInfo(list);
+        List<OrderAndMessagenumVo> listVo = new ArrayList<>();
+        for (OrderInfo orderInfo : list){
+            OrderAndMessagenumVo orderAndMessagenumVo = new OrderAndMessagenumVo();
+            BeanUtils.copyProperties(orderInfo,orderAndMessagenumVo);
+            Integer num = orderAnsqueInfoMapper.getUnReadNum(orderInfo.getOrderId(), 2);
+            orderAndMessagenumVo.setUnReadMessage(num);
+            listVo.add(orderAndMessagenumVo);
+        }
+        PageInfo pageInfo = new PageInfo(listVo);
         return ServerResponse.createBySuccess(pageInfo);
     }
 
@@ -1275,8 +1300,12 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if (type == 0 && userId.intValue() != orderInfo.getCustomerId().intValue())
             return ServerResponse.createByErrorMessage("您不属于该订单");
 
-        if (type == 1 && userId.intValue() != orderInfo.getEngineerId().intValue())
-            return ServerResponse.createByErrorMessage("您不属于该订单");
+        if (type == 1 && userId.intValue() != orderInfo.getEngineerId().intValue()) {
+            if (type == 1 && userId.intValue() != orderInfo.getEngineerCheckId().intValue()){
+                return ServerResponse.createByErrorMessage("您不属于该订单");
+            }
+            type = 2;
+        }
 
         OrderAnsqueInfo orderAnsqueInfo = new OrderAnsqueInfo();
         orderAnsqueInfo.setOrderAnsqueContent(orderAnsqueContent);
@@ -1284,6 +1313,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         orderAnsqueInfo.setUserId(userId);
         orderAnsqueInfo.setUserName(userName);
         orderAnsqueInfo.setUserType(type);
+        orderAnsqueInfo.setState(0);
 
         int row = orderAnsqueInfoMapper.insert(orderAnsqueInfo);
         if (row > 0)
@@ -1306,8 +1336,12 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if (type == 0 && userId.intValue() != orderInfo.getCustomerId().intValue())
             return ServerResponse.createByErrorMessage("您不属于该订单");
 
-        if (type == 1 && userId.intValue() != orderInfo.getEngineerId().intValue())
-            return ServerResponse.createByErrorMessage("您不属于该订单");
+        if (type == 1 && userId.intValue() != orderInfo.getEngineerId().intValue()){
+            if (type == 1 && userId.intValue() != orderInfo.getEngineerCheckId().intValue()){
+                return ServerResponse.createByErrorMessage("您不属于该订单");
+            }
+            type = 2;
+        }
 
         String fileName = file.getOriginalFilename();
         //扩展名
@@ -1344,6 +1378,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         orderAnsqueInfo.setUserId(userId);
         orderAnsqueInfo.setUserName(userName);
         orderAnsqueInfo.setUserType(type);
+        orderAnsqueInfo.setState(0);
 
         int row = orderAnsqueInfoMapper.insert(orderAnsqueInfo);
         if (row > 0)
@@ -1363,11 +1398,16 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if (type == 0 && userId.intValue() != orderInfo.getCustomerId().intValue())
             return ServerResponse.createByErrorMessage("您不属于该订单");
 
-        if (type == 1 && userId.intValue() != orderInfo.getEngineerId().intValue())
-            return ServerResponse.createByErrorMessage("您不属于该订单");
+        if (type == 1 && userId.intValue() != orderInfo.getEngineerId().intValue()) {
+            if (type == 1 && userId.intValue() != orderInfo.getEngineerCheckId().intValue()){
+                return ServerResponse.createByErrorMessage("您不属于该订单");
+            }
+            type = 2;
+        }
         PageHelper.startPage(pageNum, pageSize);
         PageHelper.orderBy("create_time asc");
         List<OrderAnsqueInfo> list = orderAnsqueInfoMapper.list(orderId);
+        orderAnsqueInfoMapper.updateMessAgeState(orderId,type);
         PageInfo pageInfo = new PageInfo(list);
         return ServerResponse.createBySuccess(pageInfo);
     }
