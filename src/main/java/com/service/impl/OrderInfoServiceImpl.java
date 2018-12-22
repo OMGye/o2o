@@ -334,7 +334,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
             CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(customerId);
             customerInfo.setCustomerBalance(BigDecimalUtil.add(customerInfo.getCustomerBalance().doubleValue(), price.doubleValue()));
-            customerInfoMapper.updateByPrimaryKey(customerInfo);
+            customerInfoMapper.updateByPrimaryKeySelective(customerInfo);
 
             PayInfo payInfo = new PayInfo();
             payInfo.setUserId(customerId);
