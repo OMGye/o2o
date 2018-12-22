@@ -15,16 +15,28 @@ public class OrderAnsqueInfo {
 
     private String orderAnsqueContent;
 
-    private Date createTime;
-
-    public OrderAnsqueInfo(Integer orderAnsqueId, Integer orderId, Integer userType, Integer userId, String userName, String orderAnsqueContent, Date createTime) {
+    public OrderAnsqueInfo(Integer orderAnsqueId, Integer orderId, Integer userType, Integer userId, String userName, String orderAnsqueContent, Integer state, Date createTime) {
         this.orderAnsqueId = orderAnsqueId;
         this.orderId = orderId;
         this.userType = userType;
         this.userId = userId;
         this.userName = userName;
         this.orderAnsqueContent = orderAnsqueContent;
+        this.state = state;
         this.createTime = createTime;
+    }
+
+    private Integer state;
+
+    private Date createTime;
+
+    public void setState(Integer state) {
+        this.state = state;
+    }
+
+    public Integer getState() {
+
+        return state;
     }
 
     public OrderAnsqueInfo() {

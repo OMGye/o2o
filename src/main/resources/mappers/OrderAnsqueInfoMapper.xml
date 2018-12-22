@@ -134,6 +134,7 @@
     from order_ansque_info
     where order_id = #{orderId}
     and user_type = #{type,jdbcType=INTEGER}
+    and state = 1
   </select>
 
 </mapper>
