@@ -19,6 +19,8 @@ public interface OrderInfoService {
 
     ServerResponse createOrder(OrderInfo order, CustomerInfo customerInfo, Integer params[],  Integer rushId, MultipartFile file, String path);
 
+    ServerResponse payForBalance(Integer orderId, Integer customerId);
+
     ServerResponse getOrderById(Integer orderId);
 
     ServerResponse aliCallback(Map<String,String> params);

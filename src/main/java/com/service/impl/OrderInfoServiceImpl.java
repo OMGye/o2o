@@ -258,6 +258,41 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     }
 
     @Override
+    public ServerResponse payForBalance(Integer orderId, Integer customerId){
+        if (orderId == null)
+            return ServerResponse.createByErrorMessage("订单号为空");
+
+        OrderInfo orderInfo = orderInfoMapper.selectByPrimaryKey(orderId);
+        if (orderInfo == null)
+            return ServerResponse.createByErrorMessage("找不到该订单");
+
+        if (orderInfo.getOrderState() != Const.Order.PAYING)
+            return ServerResponse.createByErrorMessage("该订单状态不可支付");
+
+        CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey
+                (customerId);
+        if (orderInfo.getOrderPrice().doubleValue() > customerInfo.getCustomerBalance().doubleValue()){
+            return ServerResponse.createByErrorMessage("余额不足");
+        }
+
+        customerInfo.setCustomerBalance(BigDecimalUtil.sub(customerInfo.getCustomerBalance().doubleValue(), orderInfo.getOrderPrice().doubleValue()));
+        customerInfoMapper.updateByPrimaryKeySelective(customerInfo);
+
+        orderInfo.setOrderState(Const.Order.PAIED);
+        orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+
+        BillInfo billInfo = new BillInfo();
+        billInfo.setUserId(customerInfo.getCustomerId());
+        billInfo.setBillMoney(BigDecimalUtil.sub(orderInfo.getOrderPrice().doubleValue(), BigDecimalUtil.add(orderInfo.getOrderPrice().doubleValue(), orderInfo.getOrderPrice().doubleValue()).doubleValue()));
+        billInfo.setUserName(customerInfo.getCustomerName());
+        billInfo.setUserType(0);
+        billInfo.setBillDec("支付订单 :" + orderInfo.getOrderId());
+        billInfoMapper.insert(billInfo);
+
+        return ServerResponse.createBySuccess("支付成功");
+    }
+
+    @Override
     public ServerResponse getOrderById(Integer orderId) {
         if (orderId == null)
             return ServerResponse.createByErrorMessage("参数为空");

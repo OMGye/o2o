@@ -51,7 +51,7 @@ public class CustomerInfoController {
         return customerInfoService.register(customerInfo);
     }
 
-    @RequestMapping(value = "customerInfo/login.do", method = RequestMethod.GET)
+    @RequestMapping(value = "customerInfo/login.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse login(String customerName, String password ,HttpSession session) {
 //        //以秒为单位
@@ -164,6 +164,15 @@ public class CustomerInfoController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
+    @RequestMapping(value = "orderInfo/payforbalance.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse payForBalance(HttpSession session, Integer orderId) {
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null) {
+            return orderInfoService.payForBalance(orderId, curCustomerInfo.getCustomerId());
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
 
 
 
@@ -222,7 +231,7 @@ public class CustomerInfoController {
 
     }
 
-    @RequestMapping(value = "orderInfo/paybalance.do", method = RequestMethod.GET)
+    @RequestMapping(value = "orderInfo/paybalance.do", method = RequestMethod.POST)
     public void payBalance(HttpSession session, HttpServletRequest request, HttpServletResponse response, BigDecimal price) {
 
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
