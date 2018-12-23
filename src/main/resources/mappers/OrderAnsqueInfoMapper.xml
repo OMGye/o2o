@@ -128,7 +128,7 @@
     where order_id = #{orderId};
   </select>
 
-  <select id="getUnReadNum" parameterType="map" resultMap="BaseResultMap">
+  <select id="getUnReadNum" parameterType="map" resultType="java.lang.Integer">
     select
     COUNT(*)
     from order_ansque_info
