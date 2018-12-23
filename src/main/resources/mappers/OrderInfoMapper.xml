@@ -477,9 +477,9 @@
     <include refid="Base_Column_List" />
     from order_info
     <where>
-    <if test="engineerId != null"> cast(engineer_id as char) like #{engineerIdLIke}</if>
-    <if test="customerId != null">and cast(customer_id as char) like #{customerIdLike}</if>
-    <if test="engineerCheckId != null">and cast(engineer_check_id as char) like #{engineerCheckIdLike}</if>
+    <if test="engineerIdLIke != null"> cast(engineer_id as char) like #{engineerIdLIke}</if>
+    <if test="customerIdLike != null">and cast(customer_id as char) like #{customerIdLike}</if>
+    <if test="engineerCheckIdLike != null">and cast(engineer_check_id as char) like #{engineerCheckIdLike}</if>
     </where>
     where cast(order_id as char) like #{orderIdString}
   </select>
