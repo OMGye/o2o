@@ -481,7 +481,6 @@
     <if test="customerIdLike != null">and cast(customer_id as char) like #{customerIdLike}</if>
     <if test="engineerCheckIdLike != null">and cast(engineer_check_id as char) like #{engineerCheckIdLike}</if>
     </where>
-    where cast(order_id as char) like #{orderIdString}
   </select>
 
   <select id="hasFinshedPrice" resultType="java.math.BigDecimal">
