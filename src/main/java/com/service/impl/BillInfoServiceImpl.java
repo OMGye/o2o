@@ -26,7 +26,7 @@ public class BillInfoServiceImpl implements BillInfoService{
     public ServerResponse<PageInfo> list(int pageSize, int pageNum, Integer userId, Integer userType) {
         PageHelper.startPage(pageNum,pageSize);
         PageHelper.orderBy("create_time desc");
-        List<BillInfo> list = billInfoMapper.list(userId,userType);./
+        List<BillInfo> list = billInfoMapper.list(userId,userType);
         PageInfo pageInfo = new PageInfo(list);
         return ServerResponse.createBySuccess(pageInfo);
     }
