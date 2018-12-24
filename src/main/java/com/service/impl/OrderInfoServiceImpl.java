@@ -408,7 +408,8 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             orderAndMessagenumVo.setUnReadMessage(num);
             listVo.add(orderAndMessagenumVo);
         }
-        PageInfo pageInfo = new PageInfo(listVo );
+        PageInfo pageInfo = new PageInfo(list);
+        pageInfo.setList(listVo);
         return ServerResponse.createBySuccess(pageInfo);
     }
 
@@ -757,7 +758,8 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             orderAndMessagenumVo.setUnReadMessage(num);
             listVo.add(orderAndMessagenumVo);
         }
-        PageInfo pageInfo = new PageInfo(listVo);
+        PageInfo pageInfo = new PageInfo(list);
+        pageInfo.setList(listVo);
         return ServerResponse.createBySuccess(pageInfo);
     }
 
@@ -774,7 +776,8 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             orderAndMessagenumVo.setUnReadMessage(num);
             listVo.add(orderAndMessagenumVo);
         }
-        PageInfo pageInfo = new PageInfo(listVo);
+        PageInfo pageInfo = new PageInfo(list);
+        pageInfo.setList(listVo);
         return ServerResponse.createBySuccess(pageInfo);
     }
 
