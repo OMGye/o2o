@@ -93,7 +93,7 @@ public class ExcelUtil {
     public static Object getCellValue(Cell cell) {
         Object value = null;
         DecimalFormat df = new DecimalFormat("0");  //格式化字符类型的数字
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  //日期格式化
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:MM:SS");  //日期格式化
         DecimalFormat df2 = new DecimalFormat("0.00");  //格式化数字
         switch (cell.getCellType()) {
             case Cell.CELL_TYPE_STRING:
@@ -242,7 +242,7 @@ public class ExcelUtil {
                 // 如果是日期类型进行转换
                 if (rtn != null) {
                     if (rtn instanceof Date) {
-                        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:MM:SS");
                         value = format.format(rtn);
                     } else if (rtn instanceof BigDecimal) {
                         NumberFormat nf = new DecimalFormat("#,##0.00");
