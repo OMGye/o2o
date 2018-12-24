@@ -47,8 +47,8 @@ public class EngineerInfoController {
     @RequestMapping(value = "engineerInfo/login.do",method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse login(String engineerName, String password, HttpSession session){
-//        //以秒为单位
-//        session.setMaxInactiveInterval(5 * 60);
+        //以秒为单位
+        session.setMaxInactiveInterval(3 * 60);
         ServerResponse<EngineerInfo> response = engineerInfoService.login(engineerName, password);
         if(response.isSuccess()){
             session.setAttribute(Const.CURRENT_USER,response.getData());
