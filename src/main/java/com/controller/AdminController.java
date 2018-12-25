@@ -44,6 +44,19 @@ public class AdminController {
         return response;
     }
 
+    @RequestMapping(value = "resetpassword.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<AdminInfo> resetPassword(HttpSession session, String newPassword, String oldPassword){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            if (adminInfo.getPassword().equals(oldPassword)){
+                return adminInfoService.rePassword(adminInfo.getAdminId(),newPassword);
+            }
+            return ServerResponse.createByErrorMessage("原密码错误");
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
     @RequestMapping(value = "logout.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse logout(HttpSession session) {

@@ -845,8 +845,12 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
         EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByPrimaryKey(engineerInfo.getEngineerId());
         if (dbEngineerInfo != null) {
-            if (dbEngineerInfo.getOrderCount() == 3)
-                return ServerResponse.createByErrorMessage("您当前可接订单数已满");
+            if (dbEngineerInfo.getOrderCount() == 3){
+                List<OrderInfo> list = orderInfoMapper.engineerListOrder(dbEngineerInfo.getEngineerId(), Const.Order.HAVE_CAUGHT);
+                if (list.size() >= 3){
+                    return ServerResponse.createByErrorMessage("您当前可接订单数已满");
+                }
+            }
         }
 
         if (orderInfo.getOrderFirstCategory().equals(engineerRankVO.getFirstCategory()) &&

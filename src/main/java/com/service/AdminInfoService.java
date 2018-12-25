@@ -9,4 +9,6 @@ import com.pojo.AdminInfo;
 public interface AdminInfoService {
 
     ServerResponse<AdminInfo> login(AdminInfo adminInfo);
+
+    ServerResponse rePassword(Integer id, String newPassword);
 }

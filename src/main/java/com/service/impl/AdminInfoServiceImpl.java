@@ -27,4 +27,15 @@ public class AdminInfoServiceImpl implements AdminInfoService {
 
         return ServerResponse.createBySuccess(curAdminInfo);
     }
+
+    @Override
+    public ServerResponse rePassword(Integer id, String newPassword) {
+
+        AdminInfo adminInfo = adminInfoMapper.selectByPrimaryKey(id);
+        adminInfo.setPassword(newPassword);
+        int row = adminInfoMapper.updateByPrimaryKeySelective(adminInfo);
+        if (row > 0)
+            return ServerResponse.createBySuccess("修改成功");
+        return ServerResponse.createByErrorMessage("修改失败");
+    }
 }
