@@ -150,7 +150,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         //5.得到每个基础价格拼款后的价格
         BigDecimal allCount = new BigDecimal("0");
         allCount = BigDecimalUtil.add(allCount.doubleValue(), bigDecimalParam.doubleValue());
-        if (order.getPriceTogetherNum() > 1) {
+        if (order.getPriceTogetherNum() >= 1) {
             PriceTogetherInfo priceTogetherInfo = new PriceTogetherInfo();
             priceTogetherInfo.setPriceTogetherNum(order.getPriceTogetherNum());
             priceTogetherInfo.setPriceTogetherName("CAM");
@@ -444,8 +444,12 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
         EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByPrimaryKey(engineerInfo.getEngineerId());
         if (dbEngineerInfo != null) {
-            if (dbEngineerInfo.getOrderCount() == 3)
-                return ServerResponse.createByErrorMessage("您当前可接订单数已满");
+            if (dbEngineerInfo.getOrderCount() == 3){
+                List<OrderInfo> list = orderInfoMapper.engineerListOrder(dbEngineerInfo.getEngineerId(), Const.Order.HAVE_CAUGHT);
+                if (list.size() >= 3){
+                    return ServerResponse.createByErrorMessage("您当前可接订单数已满");
+                }
+            }
         }
 
         if (orderInfo.getOrderFirstCategory().equals(engineerRankVO.getFirstCategory()) &&
@@ -846,7 +850,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByPrimaryKey(engineerInfo.getEngineerId());
         if (dbEngineerInfo != null) {
             if (dbEngineerInfo.getOrderCount() == 3){
-                List<OrderInfo> list = orderInfoMapper.engineerListOrder(dbEngineerInfo.getEngineerId(), Const.Order.HAVE_CAUGHT);
+                List<OrderInfo> list = orderInfoMapper.engineerQaeListOrder(dbEngineerInfo.getEngineerId(), Const.Order.QAE_HAVE_CAUGHT);
                 if (list.size() >= 3){
                     return ServerResponse.createByErrorMessage("您当前可接订单数已满");
                 }
