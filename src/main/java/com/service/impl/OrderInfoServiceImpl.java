@@ -580,7 +580,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
                         EngineerInfo qaeEngineerInfo = engineerInfoMapper.selectByPrimaryKey
                                 (orderInfo.getEngineerId());
                         Timer timerQae = new Timer();
-                        TimerEmailCaughtOrder caughtOrderQae = new TimerEmailCaughtOrder(customerInfo.getEmail(), "您完成的订单已被客户查看，如果三天之内没有确认，系统将直接帮您确认，并将资金直接转入您的账户");
+                        TimerEmailCaughtOrder caughtOrderQae = new TimerEmailCaughtOrder(customerInfo.getEmail(), "您完成的订单已被客户查看，如果七天之内没有确认，系统将直接帮您确认，并将资金直接转入您的账户");
                         timerQae.schedule(caughtOrderQae, Const.TIMER_FOR_SEND_EMAIL);
                         List<QuantityInfo> listQae = quantityInfoMapper.selectByQuantiy(qaeEngineerInfo.getEngineerQuantity());
                         QuantityInfo qaeQuantity = listQae.get(0);
