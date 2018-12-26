@@ -444,7 +444,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
         EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByPrimaryKey(engineerInfo.getEngineerId());
         if (dbEngineerInfo != null) {
-            if (dbEngineerInfo.getOrderCount() == 3){
+            if (dbEngineerInfo.getOrderCount() >= 3){
                 List<OrderInfo> list = orderInfoMapper.engineerListOrder(dbEngineerInfo.getEngineerId(), Const.Order.HAVE_CAUGHT);
                 if (list.size() >= 3){
                     return ServerResponse.createByErrorMessage("您当前可接订单数已满");
@@ -569,7 +569,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
                     EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey
                             (orderInfo.getEngineerId());
                     Timer timer = new Timer();
-                    TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(customerInfo.getEmail(), "您完成的订单已被客户查看，如果三天之内没有确认，系统将直接帮您确认，并将资金直接转入您的账户");
+                    TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(customerInfo.getEmail(), "您完成的订单已被客户查看，如果七天之内没有确认，系统将直接帮您确认，并将资金直接转入您的账户");
                     timer.schedule(caughtOrder, Const.TIMER_FOR_SEND_EMAIL);
 
                     List<QuantityInfo> list = quantityInfoMapper.selectByQuantiy(engineerInfo.getEngineerQuantity());
@@ -849,7 +849,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
         EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByPrimaryKey(engineerInfo.getEngineerId());
         if (dbEngineerInfo != null) {
-            if (dbEngineerInfo.getOrderCount() == 3){
+            if (dbEngineerInfo.getOrderCount() >= 3){
                 List<OrderInfo> list = orderInfoMapper.engineerQaeListOrder(dbEngineerInfo.getEngineerId(), Const.Order.QAE_HAVE_CAUGHT);
                 if (list.size() >= 3){
                     return ServerResponse.createByErrorMessage("您当前可接订单数已满");
