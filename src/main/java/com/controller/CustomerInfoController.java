@@ -242,7 +242,7 @@ public class CustomerInfoController {
             //设置请求参数
             AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();
             alipayRequest.setReturnUrl(AlipayConfig.return_url);
-            alipayRequest.setNotifyUrl("http://47.104.225.176:8080/o2o/customer/orderInfo/callbackbalance.do");
+            alipayRequest.setNotifyUrl("http://193.112.26.167:8080/o2o/customer/orderInfo/callbackbalance.do");
 
 
             String out_trade_no = null;
