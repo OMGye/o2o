@@ -5,6 +5,8 @@ import com.github.pagehelper.PageInfo;
 import com.pojo.EngineerInfo;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
+
 /**
  * Created by upupgogogo on 2018/11/14.下午4:35
  */
@@ -27,6 +29,8 @@ public interface EngineerInfoService {
     ServerResponse comfirmUserNameAndEmail(EngineerInfo engineerInfo);
 
     ServerResponse<PageInfo> selectByIdLike(int pageNum, int pageSize, Integer engineerId);
+
+    ServerResponse deductOrAddMoney(Integer type, BigDecimal price, Integer engineer);
 
 
 

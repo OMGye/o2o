@@ -90,4 +90,6 @@ public interface OrderInfoService {
 
     ServerResponse getAllPrice(Integer type);
 
+    ServerResponse changeOrderState(Integer type, Integer orderId);
+
 }

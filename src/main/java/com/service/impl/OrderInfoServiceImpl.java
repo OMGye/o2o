@@ -1265,7 +1265,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if (orderInfo == null)
             return ServerResponse.createByErrorMessage("找不到该订单");
 
-        if (orderInfo.getOrderState() == Const.Order.HAVE_FINISHED || orderInfo.getOrderState() == Const.Order.CANNCEL || orderInfo.getOrderState() == Const.Order.PAYING)
+        if (orderInfo.getOrderState() == Const.Order.HAVE_FINISHED || orderInfo.getOrderState() == Const.Order.CANNCEL || orderInfo.getOrderState() == Const.Order.PAYING || orderInfo.getOrderState() == Const.Order.PAIED)
             return ServerResponse.createByErrorMessage("异常操作");
 
         if (orderInfo.getEngineerCheckId() == null) {
@@ -1592,6 +1592,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         return null;
     }
 
+
     @Override
     public XSSFWorkbook exportExcelInfo(String startTime, String endTime) {
         if (startTime == null || endTime == null)
@@ -1744,5 +1745,63 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     }
 
 
+    @Override
+    public ServerResponse changeOrderState(Integer type, Integer orderId) {
+        if (type == null || orderId == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+
+        OrderInfo orderInfo = orderInfoMapper.selectByPrimaryKey(orderId);
+        if (orderInfo == null)
+            return ServerResponse.createByErrorMessage("找不到该订单");
+
+        if (type == 0){
+            orderInfo.setOrderState(Const.Order.HAVE_FINISHED);
+            int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+            if (row > 0){
+                if (orderInfo.getCustomerId() != null){
+                    CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
+                    sendEmai("您的订单已被后台设置为已完成", customerInfo.getEmail());
+                }
+                if (orderInfo.getEngineerId() != null){
+                    EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerId());
+                    sendEmai("您的订单已被后台设置为已完成", engineerInfo.getEmail());
+                }
+                if (orderInfo.getEngineerCheckId() != null){
+                    EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerCheckId());
+                    sendEmai("您的订单已被后台设置为已完成", engineerInfo.getEmail());
+                }
+                return ServerResponse.createBySuccess("已设置订单完成");
+            }
+            return ServerResponse.createByErrorMessage("修改失败");
+        }
+
+        if (type == 1){
+            orderInfo.setOrderState(Const.Order.CANNCEL);
+            int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+            if (row > 0){
+                if (orderInfo.getCustomerId() != null){
+                    CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
+                    sendEmai("您的订单已被后台设置为已取消", customerInfo.getEmail());
+                }
+                if (orderInfo.getEngineerId() != null){
+                    EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerId());
+                    sendEmai("您的订单已被后台设置为已取消", engineerInfo.getEmail());
+                }
+                if (orderInfo.getEngineerCheckId() != null){
+                    EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerCheckId());
+                    sendEmai("您的订单已被后台设置为已取消", engineerInfo.getEmail());
+                }
+                return ServerResponse.createBySuccess("已设置订单取消");
+            }
+            return ServerResponse.createByErrorMessage("修改失败");
+        }
+        return ServerResponse.createByErrorMessage("异常操作");
+    }
+
+    private void sendEmai(String str, String email){
+        Timer timerCheck = new Timer();
+        TimerEmailCaughtOrder caughtOrderCheck = new TimerEmailCaughtOrder(email, str);
+        timerCheck.schedule(caughtOrderCheck, Const.TIMER_FOR_SEND_EMAIL);
+    }
 
 }

@@ -11,7 +11,7 @@ public class Const {
 
     public static final Long TIMER = (long)604800000;
 
-    public static final Long TIMER_FOR_SEND_EMAIL = (long)30000;
+    public static final Long TIMER_FOR_SEND_EMAIL = (long)3000;
 
 
     public interface EngineerRankInfo{

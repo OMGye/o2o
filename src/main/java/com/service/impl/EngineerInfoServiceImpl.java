@@ -2,19 +2,14 @@ package com.service.impl;
 
 import com.common.Const;
 import com.common.ServerResponse;
+import com.dao.BillInfoMapper;
 import com.dao.EngineerInfoMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
-import com.pojo.CustomerInfo;
-import com.pojo.EngineerInfo;
-import com.pojo.OrderInfo;
-import com.pojo.QuantityInfo;
+import com.pojo.*;
 import com.service.EngineerInfoService;
-import com.util.FTPUtil;
-import com.util.MailUtil;
-import com.util.PropertiesUtil;
-import com.util.TimerEmailCaughtOrder;
+import com.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -254,6 +249,55 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
         List<EngineerInfo> list = engineerInfoMapper.selectByIdLike(engineerIdString);
         PageInfo pageInfo = new PageInfo(list);
         return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Autowired
+    private BillInfoMapper billInfoMapper;
+
+    @Override
+    public ServerResponse deductOrAddMoney(Integer type, BigDecimal price, Integer engineerId) {
+        if (type == null || price == null || engineerId == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+
+        EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(engineerId);
+        if (engineerInfo == null)
+            return ServerResponse.createByErrorMessage("找不到该用户");
+
+        if (type == 0){
+            if (engineerInfo.getEngineerBalance().doubleValue() < price.doubleValue())
+                return ServerResponse.createByErrorMessage("扣钱金额不能大于工程师余额");
+
+            engineerInfo.setEngineerBalance(BigDecimalUtil.sub(engineerInfo.getEngineerBalance().doubleValue(), price.doubleValue()));
+            int row = engineerInfoMapper.updateByPrimaryKeySelective(engineerInfo);
+            if (row > 0){
+                BillInfo billInfo = new BillInfo();
+                billInfo.setUserType(1);
+                billInfo.setBillMoney(BigDecimalUtil.sub(price.doubleValue(), BigDecimalUtil.add(price.doubleValue(), price.doubleValue()).doubleValue()));
+                billInfo.setUserName(engineerInfo.getEngineerName());
+                billInfo.setUserId(engineerId);
+                billInfo.setBillDec("后台扣款");
+                billInfoMapper.insert(billInfo);
+                return ServerResponse.createBySuccess("扣钱成功");
+            }
+            return ServerResponse.createByErrorMessage("扣钱失败");
+        }
+
+        if (type == 1){
+            engineerInfo.setEngineerBalance(BigDecimalUtil.add(engineerInfo.getEngineerBalance().doubleValue(), price.doubleValue()));
+            int row = engineerInfoMapper.updateByPrimaryKeySelective(engineerInfo);
+            if (row > 0){
+                BillInfo billInfo = new BillInfo();
+                billInfo.setUserType(1);
+                billInfo.setBillMoney(price);
+                billInfo.setUserName(engineerInfo.getEngineerName());
+                billInfo.setUserId(engineerId);
+                billInfo.setBillDec("后台加钱" );
+                billInfoMapper.insert(billInfo);
+                return ServerResponse.createBySuccess("加钱成功");
+            }
+            return ServerResponse.createByErrorMessage("加钱失败");
+        }
+        return ServerResponse.createByErrorMessage("操作异常");
     }
 
 }

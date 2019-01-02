@@ -3,6 +3,7 @@ package com.service.impl;
 import com.common.Const;
 import com.common.ServerResponse;
 import com.controller.CustomerInfoController;
+import com.dao.BillInfoMapper;
 import com.dao.CustomerInfoMapper;
 import com.dao.EngineerInfoMapper;
 import com.github.pagehelper.PageHelper;
@@ -11,6 +12,7 @@ import com.pojo.BillInfo;
 import com.pojo.CustomerInfo;
 import com.pojo.EngineerInfo;
 import com.service.CustomerInfoService;
+import com.util.BigDecimalUtil;
 import com.util.JsonUtil;
 import com.util.MailUtil;
 import com.vo.EngineerDefriendJson;
@@ -248,6 +250,56 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
         List<CustomerInfo> list = customerInfoMapper.selectByIdLike(customerIdString);
         PageInfo pageInfo = new PageInfo(list);
         return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Autowired
+    private BillInfoMapper billInfoMapper;
+
+    @Override
+    public ServerResponse deductOrAddMoney(Integer type, BigDecimal price, Integer customerId) {
+        if (type == null || price == null || customerId == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+
+        CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(customerId);
+
+        if (customerInfo == null)
+            return ServerResponse.createByErrorMessage("找不到该用户");
+
+        if (type == 0){
+            if (customerInfo.getCustomerBalance().doubleValue() < price.doubleValue())
+                return ServerResponse.createByErrorMessage("扣钱金额不能大于客户余额");
+
+            customerInfo.setCustomerBalance(BigDecimalUtil.sub(customerInfo.getCustomerBalance().doubleValue(), price.doubleValue()));
+            int row = customerInfoMapper.updateByPrimaryKeySelective(customerInfo);
+            if (row > 0){
+                BillInfo billInfo = new BillInfo();
+                billInfo.setUserType(0);
+                billInfo.setBillMoney(BigDecimalUtil.sub(price.doubleValue(), BigDecimalUtil.add(price.doubleValue(), price.doubleValue()).doubleValue()));
+                billInfo.setUserName(customerInfo.getCustomerName());
+                billInfo.setUserId(customerId);
+                billInfo.setBillDec("后台扣款");
+                billInfoMapper.insert(billInfo);
+                return ServerResponse.createBySuccess("扣钱成功");
+            }
+            return ServerResponse.createByErrorMessage("扣钱失败");
+        }
+
+        if (type == 1){
+            customerInfo.setCustomerBalance(BigDecimalUtil.add(customerInfo.getCustomerBalance().doubleValue(), price.doubleValue()));
+            int row = customerInfoMapper.updateByPrimaryKeySelective(customerInfo);
+            if (row > 0){
+                BillInfo billInfo = new BillInfo();
+                billInfo.setUserType(0);
+                billInfo.setBillMoney(price);
+                billInfo.setUserName(customerInfo.getCustomerName());
+                billInfo.setUserId(customerId);
+                billInfo.setBillDec("后台加钱");
+                billInfoMapper.insert(billInfo);
+                return ServerResponse.createBySuccess("加钱成功");
+            }
+            return ServerResponse.createByErrorMessage("加钱失败");
+        }
+        return ServerResponse.createByErrorMessage("操作异常");
     }
 
 

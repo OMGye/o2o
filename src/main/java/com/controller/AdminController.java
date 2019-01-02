@@ -775,7 +775,7 @@ public class AdminController {
 
     @RequestMapping(value = "priceInfo/allprice.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse export(HttpSession session, Integer type) {
+    public ServerResponse allPrice(HttpSession session, Integer type) {
         AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
         if (adminInfo != null){
             return orderInfoService.getAllPrice(type);
@@ -783,5 +783,35 @@ public class AdminController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
-    
+
+    @RequestMapping(value = "customerInfo/deductoraddprice.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse customerDeductOrAddPrice(HttpSession session, Integer type, BigDecimal price, Integer customerId) {
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return customerInfoService.deductOrAddMoney(type,price,customerId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "engineerInfo/deductoraddprice.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse engineerDeductOrAddPrice(HttpSession session, Integer type, BigDecimal price, Integer engineerId) {
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return engineerInfoService.deductOrAddMoney(type, price, engineerId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/changestate.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse changeOrderState(HttpSession session, Integer type, Integer orderId) {
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return orderInfoService.changeOrderState(type, orderId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
 }
