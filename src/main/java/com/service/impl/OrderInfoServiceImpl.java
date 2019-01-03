@@ -1856,9 +1856,6 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if (startTime == null || endTime == null)
             return ServerResponse.createByErrorMessage("参数为空");
 
-        Date startDate = DateTimeUtil.strToDate(startTime,"yyyy-MM-dd");
-        Date endDate = DateTimeUtil.strToDate(endTime, "yyyy-MM-dd");
-
         String[] cmd = new String[]{ "/bin/sh", "-c", "cd /product/ftpfile/img; rm -rf " + startTime + endTime + ".tar"};
         Runtime run = Runtime.getRuntime();
         try {
