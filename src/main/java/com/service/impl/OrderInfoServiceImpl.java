@@ -1846,7 +1846,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             logger.info(stringBuffer.toString());
             in.close();
             process.destroy();
-            return ServerResponse.createBySuccess("");
+            return ServerResponse.createBySuccess(PropertiesUtil.getProperty("ftp.server.http.prefix") + startTime + endTime + ".tar");
         }catch (Exception e){
             logger.info("执行失败" + e.getMessage());
             e.printStackTrace();
