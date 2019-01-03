@@ -520,4 +520,13 @@
     and download = 0
   </select>
 
+  <update id="updateDownload" parameterType="map">
+    update order_info
+    set download = 1
+    where update_time <![CDATA[>=]]> #{startDate}
+    and update_time <![CDATA[<=]]> #{endDate}
+    and order_state = 7
+    and download = 0
+  </update>
+
 </mapper>

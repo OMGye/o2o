@@ -1826,10 +1826,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             sb.append(" ");
         }
 
-        for (OrderInfo orderInfo : list){
-            orderInfo.setDownload(1);
-            orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
-        }
+        orderInfoMapper.updateDownload(startDate,endDate);
 
         String[] cmd = new String[]{ "/bin/sh", "-c", "cd /product/ftpfile/img; tar zcvf "+ startTime + endTime + ".tar " + sb.toString() + "; rm -rf " + sb.toString()};
         Runtime run = Runtime.getRuntime();
@@ -1851,7 +1848,38 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             logger.info("执行失败" + e.getMessage());
             e.printStackTrace();
         }
-        return null;
+        return ServerResponse.createByErrorMessage("下载失败");
+    }
+
+    @Override
+    public ServerResponse deleteTarByDate(String startTime, String endTime) {
+        if (startTime == null || endTime == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+
+        Date startDate = DateTimeUtil.strToDate(startTime,"yyyy-MM-dd");
+        Date endDate = DateTimeUtil.strToDate(endTime, "yyyy-MM-dd");
+
+        String[] cmd = new String[]{ "/bin/sh", "-c", "cd /product/ftpfile/img; rm -rf " + startTime + endTime + ".tar"};
+        Runtime run = Runtime.getRuntime();
+        try {
+            Process process = run.exec(cmd);
+            process.waitFor();
+            InputStream in = process.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            StringBuffer stringBuffer = new StringBuffer();
+            byte b[] = new byte[8192];
+            for (int n; (n = in.read(b)) != -1;){
+                stringBuffer.append(new String(b, 0, n));
+            }
+            logger.info(stringBuffer.toString());
+            in.close();
+            process.destroy();
+            return ServerResponse.createBySuccess("删除成功");
+        }catch (Exception e){
+            logger.info("执行失败" + e.getMessage());
+            e.printStackTrace();
+        }
+        return ServerResponse.createByErrorMessage("删除失败");
     }
 
     private void sendEmai(String str, String email){
