@@ -144,7 +144,7 @@
     and user_type != #{type}
   </update>
 
-  <select id="selectByOrderListDownload" parameterType="map" resultType="BaseResultMap">
+  <select id="selectByOrderListDownload" parameterType="map" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from order_ansque_info
