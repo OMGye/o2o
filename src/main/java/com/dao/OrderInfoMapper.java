@@ -50,4 +50,6 @@ public interface OrderInfoMapper {
     BigDecimal hasFinshedPrice();
 
     BigDecimal allUnfinishedPrice();
+
+    List<OrderInfo> selectByDateUnDownload(@Param("startDate")Date startDate, @Param("endDate")Date endDate);
 }

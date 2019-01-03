@@ -60,9 +60,20 @@ public class OrderInfo {
 
     private String refuseDec;
 
+    private Integer download;
+
     private Date createTime;
 
     private Date updateTime;
+
+    public void setDownload(Integer download) {
+        this.download = download;
+    }
+
+    public Integer getDownload() {
+
+        return download;
+    }
 
     public void setEngineerRealPrice(BigDecimal engineerRealPrice) {
         this.engineerRealPrice = engineerRealPrice;
@@ -116,7 +127,7 @@ public class OrderInfo {
         return orderCustomerFile;
     }
 
-    public OrderInfo(Integer orderId, Integer customerId, String customerName, Integer engineerId, String engineerName, Integer engineerCheckId, String engineerCheckName, String orderFirstCategory, String orderSecondCategory, Integer orderMi, Integer orderQae, String otherParamInfo, Integer basicLayer, Integer priceTogetherNum, String orderDec, Integer orderRush, Integer orderDeductRank, String orderDeductDec, String orderRateDec, Integer orderState, BigDecimal orderPrice, BigDecimal orderQaePrice, BigDecimal engineerRealPrice, BigDecimal engineerQaeRealPrice, BigDecimal adminPrice, String orderFile, String orderCustomerFile, String refuseDec, Date createTime, Date updateTime) {
+    public OrderInfo(Integer orderId, Integer customerId, String customerName, Integer engineerId, String engineerName, Integer engineerCheckId, String engineerCheckName, String orderFirstCategory, String orderSecondCategory, Integer orderMi, Integer orderQae, String otherParamInfo, Integer basicLayer, Integer priceTogetherNum, String orderDec, Integer orderRush, Integer orderDeductRank, String orderDeductDec, String orderRateDec, Integer orderState, BigDecimal orderPrice, BigDecimal orderQaePrice, BigDecimal engineerRealPrice, BigDecimal engineerQaeRealPrice, BigDecimal adminPrice, String orderFile, String orderCustomerFile, String refuseDec, Integer download, Date createTime, Date updateTime) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.customerName = customerName;
@@ -145,6 +156,7 @@ public class OrderInfo {
         this.orderFile = orderFile;
         this.orderCustomerFile = orderCustomerFile;
         this.refuseDec = refuseDec;
+        this.download = download;
         this.createTime = createTime;
         this.updateTime = updateTime;
     }

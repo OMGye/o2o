@@ -240,6 +240,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             return ServerResponse.createByErrorMessage("上传文件异常");
         }
         order.setOrderCustomerFile(PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFile.getName());
+        order.setDownload(0);
 
 
         int row = orderInfoMapper.insert(order);
@@ -1799,9 +1800,38 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
     @Override
     public ServerResponse createTarByDate(String startTime, String endTime) {
-//        if (startTime == null || endTime == null)
-//            return ServerResponse.createByErrorMessage("参数为空");
-        String[] cmd = new String[]{ "/bin/sh", "-c", "cd /product/ftpfile/img; tar -cvf 问问.tar 问问.txt 问问1.txt 问问2.txt; rm -rf 问问.txt 问问1.txt 问问2.txt"};
+        if (startTime == null || endTime == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+
+        Date startDate = DateTimeUtil.strToDate(startTime,"yyyy-MM-dd");
+        Date endDate = DateTimeUtil.strToDate(endTime, "yyyy-MM-dd");
+        List<OrderInfo> list = orderInfoMapper.selectByDateUnDownload(startDate,endDate);
+        if (list.size() == 0)
+            return ServerResponse.createByErrorMessage("该时间段的文件已经下载");
+
+        List<Integer> orderIds = new ArrayList<>();
+        for (OrderInfo orderInfo : list){
+            orderIds.add(orderInfo.getOrderId());
+        }
+        List<OrderAnsqueInfo> ansqueInfoList = orderAnsqueInfoMapper.selectByOrderListDownload(orderIds);
+        StringBuffer sb = new StringBuffer();
+        for (OrderInfo orderInfo : list){
+            sb.append(orderInfo.getOrderFile().substring(25));
+            sb.append(" ");
+            sb.append(orderInfo.getOrderCustomerFile().substring(25));
+            sb.append(" ");
+        }
+        for (OrderAnsqueInfo orderAnsqueInfo : ansqueInfoList){
+            sb.append(orderAnsqueInfo.getOrderAnsqueContent().substring(25));
+            sb.append(" ");
+        }
+
+        for (OrderInfo orderInfo : list){
+            orderInfo.setDownload(1);
+            orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+        }
+
+        String[] cmd = new String[]{ "/bin/sh", "-c", "cd /product/ftpfile/img; tar -cvf "+ startTime + endTime + ".tar " + sb.toString() + "; rm -rf " + sb.toString()};
         Runtime run = Runtime.getRuntime();
         try {
             Process process = run.exec(cmd);

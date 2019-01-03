@@ -31,6 +31,7 @@
       <arg column="order_file" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="order_customer_file" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="refuse_dec" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="download" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
     </constructor>
@@ -39,7 +40,7 @@
     order_id, customer_id, customer_name, engineer_id, engineer_name, engineer_check_id, 
     engineer_check_name, order_first_category, order_second_category, order_mi, order_qae, 
     other_param_info, basic_layer, price_together_num, order_dec, order_rush, order_deduct_rank, 
-    order_deduct_dec, order_rate_dec, order_state, order_price,order_qae_price, engineer_real_price, engineer_qae_real_price, admin_price, order_file,order_customer_file, refuse_dec, create_time,
+    order_deduct_dec, order_rate_dec, order_state, order_price,order_qae_price, engineer_real_price, engineer_qae_real_price, admin_price, order_file,order_customer_file, refuse_dec, download, create_time,
     update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -60,7 +61,7 @@
       other_param_info, basic_layer, price_together_num, 
       order_dec, order_rush, order_deduct_rank, 
       order_deduct_dec, order_rate_dec, order_state, 
-      order_price, order_qae_price, engineer_real_price, engineer_qae_real_price, admin_price, order_file, order_customer_file, refuse_dec, create_time,
+      order_price, order_qae_price, engineer_real_price, engineer_qae_real_price, admin_price, order_file, order_customer_file, refuse_dec, download,create_time,
       update_time)
     values (#{orderId,jdbcType=INTEGER}, #{customerId,jdbcType=INTEGER}, #{customerName,jdbcType=VARCHAR}, 
       #{engineerId,jdbcType=INTEGER}, #{engineerName,jdbcType=VARCHAR}, #{engineerCheckId,jdbcType=INTEGER}, 
@@ -69,7 +70,7 @@
       #{otherParamInfo,jdbcType=VARCHAR}, #{basicLayer,jdbcType=INTEGER}, #{priceTogetherNum,jdbcType=INTEGER}, 
       #{orderDec,jdbcType=VARCHAR}, #{orderRush,jdbcType=INTEGER}, #{orderDeductRank,jdbcType=INTEGER}, 
       #{orderDeductDec,jdbcType=VARCHAR}, #{orderRateDec,jdbcType=VARCHAR}, #{orderState,jdbcType=INTEGER}, 
-      #{orderPrice,jdbcType=DECIMAL}, #{orderQaePrice,jdbcType=DECIMAL}, #{engineerRealPrice,jdbcType=DECIMAL}, #{engineerQaeRealPrice,jdbcType=DECIMAL}, #{adminPrice,jdbcType=DECIMAL}, #{orderFile,jdbcType=VARCHAR}, #{orderCustomerFile,jdbcType=VARCHAR}, #{refuseDec,jdbcType=VARCHAR},
+      #{orderPrice,jdbcType=DECIMAL}, #{orderQaePrice,jdbcType=DECIMAL}, #{engineerRealPrice,jdbcType=DECIMAL}, #{engineerQaeRealPrice,jdbcType=DECIMAL}, #{adminPrice,jdbcType=DECIMAL}, #{orderFile,jdbcType=VARCHAR}, #{orderCustomerFile,jdbcType=VARCHAR}, #{refuseDec,jdbcType=VARCHAR}, #{download,jdbcType=INTEGER},
       now(), now())
   </insert>
   <insert id="insertSelective" parameterType="com.pojo.OrderInfo">
@@ -149,6 +150,9 @@
       </if>
       <if test="refuseDec != null">
         refuse_dec,
+      </if>
+      <if test="download != null">
+        download,
       </if>
       <if test="createTime != null">
         create_time,
@@ -232,6 +236,9 @@
       </if>
       <if test="refuseDec != null">
         #{refuseDec,jdbcType=VARCHAR},
+      </if>
+      <if test="download != null">
+        #{download,jdbcType=INTEGER},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
@@ -324,6 +331,9 @@
       </if>
       <if test="refuseDec != null">
         refuse_dec = #{refuseDec,jdbcType=VARCHAR},
+      </if>
+      <if test="download != null">
+        download = #{download,jdbcType=INTEGER},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -497,6 +507,17 @@
     sum(order_price)
     from order_info
     where order_state != 0 and order_state != 7 and order_state != 11
+  </select>
+
+  <select id="selectByDateUnDownload" parameterType="map" resultMap="BaseResultMap">
+    select
+    order_id,order_file,order_customer_file
+    from order_info
+    where
+    update_time <![CDATA[>=]]> #{startDate}
+    and update_time <![CDATA[<=]]> #{endDate}
+    and order_state = 7
+    and download = 0
   </select>
 
 </mapper>

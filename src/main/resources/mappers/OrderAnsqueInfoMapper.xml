@@ -144,4 +144,15 @@
     and user_type != #{type}
   </update>
 
+  <select id="selectByOrderListDownload" parameterType="map" resultType="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from order_ansque_info
+    where order_id in
+    <foreach item="item" index="index" open="(" separator="," close=")" collection="orderIds">
+      #{item}
+    </foreach>
+    and order_ansque_content like '%img.upupgogogo.cn%'
+  </select>
+
 </mapper>

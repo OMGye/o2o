@@ -23,4 +23,6 @@ public interface OrderAnsqueInfoMapper {
     Integer getUnReadNum(@Param("orderId")Integer orderId, @Param("type")Integer type);
 
     int updateMessAgeState(@Param("orderId")Integer orderId, @Param("type")Integer type);
+
+    List<OrderAnsqueInfo> selectByOrderListDownload(@Param("orderIds")List<Integer> orderIds);
 }
