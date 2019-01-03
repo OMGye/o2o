@@ -1816,10 +1816,14 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         List<OrderAnsqueInfo> ansqueInfoList = orderAnsqueInfoMapper.selectByOrderListDownload(orderIds);
         StringBuffer sb = new StringBuffer();
         for (OrderInfo orderInfo : list){
-            sb.append(orderInfo.getOrderFile().substring(21));
-            sb.append(" ");
-            sb.append(orderInfo.getOrderCustomerFile().substring(21));
-            sb.append(" ");
+            if (orderInfo.getOrderFile() != null){
+                sb.append(orderInfo.getOrderFile().substring(21));
+                sb.append(" ");
+            }
+            if (orderInfo.getOrderCustomerFile() != null){
+                sb.append(orderInfo.getOrderCustomerFile().substring(21));
+                sb.append(" ");
+            }
         }
         for (OrderAnsqueInfo orderAnsqueInfo : ansqueInfoList){
             sb.append(orderAnsqueInfo.getOrderAnsqueContent().substring(21));
