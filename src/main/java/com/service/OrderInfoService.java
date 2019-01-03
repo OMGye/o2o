@@ -92,4 +92,5 @@ public interface OrderInfoService {
 
     ServerResponse changeOrderState(Integer type, Integer orderId);
 
+    ServerResponse createTarByDate(String startTime, String endTime);
 }

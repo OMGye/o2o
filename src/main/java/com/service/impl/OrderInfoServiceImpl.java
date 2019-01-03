@@ -25,8 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -1760,15 +1759,15 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             if (row > 0){
                 if (orderInfo.getCustomerId() != null){
                     CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
-                    sendEmai("您的订单已被后台设置为已完成", customerInfo.getEmail());
+                    sendEmai("您的订单已被后台设置为已完成,订单号：" + orderId, customerInfo.getEmail());
                 }
                 if (orderInfo.getEngineerId() != null){
                     EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerId());
-                    sendEmai("您的订单已被后台设置为已完成", engineerInfo.getEmail());
+                    sendEmai("您的订单已被后台设置为已完成,订单号：" + orderId, engineerInfo.getEmail());
                 }
                 if (orderInfo.getEngineerCheckId() != null){
                     EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerCheckId());
-                    sendEmai("您的订单已被后台设置为已完成", engineerInfo.getEmail());
+                    sendEmai("您的订单已被后台设置为已完成,订单号：" + orderId, engineerInfo.getEmail());
                 }
                 return ServerResponse.createBySuccess("已设置订单完成");
             }
@@ -1781,21 +1780,55 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             if (row > 0){
                 if (orderInfo.getCustomerId() != null){
                     CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
-                    sendEmai("您的订单已被后台设置为已取消", customerInfo.getEmail());
+                    sendEmai("您的订单已被后台设置为已取消,订单号：" + orderId, customerInfo.getEmail());
                 }
                 if (orderInfo.getEngineerId() != null){
                     EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerId());
-                    sendEmai("您的订单已被后台设置为已取消", engineerInfo.getEmail());
+                    sendEmai("您的订单已被后台设置为已取消,订单号：" + orderId, engineerInfo.getEmail());
                 }
                 if (orderInfo.getEngineerCheckId() != null){
                     EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerCheckId());
-                    sendEmai("您的订单已被后台设置为已取消", engineerInfo.getEmail());
+                    sendEmai("您的订单已被后台设置为已取消,订单号：" + orderId, engineerInfo.getEmail());
                 }
                 return ServerResponse.createBySuccess("已设置订单取消");
             }
             return ServerResponse.createByErrorMessage("修改失败");
         }
         return ServerResponse.createByErrorMessage("异常操作");
+    }
+
+    @Override
+    public ServerResponse createTarByDate(String startTime, String endTime) {
+//        if (startTime == null || endTime == null)
+//            return ServerResponse.createByErrorMessage("参数为空");
+        Runtime run = Runtime.getRuntime();
+        try {
+            Process process = run.exec("echo ---进入测试文件夹----\n" +
+                    "cd /product/ftpfile/img\n" +
+                    "\n" +
+                    "echo ----打包---\n" +
+                    "tar -cvf 问问.tar 问问.txt 问问1.txt 问问2.txt\n" +
+                    "\n" +
+                    "\n" +
+                    "echo ---删除----\n" +
+                    "rm -rf 问问.txt 问问1.txt 问问2.txt\n" +
+                    "\n");
+            InputStream in = process.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            StringBuffer stringBuffer = new StringBuffer();
+            byte b[] = new byte[8192];
+            for (int n; (n = in.read(b)) != -1;){
+                stringBuffer.append(new String(b, 0, n));
+            }
+            logger.info(stringBuffer.toString());
+            in.close();
+            process.destroy();
+            return ServerResponse.createBySuccess("");
+        }catch (IOException e){
+            logger.info("执行失败");
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private void sendEmai(String str, String email){
