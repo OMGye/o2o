@@ -816,10 +816,20 @@ public class AdminController {
 
     @RequestMapping(value = "orderInfo/download.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse download(HttpSession session, String startTime, String endTime) {
+    public ServerResponse downloadTar(HttpSession session, String startTime, String endTime) {
         AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
         if (adminInfo != null){
             return orderInfoService.createTarByDate(startTime,endTime);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/delete.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse deleteTar(HttpSession session, String startTime, String endTime) {
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return orderInfoService.deleteTarByDate(startTime,endTime);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
