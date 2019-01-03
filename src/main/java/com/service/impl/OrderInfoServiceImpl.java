@@ -1801,18 +1801,10 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     public ServerResponse createTarByDate(String startTime, String endTime) {
 //        if (startTime == null || endTime == null)
 //            return ServerResponse.createByErrorMessage("参数为空");
+        String[] cmd = new String[]{"cd /product/ftpfile/img","tar -cvf 问问.tar 问问.txt 问问1.txt 问问2.txt","rm -rf 问问.txt 问问1.txt 问问2.txt"};
         Runtime run = Runtime.getRuntime();
         try {
-            Process process = run.exec("echo ---进入测试文件夹----\n" +
-                    "cd /product/ftpfile/img\n" +
-                    "\n" +
-                    "echo ----打包---\n" +
-                    "tar -cvf 问问.tar 问问.txt 问问1.txt 问问2.txt\n" +
-                    "\n" +
-                    "\n" +
-                    "echo ---删除----\n" +
-                    "rm -rf 问问.txt 问问1.txt 问问2.txt\n" +
-                    "\n");
+            Process process = run.exec(cmd);
             process.waitFor();
             InputStream in = process.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
