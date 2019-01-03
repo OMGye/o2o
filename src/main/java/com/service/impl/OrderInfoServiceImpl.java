@@ -1831,7 +1831,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
         }
 
-        String[] cmd = new String[]{ "/bin/sh", "-c", "cd /product/ftpfile/img; tar -cvf "+ startTime + endTime + ".tar " + sb.toString() + "; rm -rf " + sb.toString()};
+        String[] cmd = new String[]{ "/bin/sh", "-c", "cd /product/ftpfile/img; tar zcvf "+ startTime + endTime + ".tar " + sb.toString() + "; rm -rf " + sb.toString()};
         Runtime run = Runtime.getRuntime();
         try {
             Process process = run.exec(cmd);
