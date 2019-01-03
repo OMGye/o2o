@@ -1801,7 +1801,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     public ServerResponse createTarByDate(String startTime, String endTime) {
 //        if (startTime == null || endTime == null)
 //            return ServerResponse.createByErrorMessage("参数为空");
-        String[] cmd = new String[]{"cd /product/ftpfile/img","tar -cvf 问问.tar 问问.txt 问问1.txt 问问2.txt","rm -rf 问问.txt 问问1.txt 问问2.txt"};
+        String[] cmd = new String[]{ "/bin/sh", "-c", "cd /product/ftpfile/img; tar -cvf 问问.tar 问问.txt 问问1.txt 问问2.txt; rm -rf 问问.txt 问问1.txt 问问2.txt"};
         Runtime run = Runtime.getRuntime();
         try {
             Process process = run.exec(cmd);
