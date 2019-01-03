@@ -1813,6 +1813,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
                     "echo ---删除----\n" +
                     "rm -rf 问问.txt 问问1.txt 问问2.txt\n" +
                     "\n");
+            process.waitFor();
             InputStream in = process.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             StringBuffer stringBuffer = new StringBuffer();
@@ -1824,8 +1825,8 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             in.close();
             process.destroy();
             return ServerResponse.createBySuccess("");
-        }catch (IOException e){
-            logger.info("执行失败");
+        }catch (Exception e){
+            logger.info("执行失败" + e.getMessage());
             e.printStackTrace();
         }
         return null;
