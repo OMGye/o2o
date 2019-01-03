@@ -511,7 +511,7 @@
 
   <select id="selectByDateUnDownload" parameterType="map" resultMap="BaseResultMap">
     select
-    order_id,order_file,order_customer_file
+    <include refid="Base_Column_List" />
     from order_info
     where
     update_time <![CDATA[>=]]> #{startDate}
