@@ -58,7 +58,7 @@ public class MailUtil {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("http://img.upupgogogo.cn/".length());
+		System.out.println("http://img.yycam.top/".length());
 	}
 
 

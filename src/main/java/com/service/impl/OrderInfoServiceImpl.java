@@ -1816,19 +1816,19 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         List<OrderAnsqueInfo> ansqueInfoList = orderAnsqueInfoMapper.selectByOrderListDownload(orderIds);
         StringBuffer sb = new StringBuffer();
         for (OrderInfo orderInfo : list){
-            sb.append(orderInfo.getOrderFile().substring(25));
+            sb.append(orderInfo.getOrderFile().substring(21));
             sb.append(" ");
-            sb.append(orderInfo.getOrderCustomerFile().substring(25));
+            sb.append(orderInfo.getOrderCustomerFile().substring(21));
             sb.append(" ");
         }
         for (OrderAnsqueInfo orderAnsqueInfo : ansqueInfoList){
-            sb.append(orderAnsqueInfo.getOrderAnsqueContent().substring(25));
+            sb.append(orderAnsqueInfo.getOrderAnsqueContent().substring(21));
             sb.append(" ");
         }
 
         orderInfoMapper.updateDownload(startDate,endDate);
 
-        String[] cmd = new String[]{ "/bin/sh", "-c", "cd /product/ftpfile/img; tar zcvf "+ startTime + endTime + ".tar " + sb.toString() + "; rm -rf " + sb.toString()};
+        String[] cmd = new String[]{ "/bin/sh", "-c", "cd /product/ftpfile; tar zcvf "+ startTime + endTime + ".tar " + sb.toString() + "; rm -rf " + sb.toString()};
         Runtime run = Runtime.getRuntime();
         try {
             Process process = run.exec(cmd);
@@ -1856,7 +1856,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if (startTime == null || endTime == null)
             return ServerResponse.createByErrorMessage("参数为空");
 
-        String[] cmd = new String[]{ "/bin/sh", "-c", "cd /product/ftpfile/img; rm -rf " + startTime + endTime + ".tar"};
+        String[] cmd = new String[]{ "/bin/sh", "-c", "cd /product/ftpfile; rm -rf " + startTime + endTime + ".tar"};
         Runtime run = Runtime.getRuntime();
         try {
             Process process = run.exec(cmd);
