@@ -816,10 +816,10 @@ public class AdminController {
 
     @RequestMapping(value = "orderInfo/download.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse download(HttpSession session) {
+    public ServerResponse download(HttpSession session, String startTime, String endTime) {
         AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
         if (adminInfo != null){
-            return orderInfoService.createTarByDate("","");
+            return orderInfoService.createTarByDate(startTime,endTime);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
