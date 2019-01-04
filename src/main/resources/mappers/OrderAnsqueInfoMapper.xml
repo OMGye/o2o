@@ -152,7 +152,7 @@
     <foreach item="item" index="index" open="(" separator="," close=")" collection="orderIds">
       #{item}
     </foreach>
-    and order_ansque_content like '%img.upupgogogo.cn%'
+    and order_ansque_content like '%img.yycam.top%'
   </select>
 
 </mapper>
