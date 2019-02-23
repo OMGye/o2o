@@ -65,5 +65,13 @@ public class EngineerRankVO {
         String fileName = "ABC.JPG";
         String fisrtName = fileName.substring(0,fileName.indexOf("."));
         System.out.println(fisrtName);
+        for (int i = 0; i < 1000; i ++){
+            try {
+                Thread.sleep(1000);
+                System.out.println(i);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

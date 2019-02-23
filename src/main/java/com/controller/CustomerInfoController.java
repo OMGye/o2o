@@ -55,7 +55,7 @@ public class CustomerInfoController {
     @ResponseBody
     public ServerResponse login(String customerName, String password ,HttpSession session) {
         //以秒为单位
-        session.setMaxInactiveInterval(3 * 60);
+        session.setMaxInactiveInterval(5 * 60);
 
         ServerResponse<CustomerInfo> response = customerInfoService.login(customerName, password);
         if (response.isSuccess()) {
