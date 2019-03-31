@@ -2043,8 +2043,12 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         }
 
         order.setOrderFile(PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFile.getName());
+        if (order.getOrderQae() == 0 || (order.getOrderQae() == 1 && order.getEngineerCheckId() == null))
+            order.setOrderState(Const.Order.HAVE_UPLOAD_FILE);
+        else
+            order.setOrderState(Const.Order.QAE_HAVE_CAUGHT);
         order.setAdminCheck(Const.AdminCheck.CHECK);
-        order.setOrderState(Const.Order.HAVE_UPLOAD_FILE);
+
         int row = orderInfoMapper.updateByPrimaryKey(order);
         if (row <= 0)
             return ServerResponse.createByErrorMessage("协助上传完工文件失败");
