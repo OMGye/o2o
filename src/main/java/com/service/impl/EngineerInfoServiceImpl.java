@@ -95,6 +95,7 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
         }
 
         engineerInfo.setOrderCount(0);
+        engineerInfo.setAdminCheck(Const.AdminCheck.CHECK);
         int row = engineerInfoMapper.insert(engineerInfo);
         if (row > 0)
             return ServerResponse.createBySuccess("注册成功，请您等待后台审核通过",engineerInfo);
@@ -298,6 +299,24 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
             return ServerResponse.createByErrorMessage("加钱失败");
         }
         return ServerResponse.createByErrorMessage("操作异常");
+    }
+
+    @Override
+    public ServerResponse adminCheck(Integer adminCheck, Integer engineerId) {
+        if (adminCheck == null || engineerId == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+        if (adminCheck != Const.AdminCheck.UNCHECK && adminCheck != Const.AdminCheck.CHECK)
+            return ServerResponse.createByErrorMessage("参数异常");
+
+        EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(engineerId);
+        if (engineerInfo == null)
+            return ServerResponse.createByErrorMessage("找不到该用户");
+
+        engineerInfo.setAdminCheck(adminCheck);
+        int row = engineerInfoMapper.updateByPrimaryKeySelective(engineerInfo);
+        if (row > 0)
+            return ServerResponse.createBySuccess("更新成功");
+        return ServerResponse.createByErrorMessage("更新失败");
     }
 
 }

@@ -58,7 +58,9 @@ public class MailUtil {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("http://img.yycam.top/".length());
+
+		String fileExtensionName = "AAA.JPG".substring(0,"AAA.JPG".lastIndexOf("."));
+		System.out.println(fileExtensionName);
 	}
 
 

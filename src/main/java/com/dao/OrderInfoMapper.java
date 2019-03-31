@@ -54,4 +54,6 @@ public interface OrderInfoMapper {
     List<OrderInfo> selectByDateUnDownload(@Param("startDate")Date startDate, @Param("endDate")Date endDate);
 
     int updateDownload(@Param("startDate")Date startDate, @Param("endDate")Date endDate);
+
+    List<OrderInfo>  adminCheckList();
 }

@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.BufferedOutputStream;
@@ -763,6 +765,16 @@ public class AdminController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
+    @RequestMapping(value = "engineerInfo/admincheck.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse engineerAdminCheck(HttpSession session, Integer adminCheck, Integer engineerId) {
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return engineerInfoService.adminCheck(adminCheck,engineerId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
     @RequestMapping(value = "billInfo/getByBillIdLike.do", method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse<PageInfo> selectBillInfoByIdLike(HttpSession session, Integer billId,  @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
@@ -790,6 +802,16 @@ public class AdminController {
         AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
         if (adminInfo != null){
             return customerInfoService.deductOrAddMoney(type,price,customerId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "customerInfo/admincheck.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse customerAdminCheck(HttpSession session, Integer adminCheck, Integer customerId) {
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return customerInfoService.adminCheck(adminCheck,customerId);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
@@ -830,6 +852,107 @@ public class AdminController {
         AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
         if (adminInfo != null){
             return orderInfoService.deleteTarByDate(startTime,endTime);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/adminchecklist.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse adminCheckList(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize) {
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return orderInfoService.adminCheckList(pageNum,pageSize);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/admincheck.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse adminCheck(HttpSession session, Integer orderId) {
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return orderInfoService.adminCheck(orderId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/adminhelpreturnorder.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse adminHelpReturnOrder(HttpSession session, Integer orderId) {
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return orderInfoService.adminHelpReturnOrder(orderId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/adminhelpuploadfile.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse adminHelpUploadFile(HttpSession session, @RequestParam(value = "upload_file",required = false) MultipartFile file, Integer orderId,HttpServletRequest request) {
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            String path = request.getSession().getServletContext().getRealPath("upload");
+            return orderInfoService.adminHelpUploadFile(orderId,file,path);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/adminhelpcheck.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse adminHelpCheck(HttpSession session, Integer orderId) {
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return orderInfoService.adminHelpCheck(orderId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/adminhelpreturntoenginner.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse adminHelpReturnToEnginner(HttpSession session, Integer orderId, String dec) {
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return orderInfoService.adminHelpReturnToEnginner(orderId, dec);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/adminhelpreturntoqaeenginner.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse adminHelpReturnToQaeEnginner(HttpSession session, Integer orderId) {
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return orderInfoService.adminHelpReturnToQaeEnginner(orderId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/adminhelpcustomerreturntoenginner.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse adminHelpCustomerReturnToEnginner(HttpSession session, Integer orderId) {
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return orderInfoService.adminHelpCustomerReturnToEnginner(orderId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/adminHelpCancleOrder.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse adminHelpCancleOrder(HttpSession session, Integer orderId) {
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return orderInfoService.adminHelpCancleOrder(orderId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "orderInfo/adminhelpfinishorder.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse adminHelpFinishOrder(HttpSession session, Integer orderId) {
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return orderInfoService.adminHelpFinishOrder(orderId);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }

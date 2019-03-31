@@ -38,6 +38,8 @@ public class EngineerInfo {
 
     private Integer orderCount;
 
+    private Integer adminCheck;
+
     private Date createTime;
 
     private Date updateTime;
@@ -60,7 +62,17 @@ public class EngineerInfo {
         return personCode;
     }
 
-    public EngineerInfo(Integer engineerId, String engineerName, String password, String phone, String email, String personCode, String engineerQq, String engineerProv, String engineerCity, Byte engineerState, String engineerPayCount, BigDecimal engineerBalance, String engineerFile, Integer engineerRank, String engineerClassfy, BigDecimal engineerQuantity, Integer orderCount, Date createTime, Date updateTime) {
+    public void setAdminCheck(Integer adminCheck) {
+        this.adminCheck = adminCheck;
+    }
+
+    public Integer getAdminCheck() {
+
+        return adminCheck;
+    }
+
+    public EngineerInfo(Integer engineerId, String engineerName, String password, String phone, String email, String personCode, String engineerQq, String engineerProv, String engineerCity, Byte engineerState, String engineerPayCount, BigDecimal engineerBalance, String engineerFile, Integer engineerRank, String engineerClassfy, BigDecimal engineerQuantity, Integer orderCount, Integer adminCheck, Date createTime, Date updateTime) {
+
         this.engineerId = engineerId;
         this.engineerName = engineerName;
         this.password = password;
@@ -78,6 +90,7 @@ public class EngineerInfo {
         this.engineerClassfy = engineerClassfy;
         this.engineerQuantity = engineerQuantity;
         this.orderCount = orderCount;
+        this.adminCheck = adminCheck;
         this.createTime = createTime;
         this.updateTime = updateTime;
     }

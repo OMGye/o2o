@@ -34,6 +34,8 @@ public class CustomerInfo {
 
     private String engineerDefriend;
 
+    private Integer adminCheck;
+
     private Date createTime;
 
     private Date updateTime;
@@ -176,7 +178,16 @@ public class CustomerInfo {
         return updateTime;
     }
 
-    public CustomerInfo(Integer customerId, String customerName, String password, String phone, String email, String personCode, String customerQq, String customerProv, String customerCity, Byte customerState, String customerPayCount, BigDecimal customerBalance, String customerAttention, Integer orderCount, String engineerDefriend, Date createTime, Date updateTime) {
+    public void setAdminCheck(Integer adminCheck) {
+        this.adminCheck = adminCheck;
+    }
+
+    public Integer getAdminCheck() {
+
+        return adminCheck;
+    }
+
+    public CustomerInfo(Integer customerId, String customerName, String password, String phone, String email, String personCode, String customerQq, String customerProv, String customerCity, Byte customerState, String customerPayCount, BigDecimal customerBalance, String customerAttention, Integer orderCount, String engineerDefriend, Integer adminCheck, Date createTime, Date updateTime) {
 
         this.customerId = customerId;
         this.customerName = customerName;
@@ -193,6 +204,7 @@ public class CustomerInfo {
         this.customerAttention = customerAttention;
         this.orderCount = orderCount;
         this.engineerDefriend = engineerDefriend;
+        this.adminCheck = adminCheck;
         this.createTime = createTime;
         this.updateTime = updateTime;
     }

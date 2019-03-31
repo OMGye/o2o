@@ -71,6 +71,7 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
         customerInfo.setCustomerBalance(new BigDecimal(0));
         customerInfo.setCustomerState(Const.CustomerInfo.ABLE);
         customerInfo.setOrderCount(0);
+        customerInfo.setAdminCheck(Const.AdminCheck.CHECK);
         int row = customerInfoMapper.insert(customerInfo);
         if (row > 0)
             return ServerResponse.createBySuccess("注册成功");
@@ -302,6 +303,23 @@ public class CustomerInfoServiceImpl implements CustomerInfoService {
         return ServerResponse.createByErrorMessage("操作异常");
     }
 
+    @Override
+    public ServerResponse adminCheck(Integer adminCheck, Integer customerId) {
+        if (adminCheck == null || customerId == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+        if (adminCheck != Const.AdminCheck.UNCHECK && adminCheck != Const.AdminCheck.CHECK)
+            return ServerResponse.createByErrorMessage("参数异常");
+
+        CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(customerId);
+        if (customerInfo == null)
+            return ServerResponse.createByErrorMessage("找不到该用户");
+
+        customerInfo.setAdminCheck(adminCheck);
+        int row = customerInfoMapper.updateByPrimaryKeySelective(customerInfo);
+        if (row > 0)
+            return ServerResponse.createBySuccess("更新成功");
+        return ServerResponse.createByErrorMessage("更新失败");
+    }
 
 
 }

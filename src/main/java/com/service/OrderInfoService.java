@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.pojo.CustomerInfo;
 import com.pojo.EngineerInfo;
 import com.pojo.OrderInfo;
+import com.pojo.PayInfo;
 import com.vo.EngineerRankVO;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
@@ -95,4 +96,26 @@ public interface OrderInfoService {
     ServerResponse createTarByDate(String startTime, String endTime);
 
     ServerResponse deleteTarByDate(String startTime, String endTime);
+
+    ServerResponse<PageInfo> adminCheckList(int pageNum, int pageSize);
+
+    ServerResponse adminCheck(Integer orderId);
+
+    ServerResponse adminHelpReturnOrder(Integer orderId);
+
+    ServerResponse adminHelpUploadFile(Integer orderId, MultipartFile file, String path);
+
+    ServerResponse adminHelpCheck(Integer orderId);
+
+    ServerResponse adminHelpReturnToEnginner(Integer orderId, String dec);
+
+    ServerResponse adminHelpReturnToQaeEnginner(Integer orderId);
+
+    ServerResponse adminHelpCustomerReturnToEnginner(Integer orderId);
+
+    ServerResponse adminHelpCancleOrder(Integer orderId);
+
+    ServerResponse adminHelpFinishOrder(Integer orderId);
+
+
 }

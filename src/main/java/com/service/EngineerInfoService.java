@@ -32,6 +32,7 @@ public interface EngineerInfoService {
 
     ServerResponse deductOrAddMoney(Integer type, BigDecimal price, Integer engineer);
 
+    ServerResponse adminCheck(Integer adminCheck, Integer engineerId);
 
 
 

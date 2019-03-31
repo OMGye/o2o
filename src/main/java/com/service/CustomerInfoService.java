@@ -34,4 +34,6 @@ public interface CustomerInfoService {
     ServerResponse<PageInfo> selectByIdLike(int pageNum, int pageSize, Integer customerId);
 
     ServerResponse deductOrAddMoney(Integer type, BigDecimal price, Integer customerId);
+
+    ServerResponse adminCheck(Integer adminCheck, Integer customerId);
 }

@@ -14,6 +14,13 @@ public class Const {
     public static final Long TIMER_FOR_SEND_EMAIL = (long)3000;
 
 
+    public interface AdminCheck{
+        int UNCHECK = 0;
+        int CHECKING = 1;
+        int CHECK = 2;
+    }
+
+
     public interface EngineerRankInfo{
         int CAN = 1;
         int CANNOT = 0;

@@ -58,9 +58,13 @@ public class OrderInfo {
 
     private String orderCustomerFile;
 
+    private String customerFileRealName;
+
     private String refuseDec;
 
     private Integer download;
+
+    private Integer adminCheck;
 
     private Date createTime;
 
@@ -127,7 +131,25 @@ public class OrderInfo {
         return orderCustomerFile;
     }
 
-    public OrderInfo(Integer orderId, Integer customerId, String customerName, Integer engineerId, String engineerName, Integer engineerCheckId, String engineerCheckName, String orderFirstCategory, String orderSecondCategory, Integer orderMi, Integer orderQae, String otherParamInfo, Integer basicLayer, Integer priceTogetherNum, String orderDec, Integer orderRush, Integer orderDeductRank, String orderDeductDec, String orderRateDec, Integer orderState, BigDecimal orderPrice, BigDecimal orderQaePrice, BigDecimal engineerRealPrice, BigDecimal engineerQaeRealPrice, BigDecimal adminPrice, String orderFile, String orderCustomerFile, String refuseDec, Integer download, Date createTime, Date updateTime) {
+    public void setCustomerFileRealName(String customerFileRealName) {
+        this.customerFileRealName = customerFileRealName;
+    }
+
+    public void setAdminCheck(Integer adminCheck) {
+        this.adminCheck = adminCheck;
+    }
+
+    public Integer getAdminCheck() {
+
+        return adminCheck;
+    }
+
+    public String getCustomerFileRealName() {
+
+        return customerFileRealName;
+    }
+
+    public OrderInfo(Integer orderId, Integer customerId, String customerName, Integer engineerId, String engineerName, Integer engineerCheckId, String engineerCheckName, String orderFirstCategory, String orderSecondCategory, Integer orderMi, Integer orderQae, String otherParamInfo, Integer basicLayer, Integer priceTogetherNum, String orderDec, Integer orderRush, Integer orderDeductRank, String orderDeductDec, String orderRateDec, Integer orderState, BigDecimal orderPrice, BigDecimal orderQaePrice, BigDecimal engineerRealPrice, BigDecimal engineerQaeRealPrice, BigDecimal adminPrice, String orderFile, String orderCustomerFile, String customerFileRealName, String refuseDec, Integer download, Integer adminCheck, Date createTime, Date updateTime) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.customerName = customerName;
@@ -155,8 +177,10 @@ public class OrderInfo {
         this.adminPrice = adminPrice;
         this.orderFile = orderFile;
         this.orderCustomerFile = orderCustomerFile;
+        this.customerFileRealName = customerFileRealName;
         this.refuseDec = refuseDec;
         this.download = download;
+        this.adminCheck = adminCheck;
         this.createTime = createTime;
         this.updateTime = updateTime;
     }
