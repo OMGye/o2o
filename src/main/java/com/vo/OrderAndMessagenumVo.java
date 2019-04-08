@@ -62,6 +62,17 @@ public class OrderAndMessagenumVo {
 
     private String orderCustomerFile;
 
+    private String customerFileRealName;
+
+    public void setCustomerFileRealName(String customerFileRealName) {
+        this.customerFileRealName = customerFileRealName;
+    }
+
+    public String getCustomerFileRealName() {
+
+        return customerFileRealName;
+    }
+
     private String refuseDec;
 
     private Date createTime;

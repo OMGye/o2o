@@ -95,7 +95,7 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
         }
 
         engineerInfo.setOrderCount(0);
-        engineerInfo.setAdminCheck(Const.AdminCheck.CHECK);
+        engineerInfo.setAdminCheck(Const.AdminCheck.UNCHECK);
         int row = engineerInfoMapper.insert(engineerInfo);
         if (row > 0)
             return ServerResponse.createBySuccess("注册成功，请您等待后台审核通过",engineerInfo);
