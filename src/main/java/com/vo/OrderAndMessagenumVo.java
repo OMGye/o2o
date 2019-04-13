@@ -81,6 +81,17 @@ public class OrderAndMessagenumVo {
 
     private Integer unReadMessage;
 
+     private Integer adminCheck;
+
+    public void setAdminCheck(Integer adminCheck) {
+        this.adminCheck = adminCheck;
+    }
+
+    public Integer getAdminCheck() {
+
+        return adminCheck;
+    }
+
     public void setOrderId(Integer orderId) {
         this.orderId = orderId;
     }
