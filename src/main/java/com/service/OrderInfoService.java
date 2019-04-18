@@ -101,6 +101,8 @@ public interface OrderInfoService {
 
     ServerResponse adminCheck(Integer orderId);
 
+    ServerResponse adminCheckRefuse(Integer orderId);
+
     ServerResponse adminHelpReturnOrder(Integer orderId);
 
     ServerResponse adminHelpUploadFile(Integer orderId, MultipartFile file, String path);

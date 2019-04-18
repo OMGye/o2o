@@ -876,6 +876,17 @@ public class AdminController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
+    @RequestMapping(value = "orderInfo/admincheckrefuse.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse adminCheckRefuse(HttpSession session, Integer orderId) {
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return orderInfoService.adminCheckRefuse(orderId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
     @RequestMapping(value = "orderInfo/adminhelpreturnorder.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse adminHelpReturnOrder(HttpSession session, Integer orderId) {

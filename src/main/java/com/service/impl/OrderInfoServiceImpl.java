@@ -450,8 +450,10 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if (dbEngineerInfo != null) {
             if (dbEngineerInfo.getOrderCount() >= 1){
                 List<OrderInfo> list = orderInfoMapper.engineerListOrder(dbEngineerInfo.getEngineerId(), Const.Order.HAVE_CAUGHT);
-                if (list.size() >= 1){
-                    return ServerResponse.createByErrorMessage("您当前可接订单数已满");
+                for (OrderInfo orderInfo1 : list){
+                    if (orderInfo1.getAdminCheck() != Const.AdminCheck.CHECKING){
+                        return ServerResponse.createByErrorMessage("您当前可接订单数已满");
+                    }
                 }
             }
         }
@@ -862,14 +864,15 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
         EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByPrimaryKey(engineerInfo.getEngineerId());
         if (dbEngineerInfo != null) {
-            if (dbEngineerInfo.getOrderCount() >= 1){
+            if (dbEngineerInfo.getOrderCount() >= 1) {
                 List<OrderInfo> list = orderInfoMapper.engineerQaeListOrder(dbEngineerInfo.getEngineerId(), Const.Order.QAE_HAVE_CAUGHT);
-                if (list.size() >= 1){
-                    return ServerResponse.createByErrorMessage("您当前可接订单数已满");
+                for (OrderInfo orderInfo1 : list) {
+                    if (orderInfo1.getAdminCheck() != Const.AdminCheck.CHECKING) {
+                        return ServerResponse.createByErrorMessage("您当前可接订单数已满");
+                    }
                 }
             }
         }
-
         if (orderInfo.getOrderFirstCategory().equals(engineerRankVO.getFirstCategory()) &&
                 orderInfo.getOrderQae() == engineerRankVO.getQAE()) {
             for (String str : engineerRankVO.getSecondCategories()) {
@@ -1936,7 +1939,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             orderInfo.setAdminCheck(Const.AdminCheck.CHECK);
             int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
             if (row <= 0)
-                return ServerResponse.createByErrorMessage("审核失败");
+                return ServerResponse.createByErrorMessage("审核通过失败");
 
             if (orderInfo.getOrderQae() == 0) {
                 CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey
@@ -1971,11 +1974,30 @@ public class OrderInfoServiceImpl implements OrderInfoService {
                     Timer timer = new Timer();
                     TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(customerInfo.getEmail(), "您的订单已被审核工程师通过");
                     timer.schedule(caughtOrder, Const.TIMER_FOR_SEND_EMAIL);
-                    return ServerResponse.createBySuccess("审核成功");
+                    return ServerResponse.createBySuccess("审核通过成功");
                 }
-                return ServerResponse.createByErrorMessage("审核失败");
+                return ServerResponse.createByErrorMessage("审核通过失败");
             }
-        return ServerResponse.createBySuccess("审核成功");
+        return ServerResponse.createBySuccess("审核通过成功");
+    }
+
+    @Override
+    public ServerResponse adminCheckRefuse(Integer orderId) {
+        if (orderId == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+
+        OrderInfo orderInfo = orderInfoMapper.selectByPrimaryKey(orderId);
+        if (orderInfo == null)
+            return ServerResponse.createByErrorMessage("找不到该订单");
+
+        if (orderInfo.getOrderState() != Const.Order.HAVE_CAUGHT || orderInfo.getOrderState() != Const.Order.QAE_HAVE_CAUGHT)
+            return ServerResponse.createByErrorMessage("订单状态错误");
+
+        orderInfo.setAdminCheck(Const.AdminCheck.UNCHECK);
+        int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+        if (row <= 0)
+            return ServerResponse.createByErrorMessage("审核拒绝失败");
+        return ServerResponse.createBySuccess("审核拒绝成功");
     }
 
     @Override
@@ -1996,6 +2018,11 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         order.setEngineerCheckId(null);
         order.setRefuseDec(null);
         order.setOrderState(Const.Order.PAIED);
+
+        CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(order.getCustomerId());
+        if (customerInfo == null)
+            return ServerResponse.createByErrorMessage("该订单客户不存在");
+        order.setAdminCheck(customerInfo.getAdminCheck());
         int row = orderInfoMapper.updateByPrimaryKey(order);
         if (row <= 0)
             return ServerResponse.createByErrorMessage("退回失败");
