@@ -1990,7 +1990,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if (orderInfo == null)
             return ServerResponse.createByErrorMessage("找不到该订单");
 
-        if (orderInfo.getOrderState() != Const.Order.HAVE_CAUGHT || orderInfo.getOrderState() != Const.Order.QAE_HAVE_CAUGHT)
+        if (orderInfo.getOrderState() != Const.Order.HAVE_CAUGHT && orderInfo.getOrderState() != Const.Order.QAE_HAVE_CAUGHT)
             return ServerResponse.createByErrorMessage("订单状态错误");
 
         orderInfo.setAdminCheck(Const.AdminCheck.UNCHECK);
