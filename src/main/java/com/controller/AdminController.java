@@ -38,6 +38,7 @@ public class AdminController {
     @RequestMapping(value = "login.do",method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<AdminInfo> login(AdminInfo adminInfo, HttpSession session){
+        session.setMaxInactiveInterval(30 * 60);
         ServerResponse<AdminInfo> response = adminInfoService.login(adminInfo);
         if(response.isSuccess()){
 
