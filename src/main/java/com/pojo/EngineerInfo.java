@@ -40,9 +40,20 @@ public class EngineerInfo {
 
     private Integer adminCheck;
 
+    private String engineerAttention;
+
     private Date createTime;
 
     private Date updateTime;
+
+    public void setEngineerAttention(String engineerAttention) {
+        this.engineerAttention = engineerAttention;
+    }
+
+    public String getEngineerAttention() {
+
+        return engineerAttention;
+    }
 
     public void setOrderCount(Integer orderCount) {
         this.orderCount = orderCount;
@@ -71,8 +82,7 @@ public class EngineerInfo {
         return adminCheck;
     }
 
-    public EngineerInfo(Integer engineerId, String engineerName, String password, String phone, String email, String personCode, String engineerQq, String engineerProv, String engineerCity, Byte engineerState, String engineerPayCount, BigDecimal engineerBalance, String engineerFile, Integer engineerRank, String engineerClassfy, BigDecimal engineerQuantity, Integer orderCount, Integer adminCheck, Date createTime, Date updateTime) {
-
+    public EngineerInfo(Integer engineerId, String engineerName, String password, String phone, String email, String personCode, String engineerQq, String engineerProv, String engineerCity, Byte engineerState, String engineerPayCount, BigDecimal engineerBalance, String engineerFile, Integer engineerRank, String engineerClassfy, BigDecimal engineerQuantity, Integer orderCount, Integer adminCheck, String engineerAttention, Date createTime, Date updateTime) {
         this.engineerId = engineerId;
         this.engineerName = engineerName;
         this.password = password;
@@ -91,6 +101,7 @@ public class EngineerInfo {
         this.engineerQuantity = engineerQuantity;
         this.orderCount = orderCount;
         this.adminCheck = adminCheck;
+        this.engineerAttention = engineerAttention;
         this.createTime = createTime;
         this.updateTime = updateTime;
     }

@@ -31,5 +31,7 @@ public interface EngineerInfoMapper {
 
     List<EngineerInfo> selectByIdLike(@Param("engineerIdString")String engineerIdString);
 
+    List<EngineerInfo> selectByPhoneLike(@Param("phone")String phone);
+
     BigDecimal allPrice();
 }

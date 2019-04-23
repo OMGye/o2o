@@ -21,6 +21,7 @@
       <arg column="engineer_quantity" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
       <arg column="order_count" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="admin_check" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="engineer_attention" jdbcType="LONGVARCHAR" javaType="java.lang.String" />
       <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
       <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
     </constructor>
@@ -28,7 +29,7 @@
   <sql id="Base_Column_List" >
     engineer_id, engineer_name, password, phone, email,person_code, engineer_qq, engineer_prov, engineer_city,
     engineer_state, engineer_pay_count, engineer_balance, engineer_file, engineer_rank, 
-    engineer_classfy, engineer_quantity,order_count, admin_check,create_time, update_time
+    engineer_classfy, engineer_quantity,order_count, admin_check,engineer_attention,create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -46,12 +47,12 @@
       engineer_prov, engineer_city, engineer_state, 
       engineer_pay_count, engineer_balance, engineer_file, 
       engineer_rank, engineer_classfy, engineer_quantity,order_count ,
-      admin_check,create_time, update_time)
+      admin_check,engineer_attention,create_time, update_time)
     values (#{engineerId,jdbcType=INTEGER}, #{engineerName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{personCode,jdbcType=VARCHAR},#{engineerQq,jdbcType=VARCHAR},
       #{engineerProv,jdbcType=VARCHAR}, #{engineerCity,jdbcType=VARCHAR}, #{engineerState,jdbcType=TINYINT}, 
       #{engineerPayCount,jdbcType=VARCHAR}, #{engineerBalance,jdbcType=DECIMAL}, #{engineerFile,jdbcType=VARCHAR}, 
-      #{engineerRank,jdbcType=INTEGER}, #{engineerClassfy,jdbcType=VARCHAR}, #{engineerQuantity,jdbcType=DECIMAL}, #{orderCount,jdbcType=INTEGER},#{adminCheck,jdbcType=INTEGER},
+      #{engineerRank,jdbcType=INTEGER}, #{engineerClassfy,jdbcType=VARCHAR}, #{engineerQuantity,jdbcType=DECIMAL}, #{orderCount,jdbcType=INTEGER},#{adminCheck,jdbcType=INTEGER},#{engineerAttention,jdbcType=LONGVARCHAR},
      now(), now())
   </insert>
   <insert id="insertSelective" parameterType="com.pojo.EngineerInfo" >
@@ -110,6 +111,9 @@
       </if>
       <if test="adminCheck != null" >
         admin_check,
+      </if>
+      <if test="engineerAttention != null" >
+        engineer_attention,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -173,6 +177,9 @@
       <if test="adminCheck != null" >
         #{adminCheck,jdbcType=INTEGER},
       </if>
+      <if test="engineerAttention != null" >
+        #{engineerAttention,jdbcType=LONGVARCHAR},
+      </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -235,6 +242,9 @@
       <if test="adminCheck != null" >
         admin_check = #{adminCheck,jdbcType=INTEGER},
       </if>
+      <if test="engineerAttention != null" >
+        engineer_attention = #{engineerAttention,jdbcType=LONGVARCHAR},
+      </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -263,6 +273,7 @@
       engineer_quantity = #{engineerQuantity,jdbcType=DECIMAL},
       order_count = #{orderCount,jdbcType=INTEGER},
       admin_check = #{adminCheck,jdbcType=INTEGER},
+       engineer_attention = #{engineerAttention,jdbcType=LONGVARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = now()
     where engineer_id = #{engineerId,jdbcType=INTEGER}
@@ -312,6 +323,13 @@
     <include refid="Base_Column_List" />
     from engineer_info
     where cast(engineer_id as char) like #{engineerIdString}
+  </select>
+
+  <select id="selectByPhoneLike" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from engineer_info
+    where phone like #{phone}
   </select>
 
   <select id="allPrice" resultType="java.math.BigDecimal">

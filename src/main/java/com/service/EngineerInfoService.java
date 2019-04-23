@@ -30,10 +30,14 @@ public interface EngineerInfoService {
 
     ServerResponse<PageInfo> selectByIdLike(int pageNum, int pageSize, Integer engineerId);
 
+    ServerResponse<PageInfo> selectByPhoneLike(int pageNum, int pageSize, String phone);
+
     ServerResponse deductOrAddMoney(Integer type, BigDecimal price, Integer engineer);
 
     ServerResponse adminCheck(Integer adminCheck, Integer engineerId);
 
+
+    ServerResponse selectDetailById(Integer engineerId);
 
 
 }

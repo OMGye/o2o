@@ -33,7 +33,11 @@ public interface CustomerInfoService {
 
     ServerResponse<PageInfo> selectByIdLike(int pageNum, int pageSize, Integer customerId);
 
+    ServerResponse<PageInfo> selectByPhoneLike(int pageNum, int pageSize, String phone);
+
     ServerResponse deductOrAddMoney(Integer type, BigDecimal price, Integer customerId);
 
     ServerResponse adminCheck(Integer adminCheck, Integer customerId);
+
+    ServerResponse selectDetailById(Integer customerId);
 }

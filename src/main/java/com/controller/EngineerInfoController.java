@@ -36,6 +36,9 @@ public class EngineerInfoController {
     @Autowired
     private EngineerRankInfoService rankInfoService;
 
+    @Autowired
+    private CustomerInfoService customerInfoService;
+
     @RequestMapping(value = "engineerInfo/register.do",method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse register(@RequestParam(value = "upload_file",required = false) MultipartFile file, HttpServletRequest request, EngineerInfo engineerInfo){
@@ -394,6 +397,14 @@ public class EngineerInfoController {
         }
     }
 
-
+    @RequestMapping(value = "customerInfo/findattention.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse findAttention(HttpSession session, Integer customerId){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            return customerInfoService.selectDetailById(customerId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
 
 }

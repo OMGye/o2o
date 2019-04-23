@@ -309,6 +309,13 @@
     where cast(customer_id as char) like #{customerIdString}
   </select>
 
+  <select id="selectByPhoneLike" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from customer_info
+    where phone like #{phone}
+  </select>
+
   <select id="allPrice" resultType="java.math.BigDecimal">
     select
     sum(customer_balance)

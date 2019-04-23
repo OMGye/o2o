@@ -45,6 +45,9 @@ public class CustomerInfoController {
     @Autowired
     private CustomerInfoService customerInfoService;
 
+    @Autowired
+    private EngineerInfoService engineerInfoService;
+
     @RequestMapping(value = "customerInfo/register.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse register(CustomerInfo customerInfo) {
@@ -577,5 +580,15 @@ public class CustomerInfoController {
     }
 
 
+
+    @RequestMapping(value = "engineerInfo/findattention.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse findAttention(HttpSession session, Integer engineerId){
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null){
+            return engineerInfoService.selectDetailById(engineerId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
 
 }

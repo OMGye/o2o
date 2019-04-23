@@ -34,6 +34,8 @@ public interface CustomerInfoMapper {
 
     List<CustomerInfo> selectByIdLike(@Param("customerIdString")String customerIdString);
 
+    List<CustomerInfo> selectByPhoneLike(@Param("phone")String phone);
+
     BigDecimal allPrice();
 
 }

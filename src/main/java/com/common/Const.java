@@ -88,5 +88,11 @@ public class Const {
         int DEAL = 1;
     }
 
+    public interface AdminRank{
+        int BOSS = 0;
+        int MANAGER = 1;
+        int EMPLOY = 2;
+    }
+
 
 }

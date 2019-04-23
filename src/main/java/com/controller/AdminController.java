@@ -969,4 +969,82 @@ public class AdminController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
+
+    @RequestMapping(value = "engineerInfo/selectbyphonelike.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse selectEngineerByPhoneLike(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize, String phone) {
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return engineerInfoService.selectByPhoneLike(pageNum,pageSize,phone);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
+        @RequestMapping(value = "customerInfo/selectbyphonelike.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse selectCustomerByPhoneLike(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize, String phone) {
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return customerInfoService.selectByPhoneLike(pageNum,pageSize,phone);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
+
+
+    @RequestMapping(value = "adminInfo/adduser.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse addAdminUser(HttpSession session, AdminInfo adminInfo) {
+        AdminInfo currentAdminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (currentAdminInfo != null){
+            return adminInfoService.addUser(adminInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "adminInfo/deleteuser.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse deleteAdminUser(HttpSession session, Integer adminId) {
+        AdminInfo currentAdminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (currentAdminInfo != null){
+            return adminInfoService.deleteUser(adminId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "adminInfo/updateuser.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse updateAdminUser(HttpSession session, AdminInfo adminInfo) {
+        AdminInfo currentAdminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (currentAdminInfo != null){
+            return adminInfoService.updateUser(adminInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "adminInfo/getuserbyid.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse getAdminInfoUserById(HttpSession session, Integer adminId) {
+        AdminInfo currentAdminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (currentAdminInfo != null){
+            return adminInfoService.getById(adminId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "adminInfo/listuser.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse listAdminUser(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize) {
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return adminInfoService.list(pageSize,pageNum);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
+
+
 }

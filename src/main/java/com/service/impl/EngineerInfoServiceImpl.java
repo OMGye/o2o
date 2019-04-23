@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 import com.pojo.*;
 import com.service.EngineerInfoService;
 import com.util.*;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -317,6 +318,31 @@ public class EngineerInfoServiceImpl implements EngineerInfoService {
         if (row > 0)
             return ServerResponse.createBySuccess("更新成功");
         return ServerResponse.createByErrorMessage("更新失败");
+    }
+
+    @Override
+    public ServerResponse<PageInfo> selectByPhoneLike(int pageNum, int pageSize, String phone) {
+        if (StringUtils.isBlank(phone))
+            return ServerResponse.createByErrorMessage("参数为空");
+        phone = phone + "%";
+        PageHelper.startPage(pageNum,pageSize);
+        PageHelper.orderBy("create_time asc");
+        List<EngineerInfo> list = engineerInfoMapper.selectByPhoneLike(phone);
+        PageInfo pageInfo = new PageInfo(list);
+        return ServerResponse.createBySuccess(pageInfo);
+
+    }
+
+    @Override
+    public ServerResponse selectDetailById(Integer engineerId) {
+        if (engineerId == null)
+            return ServerResponse.createByErrorMessage("参数不能为空");
+
+        EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(engineerId);
+        if (engineerInfo == null)
+            return ServerResponse.createByErrorMessage("找不到该工程师的自我介绍");
+
+        return ServerResponse.createBySuccess(engineerInfo.getEngineerAttention());
     }
 
 }
