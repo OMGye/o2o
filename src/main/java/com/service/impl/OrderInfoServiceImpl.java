@@ -2149,7 +2149,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if (order == null)
             return ServerResponse.createByErrorMessage("找不到该订单");
 
-        if (order.getOrderState() != Const.Order.HAVE_REIVER_ORDER || order.getOrderState() != Const.Order.HAVE_UPLOAD_FILE || order.getOrderState() != Const.Order.QAE_HAVE_CAUGHT || order.getOrderState() != Const.Order.CHECK)
+        if (order.getOrderState() != Const.Order.HAVE_REIVER_ORDER && order.getOrderState() != Const.Order.HAVE_UPLOAD_FILE && order.getOrderState() != Const.Order.QAE_HAVE_CAUGHT && order.getOrderState() != Const.Order.CHECK)
             return ServerResponse.createByErrorMessage("该订单状态不能协助退回完工文件");
         order.setAdminCheck(Const.AdminCheck.CHECK);
         order.setOrderState(Const.Order.HAVE_CAUGHT);
