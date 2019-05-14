@@ -70,7 +70,7 @@
 
 
 
-        <table tableName="o2o_pay_info" domainObjectName="PayInfo" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
+        <table tableName="notice" domainObjectName="Notice" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
         <!-- geelynote mybatis插件的搭建 -->
     </context>
 </generatorConfiguration>

@@ -94,5 +94,9 @@ public class Const {
         int EMPLOY = 2;
     }
 
+    public interface  Notice{
+        int CUSTOMER = 0;
+        int ENGINEER = 1;
+    }
 
 }
