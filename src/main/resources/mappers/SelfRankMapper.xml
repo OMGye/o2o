@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.SelfRankMapper" >
+  <resultMap id="BaseResultMap" type="com.pojo.SelfRank" >
+    <constructor >
+      <idArg column="self_rank_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="engineer_rank" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="self_category_one" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="self_category_two" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="self_category_three" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="self_category_four" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="self_category_five" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="self_category_six" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="self_category_seven" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="self_category_eight" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    self_rank_id, engineer_rank, self_category_one, self_category_two, self_category_three, 
+    self_category_four, self_category_five, self_category_six, self_category_seven, self_category_eight, 
+    create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from self_rank
+    where self_rank_id = #{selfRankId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from self_rank
+    where self_rank_id = #{selfRankId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.pojo.SelfRank" >
+    insert into self_rank (self_rank_id, engineer_rank, self_category_one, 
+      self_category_two, self_category_three, self_category_four, 
+      self_category_five, self_category_six, self_category_seven, 
+      self_category_eight, create_time, update_time
+      )
+    values (#{selfRankId,jdbcType=INTEGER}, #{engineerRank,jdbcType=INTEGER}, #{selfCategoryOne,jdbcType=INTEGER}, 
+      #{selfCategoryTwo,jdbcType=INTEGER}, #{selfCategoryThree,jdbcType=INTEGER}, #{selfCategoryFour,jdbcType=INTEGER}, 
+      #{selfCategoryFive,jdbcType=INTEGER}, #{selfCategorySix,jdbcType=INTEGER}, #{selfCategorySeven,jdbcType=INTEGER}, 
+      #{selfCategoryEight,jdbcType=INTEGER}, now(), now()
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.pojo.SelfRank" >
+    insert into self_rank
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="selfRankId != null" >
+        self_rank_id,
+      </if>
+      <if test="engineerRank != null" >
+        engineer_rank,
+      </if>
+      <if test="selfCategoryOne != null" >
+        self_category_one,
+      </if>
+      <if test="selfCategoryTwo != null" >
+        self_category_two,
+      </if>
+      <if test="selfCategoryThree != null" >
+        self_category_three,
+      </if>
+      <if test="selfCategoryFour != null" >
+        self_category_four,
+      </if>
+      <if test="selfCategoryFive != null" >
+        self_category_five,
+      </if>
+      <if test="selfCategorySix != null" >
+        self_category_six,
+      </if>
+      <if test="selfCategorySeven != null" >
+        self_category_seven,
+      </if>
+      <if test="selfCategoryEight != null" >
+        self_category_eight,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="selfRankId != null" >
+        #{selfRankId,jdbcType=INTEGER},
+      </if>
+      <if test="engineerRank != null" >
+        #{engineerRank,jdbcType=INTEGER},
+      </if>
+      <if test="selfCategoryOne != null" >
+        #{selfCategoryOne,jdbcType=INTEGER},
+      </if>
+      <if test="selfCategoryTwo != null" >
+        #{selfCategoryTwo,jdbcType=INTEGER},
+      </if>
+      <if test="selfCategoryThree != null" >
+        #{selfCategoryThree,jdbcType=INTEGER},
+      </if>
+      <if test="selfCategoryFour != null" >
+        #{selfCategoryFour,jdbcType=INTEGER},
+      </if>
+      <if test="selfCategoryFive != null" >
+        #{selfCategoryFive,jdbcType=INTEGER},
+      </if>
+      <if test="selfCategorySix != null" >
+        #{selfCategorySix,jdbcType=INTEGER},
+      </if>
+      <if test="selfCategorySeven != null" >
+        #{selfCategorySeven,jdbcType=INTEGER},
+      </if>
+      <if test="selfCategoryEight != null" >
+        #{selfCategoryEight,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.pojo.SelfRank" >
+    update self_rank
+    <set >
+      <if test="engineerRank != null" >
+        engineer_rank = #{engineerRank,jdbcType=INTEGER},
+      </if>
+      <if test="selfCategoryOne != null" >
+        self_category_one = #{selfCategoryOne,jdbcType=INTEGER},
+      </if>
+      <if test="selfCategoryTwo != null" >
+        self_category_two = #{selfCategoryTwo,jdbcType=INTEGER},
+      </if>
+      <if test="selfCategoryThree != null" >
+        self_category_three = #{selfCategoryThree,jdbcType=INTEGER},
+      </if>
+      <if test="selfCategoryFour != null" >
+        self_category_four = #{selfCategoryFour,jdbcType=INTEGER},
+      </if>
+      <if test="selfCategoryFive != null" >
+        self_category_five = #{selfCategoryFive,jdbcType=INTEGER},
+      </if>
+      <if test="selfCategorySix != null" >
+        self_category_six = #{selfCategorySix,jdbcType=INTEGER},
+      </if>
+      <if test="selfCategorySeven != null" >
+        self_category_seven = #{selfCategorySeven,jdbcType=INTEGER},
+      </if>
+      <if test="selfCategoryEight != null" >
+        self_category_eight = #{selfCategoryEight,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+
+        update_time = now(),
+
+    </set>
+    where self_rank_id = #{selfRankId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.pojo.SelfRank" >
+    update self_rank
+    set engineer_rank = #{engineerRank,jdbcType=INTEGER},
+      self_category_one = #{selfCategoryOne,jdbcType=INTEGER},
+      self_category_two = #{selfCategoryTwo,jdbcType=INTEGER},
+      self_category_three = #{selfCategoryThree,jdbcType=INTEGER},
+      self_category_four = #{selfCategoryFour,jdbcType=INTEGER},
+      self_category_five = #{selfCategoryFive,jdbcType=INTEGER},
+      self_category_six = #{selfCategorySix,jdbcType=INTEGER},
+      self_category_seven = #{selfCategorySeven,jdbcType=INTEGER},
+      self_category_eight = #{selfCategoryEight,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where self_rank_id = #{selfRankId,jdbcType=INTEGER}
+  </update>
+</mapper>

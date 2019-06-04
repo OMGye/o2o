@@ -3,13 +3,20 @@ package com.service.impl;
 import com.common.Const;
 import com.common.ServerResponse;
 import com.dao.NoticeMapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.pojo.AdminInfo;
 import com.pojo.Notice;
 import com.service.NoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Created by upupgogogo on 2019/5/14.下午2:15
  */
+@Service("noticeService")
 public class NoticeServiceImpl implements NoticeService{
 
     @Autowired
@@ -57,11 +64,20 @@ public class NoticeServiceImpl implements NoticeService{
 
     @Override
     public ServerResponse list(Integer type, int pageSize, int pageNum) {
-        return null;
+        if (type == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+        PageHelper.startPage(pageNum,pageSize);
+        PageHelper.orderBy("notice_id desc");
+        List<AdminInfo> list = noticeMapper.selectList(type);
+        PageInfo pageInfo = new PageInfo(list);
+        return ServerResponse.createBySuccess(pageInfo);
     }
 
     @Override
-    public ServerResponse getById(Integer notice) {
-        return null;
+    public ServerResponse getById(Integer noticeId) {
+        if (noticeId == null)
+            return ServerResponse.createByErrorMessage("参数不能为空");
+        Notice notice = noticeMapper.selectByPrimaryKey(noticeId);
+        return ServerResponse.createBySuccess(notice);
     }
 }

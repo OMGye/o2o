@@ -1045,6 +1045,112 @@ public class AdminController {
     }
 
 
+    @Autowired
+    private NoticeService noticeService;
+    @RequestMapping(value = "noticeInfo/addnotice.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse addNotice(HttpSession session, Notice notice) {
+        AdminInfo currentAdminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (currentAdminInfo != null){
+            return noticeService.addNotice(notice);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "noticeInfo/deletenotice.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse deleteNotice(HttpSession session, Integer noticeId) {
+        AdminInfo currentAdminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (currentAdminInfo != null){
+            return noticeService.deleteNotice(noticeId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "noticeInfo/updatenotice.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse updatenotice(HttpSession session, Notice notice) {
+        AdminInfo currentAdminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (currentAdminInfo != null){
+            return noticeService.updateNotice(notice);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "noticeInfo/getnoticebyid.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse getNoticeById(HttpSession session, Integer noticeId) {
+        AdminInfo currentAdminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (currentAdminInfo != null){
+            return noticeService.getById(noticeId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "noticeInfo/listnotice.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse listAdminUser(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize, Integer type) {
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return noticeService.list(type, pageSize, pageNum);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
+
+
+    @Autowired
+    private SelfCategoryService selfCategoryService;
+    @RequestMapping(value = "selfCategoryInfo/addselfcategory.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse addSelfCategory(HttpSession session, SelfCategory selfCategory) {
+        AdminInfo currentAdminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (currentAdminInfo != null){
+            return selfCategoryService.add(selfCategory);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "selfCategoryInfo/deleteselfcategory.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse deleteSelfCategory(HttpSession session, Integer selfCategoryId) {
+        AdminInfo currentAdminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (currentAdminInfo != null){
+            return selfCategoryService.delete(selfCategoryId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "selfCategoryInfo/updateselfcategory.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse updateSelfCategory(HttpSession session, SelfCategory selfCategory) {
+        AdminInfo currentAdminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (currentAdminInfo != null){
+            return selfCategoryService.update(selfCategory);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "selfCategoryInfo/getselfcategorybyid.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse getSelfCategoryById(HttpSession session, Integer selfCategoryId) {
+        AdminInfo currentAdminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (currentAdminInfo != null){
+            return selfCategoryService.getById(selfCategoryId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "selfCategoryInfo/listselfcategory.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse listSelfCategory(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize) {
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return selfCategoryService.list(pageSize, pageNum);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
 
 
 

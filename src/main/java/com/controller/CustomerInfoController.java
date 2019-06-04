@@ -56,7 +56,7 @@ public class CustomerInfoController {
 
     @RequestMapping(value = "customerInfo/login.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse login(String customerName, String password ,HttpSession session) {
+    public ServerResponse login(String customerName, String password, HttpSession session) {
         //以秒为单位
         session.setMaxInactiveInterval(30 * 60);
 
@@ -158,7 +158,7 @@ public class CustomerInfoController {
 
     @RequestMapping(value = "orderInfo/createorder.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse createOrder(@RequestParam(value = "upload_file",required = false) MultipartFile file, HttpSession session, OrderInfo orderInfo, Integer rushId, Integer[] params, HttpServletRequest request) {
+    public ServerResponse createOrder(@RequestParam(value = "upload_file", required = false) MultipartFile file, HttpSession session, OrderInfo orderInfo, Integer rushId, Integer[] params, HttpServletRequest request) {
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
         if (curCustomerInfo != null) {
             String path = request.getSession().getServletContext().getRealPath("upload");
@@ -178,8 +178,6 @@ public class CustomerInfoController {
     }
 
 
-
-
     @RequestMapping(value = "orderInfo/pay.do", method = RequestMethod.POST)
     public void pay(HttpSession session, Integer orderId, HttpServletRequest request, HttpServletResponse response) {
         //获得初始化的AlipayClient
@@ -193,7 +191,7 @@ public class CustomerInfoController {
 
         String out_trade_no = null;
         ServerResponse serverResponse = orderInfoService.getOrderById(orderId);
-        OrderInfo orderInfo = (OrderInfo)serverResponse.getData();
+        OrderInfo orderInfo = (OrderInfo) serverResponse.getData();
         try {
             //商户订单号，商户网站订单系统中唯一订单号，必填
             out_trade_no = new String(("" + orderInfo.getOrderId()).getBytes("ISO-8859-1"), "UTF-8");
@@ -251,7 +249,7 @@ public class CustomerInfoController {
             String out_trade_no = null;
             try {
                 //商户订单号，商户网站订单系统中唯一订单号，必填
-                out_trade_no = new String(("" + curCustomerInfo.getCustomerId() + "-" +UUID.randomUUID().toString()).getBytes("ISO-8859-1"), "UTF-8");
+                out_trade_no = new String(("" + curCustomerInfo.getCustomerId() + "-" + UUID.randomUUID().toString()).getBytes("ISO-8859-1"), "UTF-8");
 
                 //付款金额，必填
                 String total_amount = new String(("" + price).getBytes("ISO-8859-1"), "UTF-8");
@@ -289,13 +287,14 @@ public class CustomerInfoController {
         }
     }
 
-    private static  final Logger logger = LoggerFactory.getLogger(CustomerInfoController.class);
+    private static final Logger logger = LoggerFactory.getLogger(CustomerInfoController.class);
+
     @RequestMapping(value = "orderInfo/callback.do", method = RequestMethod.POST)
     @ResponseBody
     public Object callBack(HttpServletRequest request) {
-        Map<String,String> params = new HashMap<String,String>();
-        Map<String,String[]> requestParams = request.getParameterMap();
-        for (Iterator<String> iter = requestParams.keySet().iterator(); iter.hasNext();) {
+        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String[]> requestParams = request.getParameterMap();
+        for (Iterator<String> iter = requestParams.keySet().iterator(); iter.hasNext(); ) {
             String name = (String) iter.next();
             String[] values = (String[]) requestParams.get(name);
             String valueStr = "";
@@ -305,18 +304,18 @@ public class CustomerInfoController {
             }
             params.put(name, valueStr);
         }
-            //乱码解决，这段代码在出现乱码时使用
-            try {
-                boolean signVerified = AlipaySignature.rsaCheckV1(params, AlipayConfig.alipay_public_key, AlipayConfig.charset, AlipayConfig.sign_type);
+        //乱码解决，这段代码在出现乱码时使用
+        try {
+            boolean signVerified = AlipaySignature.rsaCheckV1(params, AlipayConfig.alipay_public_key, AlipayConfig.charset, AlipayConfig.sign_type);
 
-                logger.info("支付宝回调,sign:{},trade_status:{},参数:{}",params.get("sign"),params.get("trade_status"),params.toString());
-                if(!signVerified) {//验证失败
-                    logger.debug("验证失败");
-                    return ServerResponse.createByErrorMessage("非法请求,验证不通过,再恶意请求我就报警找网警了");
-                }
-            } catch (Exception e) {
-                logger.error("支付宝验证回调异常",e);
+            logger.info("支付宝回调,sign:{},trade_status:{},参数:{}", params.get("sign"), params.get("trade_status"), params.toString());
+            if (!signVerified) {//验证失败
+                logger.debug("验证失败");
+                return ServerResponse.createByErrorMessage("非法请求,验证不通过,再恶意请求我就报警找网警了");
             }
+        } catch (Exception e) {
+            logger.error("支付宝验证回调异常", e);
+        }
 
         //调用SDK验证签名
 
@@ -334,9 +333,9 @@ public class CustomerInfoController {
     @RequestMapping(value = "orderInfo/callbackbalance.do", method = RequestMethod.POST)
     @ResponseBody
     public Object callBackBalance(HttpServletRequest request) {
-        Map<String,String> params = new HashMap<String,String>();
-        Map<String,String[]> requestParams = request.getParameterMap();
-        for (Iterator<String> iter = requestParams.keySet().iterator(); iter.hasNext();) {
+        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String[]> requestParams = request.getParameterMap();
+        for (Iterator<String> iter = requestParams.keySet().iterator(); iter.hasNext(); ) {
             String name = (String) iter.next();
             String[] values = (String[]) requestParams.get(name);
             String valueStr = "";
@@ -350,13 +349,13 @@ public class CustomerInfoController {
         try {
             boolean signVerified = AlipaySignature.rsaCheckV1(params, AlipayConfig.alipay_public_key, AlipayConfig.charset, AlipayConfig.sign_type);
 
-            logger.info("支付宝回调,sign:{},trade_status:{},参数:{}",params.get("sign"),params.get("trade_status"),params.toString());
-            if(!signVerified) {//验证失败
+            logger.info("支付宝回调,sign:{},trade_status:{},参数:{}", params.get("sign"), params.get("trade_status"), params.toString());
+            if (!signVerified) {//验证失败
                 logger.debug("验证失败");
                 return ServerResponse.createByErrorMessage("非法请求,验证不通过,再恶意请求我就报警找网警了");
             }
         } catch (Exception e) {
-            logger.error("支付宝验证回调异常",e);
+            logger.error("支付宝验证回调异常", e);
         }
 
         //调用SDK验证签名
@@ -370,15 +369,15 @@ public class CustomerInfoController {
 	4、验证app_id是否为该商户本身。
 	*/
         orderInfoService.aliCallbackBalance(params);
-        return  "success";
+        return "success";
     }
 
     @RequestMapping(value = "orderInfo/list.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse orderList(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize, Integer orderState){
+    public ServerResponse orderList(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize, Integer orderState) {
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
         if (curCustomerInfo != null) {
-            return orderInfoService.customerList(pageSize, pageNum,curCustomerInfo,orderState);
+            return orderInfoService.customerList(pageSize, pageNum, curCustomerInfo, orderState);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
@@ -386,12 +385,12 @@ public class CustomerInfoController {
 
     @RequestMapping(value = "orderInfo/getorderbyid.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse getOrderById(HttpSession session, Integer orderId){
+    public ServerResponse getOrderById(HttpSession session, Integer orderId) {
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
         if (curCustomerInfo != null) {
             ServerResponse response = orderInfoService.getOrderById(orderId);
-            OrderInfo orderInfo = (OrderInfo)response.getData();
-            if (orderInfo != null){
+            OrderInfo orderInfo = (OrderInfo) response.getData();
+            if (orderInfo != null) {
                 if (orderInfo.getCustomerId().intValue() != curCustomerInfo.getCustomerId().intValue())
                     return ServerResponse.createBySuccess();
             }
@@ -402,7 +401,7 @@ public class CustomerInfoController {
 
     @RequestMapping(value = "orderInfo/receiveorder.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse receiveOrder(HttpSession session, Integer orderId){
+    public ServerResponse receiveOrder(HttpSession session, Integer orderId) {
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
         if (curCustomerInfo != null) {
             return orderInfoService.receiveOrder(orderId, curCustomerInfo);
@@ -413,7 +412,7 @@ public class CustomerInfoController {
 
     @RequestMapping(value = "orderInfo/engineerdefriend.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse engineerDefriend(HttpSession session, Integer engineerId){
+    public ServerResponse engineerDefriend(HttpSession session, Integer engineerId) {
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
         if (curCustomerInfo != null) {
             return customerInfoService.engineerDefriend(curCustomerInfo.getCustomerId(), engineerId);
@@ -422,10 +421,9 @@ public class CustomerInfoController {
     }
 
 
-
     @RequestMapping(value = "orderInfo/refusetoengineer.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse refuse(HttpSession session, String refuseDec, Integer orderId){
+    public ServerResponse refuse(HttpSession session, String refuseDec, Integer orderId) {
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
         if (curCustomerInfo != null) {
             return orderInfoService.refuseToEnigneer(refuseDec, orderId, curCustomerInfo.getCustomerId());
@@ -435,7 +433,7 @@ public class CustomerInfoController {
 
     @RequestMapping(value = "orderInfo/comfirmorder.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse comfirmOrder(HttpSession session, Integer orderId){
+    public ServerResponse comfirmOrder(HttpSession session, Integer orderId) {
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
         if (curCustomerInfo != null) {
             return orderInfoService.comfirmOrder(orderId, curCustomerInfo.getCustomerId());
@@ -445,17 +443,17 @@ public class CustomerInfoController {
 
     @RequestMapping(value = "orderInfo/orderdeduct.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse orderDeduct(HttpSession session, Integer orderId, Integer priceDeductId, String orderDeductDec){
+    public ServerResponse orderDeduct(HttpSession session, Integer orderId, Integer priceDeductId, String orderDeductDec) {
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
         if (curCustomerInfo != null) {
-            return orderInfoService.orderDeduct(orderId, priceDeductId, orderDeductDec ,curCustomerInfo);
+            return orderInfoService.orderDeduct(orderId, priceDeductId, orderDeductDec, curCustomerInfo);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
     @RequestMapping(value = "orderInfo/ordercancle.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse orderCancle(HttpSession session, Integer orderId){
+    public ServerResponse orderCancle(HttpSession session, Integer orderId) {
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
         if (curCustomerInfo != null) {
             return orderInfoService.customerCancleOrder(orderId, curCustomerInfo);
@@ -465,31 +463,31 @@ public class CustomerInfoController {
 
     @RequestMapping(value = "orderInfo/addansorque.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse addAnsOrQue(HttpSession session, Integer orderId, String orderAnsqueContent){
+    public ServerResponse addAnsOrQue(HttpSession session, Integer orderId, String orderAnsqueContent) {
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
-        if (curCustomerInfo != null){
-            return orderInfoService.addAnsOrQue(orderId,curCustomerInfo.getCustomerId(),0, curCustomerInfo.getCustomerName(),orderAnsqueContent);
+        if (curCustomerInfo != null) {
+            return orderInfoService.addAnsOrQue(orderId, curCustomerInfo.getCustomerId(), 0, curCustomerInfo.getCustomerName(), orderAnsqueContent);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
     @RequestMapping(value = "orderInfo/uploadansorque.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse uploadAnsOrQue(HttpSession session, Integer orderId, @RequestParam(value = "upload_file",required = false) MultipartFile file,  HttpServletRequest request){
+    public ServerResponse uploadAnsOrQue(HttpSession session, Integer orderId, @RequestParam(value = "upload_file", required = false) MultipartFile file, HttpServletRequest request) {
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
-        if (curCustomerInfo != null){
+        if (curCustomerInfo != null) {
             String path = request.getSession().getServletContext().getRealPath("upload");
-            return orderInfoService.uploadAnsOrQue(orderId,curCustomerInfo.getCustomerId(),0, curCustomerInfo.getCustomerName(),file, path);
+            return orderInfoService.uploadAnsOrQue(orderId, curCustomerInfo.getCustomerId(), 0, curCustomerInfo.getCustomerName(), file, path);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
     @RequestMapping(value = "orderInfo/listansorque.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<PageInfo> listAnsOrQue(HttpSession session, Integer orderId, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
+    public ServerResponse<PageInfo> listAnsOrQue(HttpSession session, Integer orderId, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize) {
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
-        if (curCustomerInfo != null){
-            return orderInfoService.listOrderAnsqueInfoByOrderId(pageNum,pageSize,orderId,curCustomerInfo.getCustomerId(),0);
+        if (curCustomerInfo != null) {
+            return orderInfoService.listOrderAnsqueInfoByOrderId(pageNum, pageSize, orderId, curCustomerInfo.getCustomerId(), 0);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
@@ -497,11 +495,11 @@ public class CustomerInfoController {
     @Autowired
     private BillInfoService billInfoService;
 
-    @RequestMapping(value = "billInfo/list.do",method = RequestMethod.GET)
+    @RequestMapping(value = "billInfo/list.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<PageInfo> billInfoList(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize){
+    public ServerResponse<PageInfo> billInfoList(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize) {
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
-        if (curCustomerInfo != null){
+        if (curCustomerInfo != null) {
             return billInfoService.list(pageSize, pageNum, curCustomerInfo.getCustomerId(), 0);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
@@ -513,9 +511,9 @@ public class CustomerInfoController {
 
     @RequestMapping(value = "drawCashInfo/list.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<PageInfo> list(HttpSession session,  Integer state,  @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
+    public ServerResponse<PageInfo> list(HttpSession session, Integer state, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize) {
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
-        if (curCustomerInfo != null){
+        if (curCustomerInfo != null) {
             return drawCashInfoService.list(pageSize, pageNum, curCustomerInfo.getCustomerId(), 0, state);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
@@ -525,7 +523,7 @@ public class CustomerInfoController {
     @ResponseBody
     public ServerResponse<PageInfo> add(HttpSession session, DrawCashInfo drawCashInfo, String password) {
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
-        if (curCustomerInfo != null){
+        if (curCustomerInfo != null) {
             if (curCustomerInfo.getPassword().equals(password)) {
                 return drawCashInfoService.add(drawCashInfo, curCustomerInfo.getCustomerId(), 0, curCustomerInfo.getCustomerName());
             }
@@ -535,26 +533,25 @@ public class CustomerInfoController {
     }
 
 
-
     @Autowired
     private ProposeInfoService proposeInfoService;
 
     @RequestMapping(value = "proposeInfo/add.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<PageInfo> add(HttpSession session, ProposeInfo proposeInfo){
+    public ServerResponse<PageInfo> add(HttpSession session, ProposeInfo proposeInfo) {
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
-        if (curCustomerInfo != null){
-            return proposeInfoService.add(proposeInfo,0,curCustomerInfo.getCustomerId());
+        if (curCustomerInfo != null) {
+            return proposeInfoService.add(proposeInfo, 0, curCustomerInfo.getCustomerId());
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
     @RequestMapping(value = "proposeInfo/delete.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<PageInfo> delete(HttpSession session, Integer proposeId){
+    public ServerResponse<PageInfo> delete(HttpSession session, Integer proposeId) {
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
-        if (curCustomerInfo != null){
-            return proposeInfoService.delete(proposeId,curCustomerInfo.getCustomerId(),0);
+        if (curCustomerInfo != null) {
+            return proposeInfoService.delete(proposeId, curCustomerInfo.getCustomerId(), 0);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
@@ -563,7 +560,7 @@ public class CustomerInfoController {
     @RequestMapping(value = "orderInfo/export.do", method = RequestMethod.GET)
     public void export(HttpSession session, HttpServletResponse response, String startTime, String endTime) {
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
-        if (curCustomerInfo != null){
+        if (curCustomerInfo != null) {
             response.setContentType("application/vnd.ms-excel");
             response.setHeader("Content-disposition", "attachment;filename=order.xlsx;charset=UTF-8");
             XSSFWorkbook workbook = orderInfoService.customerOrEngineerExportExcelInfo(0, curCustomerInfo.getCustomerId(), startTime, endTime);
@@ -580,15 +577,31 @@ public class CustomerInfoController {
     }
 
 
-
     @RequestMapping(value = "engineerInfo/findattention.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse findAttention(HttpSession session, Integer engineerId){
+    public ServerResponse findAttention(HttpSession session, Integer engineerId) {
         CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
-        if (curCustomerInfo != null){
+        if (curCustomerInfo != null) {
             return engineerInfoService.selectDetailById(engineerId);
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
+    @Autowired
+    private NoticeService noticeService;
+
+    @RequestMapping(value = "noticeInfo/listnotice.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse listAdminUser(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize, Integer type) {
+        type = Const.Notice.CUSTOMER;
+        return noticeService.list(type, pageSize, pageNum);
+    }
+
+    @RequestMapping(value = "noticeInfo/getnoticebyid.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse getNoticeById(Integer noticeId) {
+        return noticeService.getById(noticeId);
     }
 
 }

@@ -18,5 +18,5 @@ public interface NoticeService {
 
     ServerResponse list(Integer type, int pageSize, int pageNum);
 
-    ServerResponse getById(Integer notice);
+    ServerResponse getById(Integer noticeId);
 }

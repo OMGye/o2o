@@ -407,4 +407,19 @@ public class EngineerInfoController {
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
 
+
+    @Autowired
+    private NoticeService noticeService;
+    @RequestMapping(value = "noticeInfo/listnotice.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse listAdminUser(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize, Integer type) {
+        type = Const.Notice.ENGINEER;
+        return noticeService.list(type, pageSize, pageNum);
+    }
+
+    @RequestMapping(value = "noticeInfo/getnoticebyid.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse getNoticeById(Integer noticeId) {
+        return noticeService.getById(noticeId);
+    }
 }

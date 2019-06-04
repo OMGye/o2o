@@ -1,6 +1,9 @@
 package com.dao;
 
+import com.pojo.AdminInfo;
 import com.pojo.Notice;
+
+import java.util.List;
 
 public interface NoticeMapper {
     int deleteByPrimaryKey(Integer noticeId);
@@ -14,4 +17,6 @@ public interface NoticeMapper {
     int updateByPrimaryKeySelective(Notice record);
 
     int updateByPrimaryKey(Notice record);
+
+    List<AdminInfo> selectList(Integer noticeType);
 }

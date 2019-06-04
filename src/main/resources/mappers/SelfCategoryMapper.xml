@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.SelfCategoryMapper" >
+  <resultMap id="BaseResultMap" type="com.pojo.SelfCategory" >
+    <constructor >
+      <idArg column="self_category_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="self_category_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="self_category_price" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    self_category_id, self_category_name, self_category_price, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from self_category
+    where self_category_id = #{selfCategoryId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from self_category
+    where self_category_id = #{selfCategoryId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.pojo.SelfCategory" >
+    insert into self_category (self_category_id, self_category_name, 
+      self_category_price, create_time, update_time
+      )
+    values (#{selfCategoryId,jdbcType=INTEGER}, #{selfCategoryName,jdbcType=VARCHAR}, 
+      #{selfCategoryPrice,jdbcType=DECIMAL}, now(), now()
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.pojo.SelfCategory" >
+    insert into self_category
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="selfCategoryId != null" >
+        self_category_id,
+      </if>
+      <if test="selfCategoryName != null" >
+        self_category_name,
+      </if>
+      <if test="selfCategoryPrice != null" >
+        self_category_price,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="selfCategoryId != null" >
+        #{selfCategoryId,jdbcType=INTEGER},
+      </if>
+      <if test="selfCategoryName != null" >
+        #{selfCategoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="selfCategoryPrice != null" >
+        #{selfCategoryPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.pojo.SelfCategory" >
+    update self_category
+    <set >
+      <if test="selfCategoryName != null" >
+        self_category_name = #{selfCategoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="selfCategoryPrice != null" >
+        self_category_price = #{selfCategoryPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+
+        update_time = now(),
+
+    </set>
+    where self_category_id = #{selfCategoryId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.pojo.SelfCategory" >
+    update self_category
+    set self_category_name = #{selfCategoryName,jdbcType=VARCHAR},
+      self_category_price = #{selfCategoryPrice,jdbcType=DECIMAL},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where self_category_id = #{selfCategoryId,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from self_category
+  </select>
+
+  <select id="selectByName" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from self_category
+    where self_category_name = #{name,jdbcType=VARCHAR}
+  </select>
+</mapper>
