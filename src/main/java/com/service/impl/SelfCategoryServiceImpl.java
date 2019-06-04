@@ -9,12 +9,14 @@ import com.pojo.QuantityInfo;
 import com.pojo.SelfCategory;
 import com.service.SelfCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
  * Created by upupgogogo on 2019/5/19.下午2:29
  */
+@Service("selfCategoryService")
 public class SelfCategoryServiceImpl implements SelfCategoryService {
 
     @Autowired
