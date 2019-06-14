@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.SelfQuantityInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.pojo.SelfQuantityInfo" >
+    <constructor >
+      <idArg column="self_quantity_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="self_quantiy_rank" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="quantity_percentage" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="quantity_draw" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="quantity_dec" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    self_quantity_id, self_quantiy_rank, quantity_percentage, quantity_draw, quantity_dec, 
+    create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from self_quantity_info
+    where self_quantity_id = #{selfQuantityId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from self_quantity_info
+    where self_quantity_id = #{selfQuantityId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.pojo.SelfQuantityInfo" >
+    insert into self_quantity_info (self_quantity_id, self_quantiy_rank, 
+      quantity_percentage, quantity_draw, quantity_dec, 
+      create_time, update_time)
+    values (#{selfQuantityId,jdbcType=INTEGER}, #{selfQuantiyRank,jdbcType=INTEGER}, 
+      #{quantityPercentage,jdbcType=DECIMAL}, #{quantityDraw,jdbcType=DECIMAL}, #{quantityDec,jdbcType=VARCHAR}, 
+      now(), now())
+  </insert>
+  <insert id="insertSelective" parameterType="com.pojo.SelfQuantityInfo" >
+    insert into self_quantity_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="selfQuantityId != null" >
+        self_quantity_id,
+      </if>
+      <if test="selfQuantiyRank != null" >
+        self_quantiy_rank,
+      </if>
+      <if test="quantityPercentage != null" >
+        quantity_percentage,
+      </if>
+      <if test="quantityDraw != null" >
+        quantity_draw,
+      </if>
+      <if test="quantityDec != null" >
+        quantity_dec,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="selfQuantityId != null" >
+        #{selfQuantityId,jdbcType=INTEGER},
+      </if>
+      <if test="selfQuantiyRank != null" >
+        #{selfQuantiyRank,jdbcType=INTEGER},
+      </if>
+      <if test="quantityPercentage != null" >
+        #{quantityPercentage,jdbcType=DECIMAL},
+      </if>
+      <if test="quantityDraw != null" >
+        #{quantityDraw,jdbcType=DECIMAL},
+      </if>
+      <if test="quantityDec != null" >
+        #{quantityDec,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.pojo.SelfQuantityInfo" >
+    update self_quantity_info
+    <set >
+      <if test="selfQuantiyRank != null" >
+        self_quantiy_rank = #{selfQuantiyRank,jdbcType=INTEGER},
+      </if>
+      <if test="quantityPercentage != null" >
+        quantity_percentage = #{quantityPercentage,jdbcType=DECIMAL},
+      </if>
+      <if test="quantityDraw != null" >
+        quantity_draw = #{quantityDraw,jdbcType=DECIMAL},
+      </if>
+      <if test="quantityDec != null" >
+        quantity_dec = #{quantityDec,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+
+        update_time = now(),
+
+    </set>
+    where self_quantity_id = #{selfQuantityId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.pojo.SelfQuantityInfo" >
+    update self_quantity_info
+    set self_quantiy_rank = #{selfQuantiyRank,jdbcType=INTEGER},
+      quantity_percentage = #{quantityPercentage,jdbcType=DECIMAL},
+      quantity_draw = #{quantityDraw,jdbcType=DECIMAL},
+      quantity_dec = #{quantityDec,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = now()
+    where self_quantity_id = #{selfQuantityId,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectByQuantiyRank" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    <include refid="Base_Column_List" />
+    from self_quantity_info
+    where self_quantiy_rank = #{quantiyRank,jdbcType=INTEGER}
+  </select>
+
+
+  <select id="selectList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from self_quantity_info
+  </select>
+
+  <select id="selectByQuantiy" resultMap="BaseResultMap" parameterType="java.math.BigDecimal">
+    select
+    <include refid="Base_Column_List" />
+    from self_quantity_info
+    where #{quantityPercentage,jdbcType=DECIMAL} >= quantity_percentage
+    ORDER BY quantity_draw asc
+  </select>
+
+</mapper>

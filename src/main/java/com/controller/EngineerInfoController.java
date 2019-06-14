@@ -422,4 +422,28 @@ public class EngineerInfoController {
     public ServerResponse getNoticeById(Integer noticeId) {
         return noticeService.getById(noticeId);
     }
+
+    @Autowired
+    private SelfOrderService selfOrderService;
+
+    @RequestMapping(value = "selfOrder/orderuploadfile.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse orderUploadFile(HttpSession session, Integer orderId , @RequestParam(value = "upload_file", required = false) MultipartFile file, HttpServletRequest request) {
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            String path = request.getSession().getServletContext().getRealPath("upload");
+            return selfOrderService.orderUploadFile(orderId,curEngineerInfo,file,path);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "selfOrder/caughtorder.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse caughtOrder(Integer orderId,HttpSession session) {
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            return selfOrderService.caughtOrder(orderId,curEngineerInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
 }

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.SelfOrderAnsqueMapper" >
+  <resultMap id="BaseResultMap" type="com.pojo.SelfOrderAnsque" >
+    <constructor >
+      <idArg column="order_ansque_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="self_order_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="user_type" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="user_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="order_ansque_content" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="state" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    order_ansque_id, self_order_id, user_type, user_id, user_name, order_ansque_content, 
+    state, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from self_order_ansque
+    where order_ansque_id = #{orderAnsqueId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from self_order_ansque
+    where order_ansque_id = #{orderAnsqueId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.pojo.SelfOrderAnsque" >
+    insert into self_order_ansque (order_ansque_id, self_order_id, user_type, 
+      user_id, user_name, order_ansque_content, 
+      state, create_time)
+    values (#{orderAnsqueId,jdbcType=INTEGER}, #{selfOrderId,jdbcType=INTEGER}, #{userType,jdbcType=INTEGER}, 
+      #{userId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{orderAnsqueContent,jdbcType=VARCHAR}, 
+      #{state,jdbcType=INTEGER}, now())
+  </insert>
+  <insert id="insertSelective" parameterType="com.pojo.SelfOrderAnsque" >
+    insert into self_order_ansque
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderAnsqueId != null" >
+        order_ansque_id,
+      </if>
+      <if test="selfOrderId != null" >
+        self_order_id,
+      </if>
+      <if test="userType != null" >
+        user_type,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="orderAnsqueContent != null" >
+        order_ansque_content,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderAnsqueId != null" >
+        #{orderAnsqueId,jdbcType=INTEGER},
+      </if>
+      <if test="selfOrderId != null" >
+        #{selfOrderId,jdbcType=INTEGER},
+      </if>
+      <if test="userType != null" >
+        #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderAnsqueContent != null" >
+        #{orderAnsqueContent,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.pojo.SelfOrderAnsque" >
+    update self_order_ansque
+    <set >
+      <if test="selfOrderId != null" >
+        self_order_id = #{selfOrderId,jdbcType=INTEGER},
+      </if>
+      <if test="userType != null" >
+        user_type = #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderAnsqueContent != null" >
+        order_ansque_content = #{orderAnsqueContent,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where order_ansque_id = #{orderAnsqueId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.pojo.SelfOrderAnsque" >
+    update self_order_ansque
+    set self_order_id = #{selfOrderId,jdbcType=INTEGER},
+      user_type = #{userType,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      user_name = #{userName,jdbcType=VARCHAR},
+      order_ansque_content = #{orderAnsqueContent,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where order_ansque_id = #{orderAnsqueId,jdbcType=INTEGER}
+  </update>
+
+  <select id="list" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from self_order_ansque
+    where self_order_id = #{orderId};
+  </select>
+
+  <select id="getUnReadNum" parameterType="map" resultType="java.lang.Integer">
+    select
+    COUNT(*)
+    from self_order_ansque
+    where self_order_id = #{orderId}
+    and user_type != #{type,jdbcType=INTEGER}
+    and state = 0
+  </select>
+
+  <update id="updateMessAgeState" parameterType="map">
+    update order_ansque_info
+    set state = 1
+    where self_order_id = #{orderId}
+    and user_type != #{type}
+  </update>
+
+  <select id="selectByOrderListDownload" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from self_order_ansque
+    where self_order_id in
+    <foreach item="item" index="index" open="(" separator="," close=")" collection="orderIds">
+      #{item}
+    </foreach>
+    and order_ansque_content like '%img.yycam.top%'
+  </select>
+</mapper>

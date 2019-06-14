@@ -99,4 +99,17 @@ public class Const {
         int ENGINEER = 1;
     }
 
+    public interface  SelfOrder{
+        int CREATE = 0;
+        int PAID = 1;
+        int CAUGHT = 2;
+        int SEND = 3;
+        int REIVER = 4;
+        int FINISHED = 5;
+        int DEDUCT = 6;
+        int COMFIRM = 7;
+        int COMPLAIN = 8;
+        int CANNCEL = 9;
+    }
+
 }

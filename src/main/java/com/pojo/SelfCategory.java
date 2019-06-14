@@ -10,14 +10,27 @@ public class SelfCategory {
 
     private BigDecimal selfCategoryPrice;
 
+    private Integer rank;
+
     private Date createTime;
 
     private Date updateTime;
 
-    public SelfCategory(Integer selfCategoryId, String selfCategoryName, BigDecimal selfCategoryPrice, Date createTime, Date updateTime) {
+    public void setRank(Integer rank) {
+        this.rank = rank;
+    }
+
+    public Integer getRank() {
+
+        return rank;
+    }
+
+    public SelfCategory(Integer selfCategoryId, String selfCategoryName, BigDecimal selfCategoryPrice, Integer rank, Date createTime, Date updateTime) {
+
         this.selfCategoryId = selfCategoryId;
         this.selfCategoryName = selfCategoryName;
         this.selfCategoryPrice = selfCategoryPrice;
+        this.rank = rank;
         this.createTime = createTime;
         this.updateTime = updateTime;
     }

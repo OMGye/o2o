@@ -23,7 +23,7 @@ public class SelfCategoryServiceImpl implements SelfCategoryService {
     private SelfCategoryMapper selfCategoryMapper;
     @Override
     public ServerResponse add(SelfCategory selfCategory) {
-        if (selfCategory == null || selfCategory.getSelfCategoryName() == null || selfCategory.getSelfCategoryPrice() == null )
+        if (selfCategory == null || selfCategory.getSelfCategoryName() == null || selfCategory.getSelfCategoryPrice() == null || selfCategory.getRank() == null)
             return ServerResponse.createByErrorMessage("参数不能为空");
 
         SelfCategory category = selfCategoryMapper.selectByName(selfCategory.getSelfCategoryName());

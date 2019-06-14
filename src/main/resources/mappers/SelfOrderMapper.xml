@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.SelfOrderMapper" >
+  <resultMap id="BaseResultMap" type="com.pojo.SelfOrder" >
+    <constructor >
+      <idArg column="order_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="customer_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="customer_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="engineer_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="engineer_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="order_first_category" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="order_self_category" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="order_dec" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="order_deduct_rank" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="order_deduct_dec" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="order_state" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="order_price" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="admin_price" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="order_file" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="order_customer_file" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="customer_file_real_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="refuse_dec" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="download" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    order_id, customer_id, customer_name, engineer_id, engineer_name, order_first_category,
+    order_self_category, order_dec, order_deduct_rank, order_deduct_dec, order_state,
+    order_price, admin_price, order_file, order_customer_file, customer_file_real_name,
+    refuse_dec, download, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from self_order
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from self_order
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.pojo.SelfOrder" >
+    insert into self_order (order_id, customer_id, customer_name,
+    engineer_id, engineer_name, order_first_category,
+    order_self_category, order_dec, order_deduct_rank,
+    order_deduct_dec, order_state, order_price,
+    admin_price, order_file, order_customer_file,
+    customer_file_real_name, refuse_dec, download,
+    create_time, update_time)
+    values (#{orderId,jdbcType=INTEGER}, #{customerId,jdbcType=INTEGER}, #{customerName,jdbcType=VARCHAR},
+    #{engineerId,jdbcType=INTEGER}, #{engineerName,jdbcType=VARCHAR}, #{orderFirstCategory,jdbcType=VARCHAR},
+    #{orderSelfCategory,jdbcType=VARCHAR}, #{orderDec,jdbcType=VARCHAR}, #{orderDeductRank,jdbcType=INTEGER},
+    #{orderDeductDec,jdbcType=VARCHAR}, #{orderState,jdbcType=INTEGER}, #{orderPrice,jdbcType=DECIMAL},
+    #{adminPrice,jdbcType=DECIMAL}, #{orderFile,jdbcType=VARCHAR}, #{orderCustomerFile,jdbcType=VARCHAR},
+    #{customerFileRealName,jdbcType=VARCHAR}, #{refuseDec,jdbcType=VARCHAR}, #{download,jdbcType=INTEGER},
+    now(), now())
+  </insert>
+  <insert id="insertSelective" parameterType="com.pojo.SelfOrder" >
+    insert into self_order
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        order_id,
+      </if>
+      <if test="customerId != null" >
+        customer_id,
+      </if>
+      <if test="customerName != null" >
+        customer_name,
+      </if>
+      <if test="engineerId != null" >
+        engineer_id,
+      </if>
+      <if test="engineerName != null" >
+        engineer_name,
+      </if>
+      <if test="orderFirstCategory != null" >
+        order_first_category,
+      </if>
+      <if test="orderSelfCategory != null" >
+        order_self_category,
+      </if>
+      <if test="orderDec != null" >
+        order_dec,
+      </if>
+      <if test="orderDeductRank != null" >
+        order_deduct_rank,
+      </if>
+      <if test="orderDeductDec != null" >
+        order_deduct_dec,
+      </if>
+      <if test="orderState != null" >
+        order_state,
+      </if>
+      <if test="orderPrice != null" >
+        order_price,
+      </if>
+      <if test="adminPrice != null" >
+        admin_price,
+      </if>
+      <if test="orderFile != null" >
+        order_file,
+      </if>
+      <if test="orderCustomerFile != null" >
+        order_customer_file,
+      </if>
+      <if test="customerFileRealName != null" >
+        customer_file_real_name,
+      </if>
+      <if test="refuseDec != null" >
+        refuse_dec,
+      </if>
+      <if test="download != null" >
+        download,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="customerId != null" >
+        #{customerId,jdbcType=INTEGER},
+      </if>
+      <if test="customerName != null" >
+        #{customerName,jdbcType=VARCHAR},
+      </if>
+      <if test="engineerId != null" >
+        #{engineerId,jdbcType=INTEGER},
+      </if>
+      <if test="engineerName != null" >
+        #{engineerName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderFirstCategory != null" >
+        #{orderFirstCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="orderSelfCategory != null" >
+        #{orderSelfCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="orderDec != null" >
+        #{orderDec,jdbcType=VARCHAR},
+      </if>
+      <if test="orderDeductRank != null" >
+        #{orderDeductRank,jdbcType=INTEGER},
+      </if>
+      <if test="orderDeductDec != null" >
+        #{orderDeductDec,jdbcType=VARCHAR},
+      </if>
+      <if test="orderState != null" >
+        #{orderState,jdbcType=INTEGER},
+      </if>
+      <if test="orderPrice != null" >
+        #{orderPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="adminPrice != null" >
+        #{adminPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="orderFile != null" >
+        #{orderFile,jdbcType=VARCHAR},
+      </if>
+      <if test="orderCustomerFile != null" >
+        #{orderCustomerFile,jdbcType=VARCHAR},
+      </if>
+      <if test="customerFileRealName != null" >
+        #{customerFileRealName,jdbcType=VARCHAR},
+      </if>
+      <if test="refuseDec != null" >
+        #{refuseDec,jdbcType=VARCHAR},
+      </if>
+      <if test="download != null" >
+        #{download,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.pojo.SelfOrder" >
+    update self_order
+    <set >
+      <if test="customerId != null" >
+        customer_id = #{customerId,jdbcType=INTEGER},
+      </if>
+      <if test="customerName != null" >
+        customer_name = #{customerName,jdbcType=VARCHAR},
+      </if>
+      <if test="engineerId != null" >
+        engineer_id = #{engineerId,jdbcType=INTEGER},
+      </if>
+      <if test="engineerName != null" >
+        engineer_name = #{engineerName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderFirstCategory != null" >
+        order_first_category = #{orderFirstCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="orderSelfCategory != null" >
+        order_self_category = #{orderSelfCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="orderDec != null" >
+        order_dec = #{orderDec,jdbcType=VARCHAR},
+      </if>
+      <if test="orderDeductRank != null" >
+        order_deduct_rank = #{orderDeductRank,jdbcType=INTEGER},
+      </if>
+      <if test="orderDeductDec != null" >
+        order_deduct_dec = #{orderDeductDec,jdbcType=VARCHAR},
+      </if>
+      <if test="orderState != null" >
+        order_state = #{orderState,jdbcType=INTEGER},
+      </if>
+      <if test="orderPrice != null" >
+        order_price = #{orderPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="adminPrice != null" >
+        admin_price = #{adminPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="orderFile != null" >
+        order_file = #{orderFile,jdbcType=VARCHAR},
+      </if>
+      <if test="orderCustomerFile != null" >
+        order_customer_file = #{orderCustomerFile,jdbcType=VARCHAR},
+      </if>
+      <if test="customerFileRealName != null" >
+        customer_file_real_name = #{customerFileRealName,jdbcType=VARCHAR},
+      </if>
+      <if test="refuseDec != null" >
+        refuse_dec = #{refuseDec,jdbcType=VARCHAR},
+      </if>
+      <if test="download != null" >
+        download = #{download,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+
+      update_time = now(),
+
+    </set>
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.pojo.SelfOrder" >
+    update self_order
+    set customer_id = #{customerId,jdbcType=INTEGER},
+    customer_name = #{customerName,jdbcType=VARCHAR},
+    engineer_id = #{engineerId,jdbcType=INTEGER},
+    engineer_name = #{engineerName,jdbcType=VARCHAR},
+    order_first_category = #{orderFirstCategory,jdbcType=VARCHAR},
+    order_self_category = #{orderSelfCategory,jdbcType=VARCHAR},
+    order_dec = #{orderDec,jdbcType=VARCHAR},
+    order_deduct_rank = #{orderDeductRank,jdbcType=INTEGER},
+    order_deduct_dec = #{orderDeductDec,jdbcType=VARCHAR},
+    order_state = #{orderState,jdbcType=INTEGER},
+    order_price = #{orderPrice,jdbcType=DECIMAL},
+    admin_price = #{adminPrice,jdbcType=DECIMAL},
+    order_file = #{orderFile,jdbcType=VARCHAR},
+    order_customer_file = #{orderCustomerFile,jdbcType=VARCHAR},
+    customer_file_real_name = #{customerFileRealName,jdbcType=VARCHAR},
+    refuse_dec = #{refuseDec,jdbcType=VARCHAR},
+    download = #{download,jdbcType=INTEGER},
+    create_time = #{createTime,jdbcType=TIMESTAMP},
+    update_time = now()
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </update>
+
+  <select id="engineerCaughtList" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List" />
+    from self_order
+    <where>
+      <if test="orderState != null"> order_state = #{orderState}</if>
+      <if test="engineerId != null">and engineer_id = #{engineerId}</if>
+    </where>
+  </select>
+
+  <select id="customerListOrder" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List" />
+    from self_order
+    <where>
+      <if test="orderState != null"> order_state = #{orderState}</if>
+      <if test="customerId != null">and customer_id = #{customerId}</if>
+    </where>
+  </select>
+
+  <select id="selectByTimeAndType" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from order_info
+    <where>
+      <if test="startDate != null"> update_time <![CDATA[>=]]> #{startDate}</if>
+      <if test="endDate != null"> and update_time <![CDATA[<=]]> #{endDate}</if>
+      <if test="engineerId != null">and engineer_id = #{engineerId}</if>
+      <if test="customerId != null">and customer_id = #{customerId}</if>
+      <if test="orderState != null"> and order_state = 5</if>
+    </where>
+  </select>
+
+</mapper>

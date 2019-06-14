@@ -604,4 +604,61 @@ public class CustomerInfoController {
         return noticeService.getById(noticeId);
     }
 
+
+
+    @Autowired
+    private SelfOrderService selfOrderService;
+
+    @RequestMapping(value = "selfOrder/create.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse create(HttpSession session, SelfOrder order, @RequestParam(value = "upload_file", required = false) MultipartFile file, HttpServletRequest request) {
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null) {
+            String path = request.getSession().getServletContext().getRealPath("upload");
+            return selfOrderService.createOrder(order,curCustomerInfo,file,path);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "selfOrder/payforbalance.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse payForBalance(Integer orderId,HttpSession session) {
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null) {
+            return selfOrderService.payForBalance(orderId,curCustomerInfo.getCustomerId());
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "selfOrder/receiveorder.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse receiveOrder(Integer orderId,HttpSession session) {
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null) {
+            return selfOrderService.receiveOrder(orderId,curCustomerInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "selfOrder/refusetoenigneer.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse refuseToEnigneer(String refuseDec,Integer orderId,HttpSession session) {
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null) {
+            return selfOrderService.refuseToEnigneer(refuseDec,orderId,curCustomerInfo.getCustomerId());
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "selfOrder/comfirmorder.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse comfirmOrder(Integer orderId,HttpSession session) {
+        CustomerInfo curCustomerInfo = (CustomerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curCustomerInfo != null) {
+            return selfOrderService.comfirmOrder(orderId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
 }

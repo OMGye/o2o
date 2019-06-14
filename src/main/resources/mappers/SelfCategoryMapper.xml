@@ -6,12 +6,13 @@
       <idArg column="self_category_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="self_category_name" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="self_category_price" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+      <arg column="rank" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
       <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
     </constructor>
   </resultMap>
   <sql id="Base_Column_List" >
-    self_category_id, self_category_name, self_category_price, create_time, update_time
+    self_category_id, self_category_name, self_category_price, rank,create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -25,10 +26,10 @@
   </delete>
   <insert id="insert" parameterType="com.pojo.SelfCategory" >
     insert into self_category (self_category_id, self_category_name, 
-      self_category_price, create_time, update_time
+      self_category_price, rank,create_time, update_time
       )
     values (#{selfCategoryId,jdbcType=INTEGER}, #{selfCategoryName,jdbcType=VARCHAR}, 
-      #{selfCategoryPrice,jdbcType=DECIMAL}, now(), now()
+      #{selfCategoryPrice,jdbcType=DECIMAL}, #{rank,jdbcType=INTEGER},now(), now()
       )
   </insert>
   <insert id="insertSelective" parameterType="com.pojo.SelfCategory" >
@@ -77,6 +78,9 @@
       <if test="selfCategoryPrice != null" >
         self_category_price = #{selfCategoryPrice,jdbcType=DECIMAL},
       </if>
+      <if test="rank != null" >
+        rank = #{rank,jdbcType=INTEGER},
+      </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -90,6 +94,7 @@
     update self_category
     set self_category_name = #{selfCategoryName,jdbcType=VARCHAR},
       self_category_price = #{selfCategoryPrice,jdbcType=DECIMAL},
+      rank = #{rank,jdbcType=INTEGER}
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where self_category_id = #{selfCategoryId,jdbcType=INTEGER}

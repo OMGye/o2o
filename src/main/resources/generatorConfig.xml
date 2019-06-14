@@ -70,8 +70,12 @@
 
 
 
-        <table tableName="self_rank" domainObjectName="SelfRank" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
-        <table tableName="self_category" domainObjectName="SelfCategory" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
+        <table tableName="self_quantity_info" domainObjectName="SelfQuantityInfo" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
+
+        <table tableName="self_order_ansque" domainObjectName="SelfOrderAnsque" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
+
+        <table tableName="self_order" domainObjectName="SelfOrder" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
+
         <!-- geelynote mybatis插件的搭建 -->
     </context>
 </generatorConfiguration>
