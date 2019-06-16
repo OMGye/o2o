@@ -19,11 +19,11 @@ public interface SelfOrderAnsqueMapper {
 
     int updateByPrimaryKey(SelfOrderAnsque record);
 
-    List<OrderAnsqueInfo> list(@Param("orderId")Integer orderId);
+    List<SelfOrderAnsque> list(@Param("orderId")Integer orderId);
 
     Integer getUnReadNum(@Param("orderId")Integer orderId, @Param("type")Integer type);
 
     int updateMessAgeState(@Param("orderId")Integer orderId, @Param("type")Integer type);
 
-    List<OrderAnsqueInfo> selectByOrderListDownload(@Param("orderIds")List<Integer> orderIds);
+    List<SelfOrderAnsque> selectByOrderListDownload(@Param("orderIds")List<Integer> orderIds);
 }

@@ -446,4 +446,104 @@ public class EngineerInfoController {
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
     }
+    @RequestMapping(value = "selfOrder/engineercomfirmdeductorcomplain.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse engineerComfirmDeductOrComplain(Integer orderId,HttpSession session, Integer comfirmOrComplain) {
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            return selfOrderService.engineerComfirmDeductOrComplain(orderId,comfirmOrComplain);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "selfOrder/engineerselforderlist.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse engineerSelfOrderList(HttpSession session,@RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize,Integer state) {
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            return selfOrderService.engineerList(pageSize,pageNum,curEngineerInfo,state);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
+    @RequestMapping(value = "selfOrder/engineergetselforderbyid.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse getSelfOrderById(HttpSession session, Integer orderId) {
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            ServerResponse response = selfOrderService.getOrderById(orderId);
+            if (response.isSuccess()){
+                SelfOrder order = (SelfOrder) response.getData();
+                if (order.getEngineerId().intValue() != curEngineerInfo.getEngineerId().intValue())
+                    return ServerResponse.createByErrorMessage("异常操作");
+            }
+            return response;
+
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "selfOrder/engineercancaughtlist.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse engineerCanCaughtList(HttpSession session,@RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize) {
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            return selfOrderService.engineerCanCaughtList(pageSize,pageNum,curEngineerInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+
+    @RequestMapping(value = "selfOrder/addansorque.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse addSelfAnsOrQue(HttpSession session, Integer orderId, String orderAnsqueContent){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            return selfOrderService.addAnsOrQue(orderId,curEngineerInfo.getEngineerId(),1, curEngineerInfo.getEngineerName(),orderAnsqueContent);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "selfOrder/uploadansorque.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse uploadSelfAnsOrQue(HttpSession session, Integer orderId, @RequestParam(value = "upload_file",required = false) MultipartFile file,  HttpServletRequest request){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            String path = request.getSession().getServletContext().getRealPath("upload");
+            return selfOrderService.uploadAnsOrQue(orderId,curEngineerInfo.getEngineerId(),1, curEngineerInfo.getEngineerName(),file, path);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "selfOrder/listansorque.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> listSelfAnsOrQue(HttpSession session, Integer orderId,  @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "5") int pageSize){
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null){
+            return selfOrderService.listOrderAnsqueInfoByOrderId(pageNum,pageSize,orderId,curEngineerInfo.getEngineerId(),1);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "selfOrder/export.do", method = RequestMethod.GET)
+    public void customerOrEngineerExportExcelInfo(HttpSession session, HttpServletResponse response, String startTime, String endTime) {
+        EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
+        if (curEngineerInfo != null) {
+            response.setContentType("application/vnd.ms-excel");
+            response.setHeader("Content-disposition", "attachment;filename=order.xlsx;charset=UTF-8");
+            XSSFWorkbook workbook = null;
+            workbook = orderInfoService.customerOrEngineerExportExcelInfo(1, curEngineerInfo.getEngineerId(), startTime, endTime);
+
+            try {
+                OutputStream output = response.getOutputStream();
+                BufferedOutputStream bufferedOutPut = new BufferedOutputStream(output);
+                workbook.write(bufferedOutPut);
+                bufferedOutPut.flush();
+                bufferedOutPut.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

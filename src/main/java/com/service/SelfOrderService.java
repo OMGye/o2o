@@ -52,4 +52,22 @@ public interface SelfOrderService {
 
     XSSFWorkbook customerOrEngineerExportExcelInfo(Integer type, Integer id, String startTime, String endTime);
 
+    ServerResponse engineerList(int pageSize, int pageNum, EngineerInfo engineerInfo, Integer orderState);
+
+    ServerResponse engineerCanCaughtList(int pageSize, int pageNum,EngineerInfo engineerInfo);
+
+    ServerResponse addAnsOrQue(Integer orderId, Integer userId, Integer type, String userName, String orderAnsqueContent);
+
+    ServerResponse uploadAnsOrQue(Integer orderId, Integer userId, Integer type, String userName, MultipartFile file, String path);
+
+    ServerResponse<PageInfo> listOrderAnsqueInfoByOrderId(int pageNum, int pageSize, Integer orderId, Integer userId, Integer type);
+
+    ServerResponse<PageInfo> listOrderAnsqueInfoByOrderId(int pageNum, int pageSize, Integer orderId);
+
+    XSSFWorkbook exportExcelInfo(String startTime, String endTime);
+
+    ServerResponse<PageInfo> adminOrderList(int pageSize, int pageNum, Integer state, Integer firstCategory, String selfCategoryName);
+
+    ServerResponse aliCallback(Map<String,String> params);
+
 }

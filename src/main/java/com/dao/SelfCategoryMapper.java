@@ -20,4 +20,6 @@ public interface SelfCategoryMapper {
     List<SelfCategory> selectList();
 
     SelfCategory selectByName(String name);
+
+
 }

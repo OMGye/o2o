@@ -292,10 +292,21 @@
     </where>
   </select>
 
+  <select id="engineerListOrder" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List" />
+    from self_order
+    <where>
+      <if test="orderState != null"> order_state = #{orderState}</if>
+      <if test="engineerId != null">and engineer_id = #{engineerId}</if>
+
+    </where>
+  </select>
+
   <select id="selectByTimeAndType" parameterType="map" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from order_info
+    from self_order
     <where>
       <if test="startDate != null"> update_time <![CDATA[>=]]> #{startDate}</if>
       <if test="endDate != null"> and update_time <![CDATA[<=]]> #{endDate}</if>
@@ -305,4 +316,41 @@
     </where>
   </select>
 
+
+  <select id="engineerCanCaughtList" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from self_order
+    <where>
+      <if test="orderFirstCategory != null"> order_first_category = #{orderFirstCategory,jdbcType=VARCHAR}</if>
+      <if test="selfCategories != null">
+        and order_self_category in
+        <foreach item="item" index="index" open="(" separator="," close=")" collection="selfCategories">
+          #{item}
+        </foreach>
+      </if>
+      <if test="orderState != null"> and order_state = #{orderState}</if>
+    </where>
+  </select>
+
+  <select id="selectByTime" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from self_order
+    where
+    update_time <![CDATA[>=]]> #{startDate}
+    and update_time <![CDATA[<=]]> #{endDate}
+    and order_state = 5
+  </select>
+
+  <select id="adminOrderList" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from self_order
+    <where>
+      <if test="orderFirstCategory != null"> order_first_category = #{orderFirstCategory,jdbcType=VARCHAR}</if>
+      <if test="orderSelfCategory != null"> and order_self_category = #{orderSelfCategory}</if>
+      <if test="orderState != null"> and order_state = #{orderState}</if>
+    </where>
+  </select>
 </mapper>

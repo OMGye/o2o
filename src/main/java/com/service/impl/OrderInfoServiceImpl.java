@@ -400,7 +400,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     @Override
     public ServerResponse<PageInfo> customerList(int pageSize, int pageNum, CustomerInfo customerInfo, Integer orderState) {
         PageHelper.startPage(pageNum, pageSize);
-        PageHelper.orderBy("update_time desc");
+        PageHelper.orderBy("order_id desc");
         List<OrderInfo> list = orderInfoMapper.customerListOrder(customerInfo.getCustomerId(), orderState);
         List<OrderAndMessagenumVo> listVo = new ArrayList<>();
         for (OrderInfo orderInfo : list){
@@ -764,7 +764,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     @Override
     public ServerResponse engineerList(int pageSize, int pageNum, EngineerInfo engineerInfo, Integer orderState) {
         PageHelper.startPage(pageNum, pageSize);
-        PageHelper.orderBy("update_time desc");
+        PageHelper.orderBy("order_id desc");
         List<OrderInfo> list = orderInfoMapper.engineerListOrder(engineerInfo.getEngineerId(), orderState);
         List<OrderAndMessagenumVo> listVo = new ArrayList<>();
         for (OrderInfo orderInfo : list){
@@ -1278,7 +1278,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
                 orderFirstCategory = "FPC";
         }
         PageHelper.startPage(pageNum, pageSize);
-        PageHelper.orderBy("update_time desc");
+        PageHelper.orderBy("order_id desc");
         List<OrderInfo> list = orderInfoMapper.adminOrderList(state, orderFirstCategory, orderQae);
         PageInfo pageInfo = new PageInfo(list);
         return ServerResponse.createBySuccess(pageInfo);

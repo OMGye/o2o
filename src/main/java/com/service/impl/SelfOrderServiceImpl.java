@@ -42,13 +42,16 @@ public class SelfOrderServiceImpl implements SelfOrderService{
     @Autowired
     private EngineerInfoMapper engineerInfoMapper;
     @Autowired
-    private QuantityInfoMapper quantityInfoMapper;
+    private SelfQuantityInfoMapper quantityInfoMapper;
     @Autowired
     private IncomeInfoMapper incomeInfoMapper;
     @Autowired
     private PriceDeductInfoMapper priceDeductInfoMapper;
     @Autowired
     private SelfOrderAnsqueMapper selfOrderAnsqueMapper;
+
+    @Autowired
+    private PayInfoMapper payInfoMapper;
 
     private static final Logger logger = LoggerFactory.getLogger(OrderInfoServiceImpl.class);
 
@@ -272,8 +275,8 @@ public class SelfOrderServiceImpl implements SelfOrderService{
                     TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(engineerInfo.getEmail(), "您完成的自建订单已被客户查看，如果七天之内没有确认，系统将直接帮您确认，并将资金直接转入您的账户");
                     timer.schedule(caughtOrder, Const.TIMER_FOR_SEND_EMAIL);
 
-                    List<QuantityInfo> list = quantityInfoMapper.selectByQuantiy(engineerInfo.getEngineerQuantity());
-                    QuantityInfo maxQuantity = list.get(0);
+                    List<SelfQuantityInfo> list = quantityInfoMapper.selectByQuantiy(engineerInfo.getEngineerQuantity());
+                    SelfQuantityInfo maxQuantity = list.get(0);
 
                     BigDecimal drawEnginner = null;
                     Timer newTimer = new Timer();
@@ -331,8 +334,8 @@ public class SelfOrderServiceImpl implements SelfOrderService{
         order.setOrderState(Const.SelfOrder.FINISHED);
 
         EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(order.getEngineerId());
-        List<QuantityInfo> list = quantityInfoMapper.selectByQuantiy(engineerInfo.getEngineerQuantity());
-        QuantityInfo maxQuantity = list.get(0);
+        List<SelfQuantityInfo> list = quantityInfoMapper.selectByQuantiy(engineerInfo.getEngineerQuantity());
+        SelfQuantityInfo maxQuantity = list.get(0);
         BigDecimal price = order.getOrderPrice();
         price = BigDecimalUtil.sub(price.doubleValue(), BigDecimalUtil.mul(price.doubleValue(), maxQuantity.getQuantityDraw().doubleValue()).doubleValue());
         engineerInfo.setEngineerBalance(BigDecimalUtil.add(price.doubleValue(), engineerInfo.getEngineerBalance().doubleValue()));
@@ -387,7 +390,8 @@ public class SelfOrderServiceImpl implements SelfOrderService{
         //个人账单
         BillInfo billInfo = new BillInfo();
         billInfo.setUserId(customerInfo.getCustomerId());
-        billInfo.setBillMoney(money);
+        billInfo.setBillMoney(BigDecimalUtil.sub(money.doubleValue(),BigDecimalUtil.add(money.doubleValue()
+                ,money.doubleValue()).doubleValue()));
         billInfo.setUserName(customerInfo.getCustomerName());
         billInfo.setUserType(0);
         billInfo.setBillDec("自建订单加钱 :" + order.getOrderId());
@@ -463,8 +467,8 @@ public class SelfOrderServiceImpl implements SelfOrderService{
 
 
             EngineerInfo dbengineerInfo = engineerInfoMapper.selectByPrimaryKey(order.getEngineerId());
-            List<QuantityInfo> list = quantityInfoMapper.selectByQuantiy(dbengineerInfo.getEngineerQuantity());
-            QuantityInfo maxQuantity = list.get(0);
+            List<SelfQuantityInfo> list = quantityInfoMapper.selectByQuantiy(dbengineerInfo.getEngineerQuantity());
+            SelfQuantityInfo maxQuantity = list.get(0);
             BigDecimal orderCamPrice = BigDecimalUtil.sub(order.getOrderPrice().doubleValue(), customerDeductPrice.doubleValue());
             orderCamPrice = BigDecimalUtil.sub(orderCamPrice.doubleValue(), BigDecimalUtil.mul(orderCamPrice.doubleValue(), maxQuantity.getQuantityDraw().doubleValue()).doubleValue());
             dbengineerInfo.setEngineerBalance(BigDecimalUtil.add(orderCamPrice.doubleValue(), dbengineerInfo.getEngineerBalance().doubleValue()));
@@ -624,8 +628,8 @@ public class SelfOrderServiceImpl implements SelfOrderService{
         order.setOrderState(Const.SelfOrder.FINISHED);
 
         EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(order.getEngineerId());
-        List<QuantityInfo> list = quantityInfoMapper.selectByQuantiy(engineerInfo.getEngineerQuantity());
-        QuantityInfo maxQuantity = list.get(0);
+        List<SelfQuantityInfo> list = quantityInfoMapper.selectByQuantiy(engineerInfo.getEngineerQuantity());
+        SelfQuantityInfo maxQuantity = list.get(0);
         BigDecimal price = order.getOrderPrice();
         price = BigDecimalUtil.sub(price.doubleValue(), BigDecimalUtil.mul(price.doubleValue(), maxQuantity.getQuantityDraw().doubleValue()).doubleValue());
         engineerInfo.setEngineerBalance(BigDecimalUtil.add(price.doubleValue(), engineerInfo.getEngineerBalance().doubleValue()));
@@ -659,7 +663,7 @@ public class SelfOrderServiceImpl implements SelfOrderService{
     @Override
     public ServerResponse<PageInfo> customerList(int pageSize, int pageNum, CustomerInfo customerInfo, Integer orderState) {
         PageHelper.startPage(pageNum, pageSize);
-        PageHelper.orderBy("update_time desc");
+        PageHelper.orderBy("order_id desc");
         List<SelfOrder> list = orderMapper.customerListOrder(customerInfo.getCustomerId(), orderState);
         List<SelfOrderAndMessagenumVo> listVo = new ArrayList<>();
         for (SelfOrder order : list){
@@ -682,7 +686,7 @@ public class SelfOrderServiceImpl implements SelfOrderService{
             try {
                 Date startDate = DateTimeUtil.strToDate(startTime, "yyyy-MM-dd");
                 Date endDate = DateTimeUtil.strToDate(endTime, "yyyy-MM-dd");
-                List<SelfOrder> orderInfoList = orderMapper.selectByTimeAndType(startDate, endDate, id, null,  Const.Order.HAVE_FINISHED);
+                List<SelfOrder> orderInfoList = orderMapper.selectByTimeAndType(startDate, endDate, id, null,  Const.SelfOrder.FINISHED);
                 XSSFWorkbook xssfWorkbook = null;
                 List<ExcelBean> excel = new ArrayList<>();
                 Map<Integer, List<ExcelBean>> map = new LinkedHashMap<>();
@@ -736,4 +740,276 @@ public class SelfOrderServiceImpl implements SelfOrderService{
         return null;
     }
 
+    @Override
+    public ServerResponse engineerList(int pageSize, int pageNum, EngineerInfo engineerInfo, Integer orderState) {
+        PageHelper.startPage(pageNum, pageSize);
+        PageHelper.orderBy("order_id desc");
+        List<SelfOrder> list = orderMapper.engineerListOrder(engineerInfo.getEngineerId(), orderState);
+        List<SelfOrderAndMessagenumVo> listVo = new ArrayList<>();
+        for (SelfOrder order : list){
+            SelfOrderAndMessagenumVo selfOrderAndMessagenumVo = new SelfOrderAndMessagenumVo();
+            BeanUtils.copyProperties(order,selfOrderAndMessagenumVo);
+            Integer num = selfOrderAnsqueMapper.getUnReadNum(order.getOrderId(), 1);
+            selfOrderAndMessagenumVo.setUnReadMessage(num);
+            listVo.add(selfOrderAndMessagenumVo);
+        }
+        PageInfo pageInfo = new PageInfo(list);
+        pageInfo.setList(listVo);
+        return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Override
+    public ServerResponse engineerCanCaughtList(int pageSize, int pageNum, EngineerInfo engineerInfo) {
+        List<SelfCategory> categoryList = categoryMapper.selectList();
+        List<String> categories = new ArrayList<>();
+        for (SelfCategory selfCategory : categoryList){
+            if (engineerInfo.getEngineerRank() >= selfCategory.getRank())
+                categories.add(selfCategory.getSelfCategoryName());
+        }
+
+        PageHelper.startPage(pageNum, pageSize);
+        PageHelper.orderBy("order_id asc");
+        List<SelfOrder> list = orderMapper.engineerCanCaughtList(engineerInfo.getEngineerClassfy(), categories,Const.SelfOrder.PAID);
+        PageInfo pageInfo = new PageInfo(list);
+
+        return ServerResponse.createBySuccess(pageInfo);
+    }
+
+
+    @Override
+    public ServerResponse addAnsOrQue(Integer orderId, Integer userId, Integer type, String userName, String orderAnsqueContent) {
+        if (orderId == null || orderAnsqueContent == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+
+        SelfOrder order = orderMapper.selectByPrimaryKey(orderId);
+        if (order == null)
+            return ServerResponse.createByErrorMessage("找不到该订单");
+
+
+        if (type == 0 && userId.intValue() != order.getCustomerId().intValue())
+            return ServerResponse.createByErrorMessage("您不属于该订单");
+
+        if (type == 1 && userId.intValue() != order.getEngineerId().intValue()) {
+                return ServerResponse.createByErrorMessage("您不属于该订单");
+        }
+
+        SelfOrderAnsque orderAnsqueInfo = new SelfOrderAnsque();
+        orderAnsqueInfo.setOrderAnsqueContent(orderAnsqueContent);
+        orderAnsqueInfo.setSelfOrderId(orderId);
+        orderAnsqueInfo.setUserId(userId);
+        orderAnsqueInfo.setUserName(userName);
+        orderAnsqueInfo.setUserType(type);
+        orderAnsqueInfo.setState(0);
+
+        int row = selfOrderAnsqueMapper.insert(orderAnsqueInfo);
+        if (row > 0)
+            return ServerResponse.createBySuccess("操作成功");
+        return ServerResponse.createByErrorMessage("操作失败");
+    }
+
+    @Override
+    public ServerResponse uploadAnsOrQue(Integer orderId, Integer userId, Integer type, String userName, MultipartFile file, String path) {
+        if (orderId == null || file == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+
+        SelfOrder order = orderMapper.selectByPrimaryKey(orderId);
+        if (order == null)
+            return ServerResponse.createByErrorMessage("找不到该订单");
+
+        if (type == 0 && userId.intValue() != order.getCustomerId().intValue())
+            return ServerResponse.createByErrorMessage("您不属于该订单");
+
+        if (type == 1 && userId.intValue() != order.getEngineerId().intValue()){
+                return ServerResponse.createByErrorMessage("您不属于该订单");
+
+        }
+
+        String fileName = file.getOriginalFilename();
+        //扩展名
+        //abc.jpg
+        String fileExtensionName = fileName.substring(fileName.lastIndexOf(".") + 1);
+        String uploadFileName = UUID.randomUUID().toString() + "." + fileExtensionName;
+        logger.info("开始上传文件,上传文件的文件名:{},上传的路径:{},新文件名:{}", fileName, path, uploadFileName);
+
+        File fileDir = new File(path);
+        if (!fileDir.exists()) {
+            fileDir.setWritable(true);
+            fileDir.mkdirs();
+        }
+        File targetFile = new File(path, uploadFileName);
+
+
+        try {
+            file.transferTo(targetFile);
+            //文件已经上传成功了
+
+            FTPUtil.uploadFile(Lists.newArrayList(targetFile));
+            //已经上传到ftp服务器上
+
+            targetFile.delete();
+        } catch (IOException e) {
+            logger.error("上传文件异常", e);
+            return ServerResponse.createByErrorMessage("上传文件异常");
+        }
+
+        SelfOrderAnsque orderAnsqueInfo = new SelfOrderAnsque();
+        orderAnsqueInfo.setOrderAnsqueContent(PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFile.getName());
+        orderAnsqueInfo.setSelfOrderId(orderId);
+        orderAnsqueInfo.setUserId(userId);
+        orderAnsqueInfo.setUserName(userName);
+        orderAnsqueInfo.setUserType(type);
+        orderAnsqueInfo.setState(0);
+
+        int row = selfOrderAnsqueMapper.insert(orderAnsqueInfo);
+        if (row > 0)
+            return ServerResponse.createBySuccess("操作成功");
+        return ServerResponse.createByErrorMessage("操作失败");
+    }
+
+    @Override
+    public ServerResponse<PageInfo> listOrderAnsqueInfoByOrderId(int pageNum, int pageSize, Integer orderId, Integer userId, Integer type) {
+        if (orderId == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+
+        SelfOrder order = orderMapper.selectByPrimaryKey(orderId);
+        if (order == null)
+            return ServerResponse.createByErrorMessage("找不到该订单");
+
+        if (type == 0 && userId.intValue() != order.getCustomerId().intValue())
+            return ServerResponse.createByErrorMessage("您不属于该订单");
+
+        if (type == 1 && userId.intValue() != order.getEngineerId().intValue()) {
+            return ServerResponse.createByErrorMessage("您不属于该订单");
+
+        }
+        PageHelper.startPage(pageNum, pageSize);
+        PageHelper.orderBy("create_time asc");
+        List<SelfOrderAnsque> list = selfOrderAnsqueMapper.list(orderId);
+        selfOrderAnsqueMapper.updateMessAgeState(orderId,type);
+        PageInfo pageInfo = new PageInfo(list);
+        return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Override
+    public ServerResponse<PageInfo> listOrderAnsqueInfoByOrderId(int pageNum, int pageSize, Integer orderId) {
+        if (orderId == null)
+            return ServerResponse.createByErrorMessage("参数为空");
+
+        SelfOrder order = orderMapper.selectByPrimaryKey(orderId);
+        if (order == null)
+            return ServerResponse.createByErrorMessage("找不到该订单");
+
+        PageHelper.startPage(pageNum, pageSize);
+        PageHelper.orderBy("create_time asc");
+        List<SelfOrderAnsque> list = selfOrderAnsqueMapper.list(orderId);
+        PageInfo pageInfo = new PageInfo(list);
+        return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Override
+    public XSSFWorkbook exportExcelInfo(String startTime, String endTime) {
+        if (startTime == null || endTime == null)
+            return null;
+        try {
+            //根据ID查找数据
+            Date startDate = DateTimeUtil.strToDate(startTime, "yyyy-MM-dd");
+            Date endDate = DateTimeUtil.strToDate(endTime, "yyyy-MM-dd");
+            List<SelfOrder> orderInfoList = orderMapper.selectByTime(startDate, endDate);
+
+            XSSFWorkbook xssfWorkbook = null;
+            List<ExcelBean> excel = new ArrayList<>();
+            Map<Integer, List<ExcelBean>> map = new LinkedHashMap<>();
+            //设置标题栏
+            excel.add(new ExcelBean("订单id", "orderId", 0));
+            excel.add(new ExcelBean("订单金额", "orderPrice", 0));
+            excel.add(new ExcelBean("平台抽成金额", "adminPrice", 0));
+            excel.add(new ExcelBean("客户文件名", "orderCustomerFile", 0));
+            excel.add(new ExcelBean("工程师完单文件", "orderFile", 0));
+            excel.add(new ExcelBean("客户编号", "customerId", 0));
+            excel.add(new ExcelBean("制作工程师编号", "engineerId", 0));
+            excel.add(new ExcelBean(" PCB种类", "orderFirstCategory", 0));
+            excel.add(new ExcelBean("订单种类", "orderSelfCategory", 0));
+            excel.add(new ExcelBean("下订单的时间", "createTime", 0));
+            excel.add(new ExcelBean("完成时间", "updateTime", 0));
+            map.put(0, excel);
+            String sheetName = "order";
+            xssfWorkbook = ExcelUtil.createExcelFile(OrderInfo.class, orderInfoList, map, sheetName);
+            return xssfWorkbook;
+        } catch (Exception e) {
+            return null;
+        }
+
+
+    }
+
+    @Override
+    public ServerResponse<PageInfo> adminOrderList(int pageSize, int pageNum, Integer state, Integer firstCategory, String selfCategoryName) {
+        String orderFirstCategory = null;
+        if (firstCategory != null) {
+            if (firstCategory == 0)
+                orderFirstCategory = "PCB";
+            else
+                orderFirstCategory = "FPC";
+        }
+        PageHelper.startPage(pageNum, pageSize);
+        PageHelper.orderBy("order_id desc");
+        List<SelfOrder> list = orderMapper.adminOrderList(state, orderFirstCategory, selfCategoryName);
+        PageInfo pageInfo = new PageInfo(list);
+        return ServerResponse.createBySuccess(pageInfo);
+    }
+
+
+    @Override
+    public ServerResponse aliCallback(Map<String, String> params) {
+        try {
+            Integer orderId = Integer.parseInt(params.get("out_trade_no"));
+            String tradeNo = params.get("trade_no");
+            String tradeStatus = params.get("trade_status");
+            SelfOrder order = orderMapper.selectByPrimaryKey(orderId);
+            if (order == null) {
+                logger.debug("非o2o的订单,回调忽略");
+                return ServerResponse.createByErrorMessage("非o2o的订单,回调忽略");
+            }
+            if (order.getOrderState() >= Const.SelfOrder.PAID) {
+                logger.debug("支付宝重复调用");
+                return ServerResponse.createByErrorMessage("支付宝重复调用");
+            }
+            if (Const.AlipayCallback.TRADE_STATUS_TRADE_SUCCESS.equals(tradeStatus)) {
+                order.setOrderState(Const.SelfOrder.PAID);
+                orderMapper.updateByPrimaryKeySelective(order);
+            }
+
+            CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(order.getCustomerId());
+
+            PayInfo payInfo = new PayInfo();
+            payInfo.setUserId(order.getCustomerId());
+            payInfo.setOrderNo((long) order.getOrderId());
+            payInfo.setPayPlatform(Const.PayPlatformEnum.ALIPAY.getCode());
+            payInfo.setPlatformNumber(tradeNo);
+            payInfo.setPlatformStatus(tradeStatus);
+            payInfo.setUserName(customerInfo.getCustomerName());
+            payInfo.setPrice(order.getOrderPrice());
+            payInfoMapper.insert(payInfo);
+
+            BillInfo payBillInfo = new BillInfo();
+            payBillInfo.setUserId(customerInfo.getCustomerId());
+            payBillInfo.setBillMoney(order.getOrderPrice());
+            payBillInfo.setUserName(customerInfo.getCustomerName());
+            payBillInfo.setUserType(0);
+            payBillInfo.setBillDec("充值自建订单 :" + order.getOrderId());
+            billInfoMapper.insert(payBillInfo);
+
+            BillInfo billInfo = new BillInfo();
+            billInfo.setUserId(customerInfo.getCustomerId());
+            billInfo.setBillMoney(BigDecimalUtil.sub(order.getOrderPrice().doubleValue(), BigDecimalUtil.add(order.getOrderPrice().doubleValue(), order.getOrderPrice().doubleValue()).doubleValue()));
+            billInfo.setUserName(customerInfo.getCustomerName());
+            billInfo.setUserType(0);
+            billInfo.setBillDec("支付自建订单 :" + order.getOrderId());
+            billInfoMapper.insert(billInfo);
+        } catch (Exception e) {
+            logger.debug("支付宝验证回调异常", e);
+        }
+
+        return ServerResponse.createBySuccess();
+    }
 }

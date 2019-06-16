@@ -19,9 +19,9 @@ public interface SelfQuantityInfoMapper {
 
     int updateByPrimaryKey(SelfQuantityInfo record);
 
-    QuantityInfo selectByQuantiyRank(Integer quantiyRank);
+    SelfQuantityInfo selectByQuantiyRank(Integer quantiyRank);
 
-    List<QuantityInfo> selectList();
+    List<SelfQuantityInfo> selectList();
 
-    List<QuantityInfo> selectByQuantiy(BigDecimal pence);
+    List<SelfQuantityInfo> selectByQuantiy(BigDecimal pence);
 }

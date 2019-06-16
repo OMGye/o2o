@@ -1153,6 +1153,150 @@ public class AdminController {
     }
 
 
+    @Autowired
+    private SelfQuantityInfoService selfQuantityInfoService;
+
+    @RequestMapping(value = "selfQuantityInfo/delete.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse deleteSelfQuantityInfo(HttpSession session, Integer quantityId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return selfQuantityInfoService.delete(quantityId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+    @RequestMapping(value = "selfQuantityInfo/update.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse updateSelfQuantityInfo(HttpSession session, SelfQuantityInfo quantityInfo){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return selfQuantityInfoService.update(quantityInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+    @RequestMapping(value = "selfQuantityInfo/list.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse listSelfQuantityInfo(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize){
+        return selfQuantityInfoService.list(pageSize,pageNum);
+    }
+
+    @RequestMapping(value = "selfQuantityInfo/add.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse addSelfQuantityInfo(HttpSession session, SelfQuantityInfo quantityInfo){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return selfQuantityInfoService.add(quantityInfo);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
+
+    @RequestMapping(value = "selfQuantityInfo/getbyid.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse getByIdSelfQuantityInfo(HttpSession session, Integer quantityId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return selfQuantityInfoService.getById(quantityId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+
+    }
 
 
+    @Autowired
+    private SelfOrderService selfOrderService;
+
+    @RequestMapping(value = "selfOrder/selforderlist.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse adminOrderList(HttpSession session, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize,Integer state, Integer firstCategory, String selfCategoryName){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return selfOrderService.adminOrderList(pageSize,pageNum,state
+            ,firstCategory,selfCategoryName);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "selfOrder/getselforderbyid.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse getSelfOrderById(HttpSession session, Integer orderId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return selfOrderService.getOrderById(orderId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "selfOrder/getselforderansquebyid.do",method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse getSelfOrderAnsQueById(HttpSession session, Integer orderId, @RequestParam(value = "pageNum",defaultValue = "1") int pageNum, @RequestParam(value = "pageSize",defaultValue = "5")int pageSize){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return selfOrderService.listOrderAnsqueInfoByOrderId(pageNum,pageSize,orderId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "selfOrder/admindeal.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse adminDeal(HttpSession session, Integer orderId, BigDecimal customerPrice, BigDecimal engineerPrice){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return selfOrderService.adminDeal(orderId,customerPrice,engineerPrice);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "selfOrder/admincancleselforder.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse adminCancleSelfOrder(HttpSession session, Integer orderId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return selfOrderService.adminCancleSelfOrder(orderId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "selfOrder/admincancletocreate.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse adminCancleToCreate(HttpSession session, Integer orderId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return selfOrderService.adminCancleToCreate(orderId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "selfOrder/adminfinishselforder.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse adminFinishSelfOrder(HttpSession session, Integer orderId){
+        AdminInfo adminInfo = (AdminInfo)session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null){
+            return selfOrderService.adminFinishSelfOrder(orderId);
+        }
+        return ServerResponse.createByErrorMessage("请登入管理员账户");
+    }
+
+    @RequestMapping(value = "selfOrder/exportexcelinfo.do", method = RequestMethod.GET)
+    public void exportExcelInfo(HttpSession session, HttpServletResponse response, String startTime, String endTime) {
+        AdminInfo adminInfo = (AdminInfo) session.getAttribute(Const.CURRENT_USER);
+        if (adminInfo != null) {
+            response.setContentType("application/vnd.ms-excel");
+            response.setHeader("Content-disposition", "attachment;filename=selfOrder.xlsx;charset=UTF-8");
+            XSSFWorkbook workbook = selfOrderService.exportExcelInfo(startTime, endTime);
+            try {
+                OutputStream output = response.getOutputStream();
+                BufferedOutputStream bufferedOutPut = new BufferedOutputStream(output);
+                workbook.write(bufferedOutPut);
+                bufferedOutPut.flush();
+                bufferedOutPut.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

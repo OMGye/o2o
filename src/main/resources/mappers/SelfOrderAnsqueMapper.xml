@@ -146,7 +146,7 @@
   </select>
 
   <update id="updateMessAgeState" parameterType="map">
-    update order_ansque_info
+    update self_order_ansque
     set state = 1
     where self_order_id = #{orderId}
     and user_type != #{type}
