@@ -527,7 +527,6 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             orderInfo.setOrderFile(PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFile.getName());
         }
 
-        if (orderInfo.getAdminCheck() == Const.AdminCheck.CHECK) {
             if (orderInfo.getEngineerCheckId() != null) {
                 orderInfo.setOrderState(Const.Order.QAE_HAVE_CAUGHT);
             } else {
@@ -559,13 +558,6 @@ public class OrderInfoServiceImpl implements OrderInfoService {
                 TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(customerInfo.getEmail(), "您的订单已被工程师完成,等待审核工程师审核");
                 timer.schedule(caughtOrder, Const.TIMER_FOR_SEND_EMAIL);
             }
-        }
-        if (orderInfo.getAdminCheck() == Const.AdminCheck.UNCHECK) {
-            orderInfo.setAdminCheck(Const.AdminCheck.CHECKING);
-            int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
-            if (row <= 0)
-                return ServerResponse.createByErrorMessage("上传失败");
-        }
         return ServerResponse.createBySuccess("上传成功");
     }
 
@@ -933,7 +925,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             if (orderInfo.getOrderState() != Const.Order.QAE_HAVE_CAUGHT)
                 return ServerResponse.createByErrorMessage("当前订单状态不可通过");
 
-            if (orderInfo.getAdminCheck() == Const.AdminCheck.CHECK) {
+            if (orderInfo.getAdminCheck() == Const.AdminCheck.CHECK && engineerInfo.getAdminCheck() == Const.AdminCheck.CHECK) {
                 if (orderInfo.getEngineerCheckId() != null && engineerInfo.getEngineerId().intValue() == orderInfo.getEngineerCheckId()) {
                     orderInfo.setOrderState(Const.Order.CHECK);
                     int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
@@ -1995,8 +1987,13 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
         orderInfo.setAdminCheck(Const.AdminCheck.UNCHECK);
         int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
-        if (row <= 0)
+        if (row <= 0){
             return ServerResponse.createByErrorMessage("审核拒绝失败");
+        }
+        EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerCheckId());
+        Timer timer = new Timer();
+        TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(engineerInfo.getEmail(), "您的订单审核出现问题，请您重新审核");
+        timer.schedule(caughtOrder, Const.TIMER_FOR_SEND_EMAIL);
         return ServerResponse.createBySuccess("审核拒绝成功");
     }
 
