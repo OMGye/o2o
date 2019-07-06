@@ -56,6 +56,8 @@ public interface OrderInfoService {
 
     ServerResponse qaeCheck(Integer orderId, Integer state, String refuseDec, EngineerInfo engineerInfo);
 
+    ServerResponse qaeCheckUploadFile(Integer orderId, EngineerInfo engineerInfo, MultipartFile file, String path);
+
     ServerResponse customerCancleOrder(Integer orderId, CustomerInfo customerInfo);
 
     ServerResponse engineerCancleOrder(Integer orderId, EngineerInfo engineerInfo);

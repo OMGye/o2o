@@ -243,9 +243,8 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             return ServerResponse.createByErrorMessage("上传文件异常");
         }
         order.setOrderCustomerFile(PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFile.getName());
-        order.setAdminCheck(customerInfo.getAdminCheck());
         order.setDownload(0);
-
+        order.setAdminCheck(customerInfo.getAdminCheck());
 
         int row = orderInfoMapper.insert(order);
         if (row > 0) {
@@ -260,7 +259,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     }
 
     @Override
-    public ServerResponse payForBalance(Integer orderId, Integer customerId){
+    public ServerResponse payForBalance(Integer orderId, Integer customerId) {
         if (orderId == null)
             return ServerResponse.createByErrorMessage("订单号为空");
 
@@ -273,7 +272,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
         CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey
                 (customerId);
-        if (orderInfo.getOrderPrice().doubleValue() > customerInfo.getCustomerBalance().doubleValue()){
+        if (orderInfo.getOrderPrice().doubleValue() > customerInfo.getCustomerBalance().doubleValue()) {
             return ServerResponse.createByErrorMessage("余额不足");
         }
 
@@ -360,7 +359,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     public ServerResponse aliCallbackBalance(Map<String, String> params) {
         try {
             String order = params.get("out_trade_no");
-            Integer customerId = Integer.parseInt(order.substring(0,order.indexOf("-")));
+            Integer customerId = Integer.parseInt(order.substring(0, order.indexOf("-")));
             String tradeNo = params.get("trade_no");
             String tradeStatus = params.get("trade_status");
             BigDecimal price = new BigDecimal(params.get("total_amount"));
@@ -403,9 +402,9 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         PageHelper.orderBy("order_id desc");
         List<OrderInfo> list = orderInfoMapper.customerListOrder(customerInfo.getCustomerId(), orderState);
         List<OrderAndMessagenumVo> listVo = new ArrayList<>();
-        for (OrderInfo orderInfo : list){
+        for (OrderInfo orderInfo : list) {
             OrderAndMessagenumVo orderAndMessagenumVo = new OrderAndMessagenumVo();
-            BeanUtils.copyProperties(orderInfo,orderAndMessagenumVo);
+            BeanUtils.copyProperties(orderInfo, orderAndMessagenumVo);
             Integer num = orderAnsqueInfoMapper.getUnReadNum(orderInfo.getOrderId(), 0);
             orderAndMessagenumVo.setUnReadMessage(num);
             listVo.add(orderAndMessagenumVo);
@@ -448,10 +447,10 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
         EngineerInfo dbEngineerInfo = engineerInfoMapper.selectByPrimaryKey(engineerInfo.getEngineerId());
         if (dbEngineerInfo != null) {
-            if (dbEngineerInfo.getOrderCount() >= 1){
+            if (dbEngineerInfo.getOrderCount() >= 1) {
                 List<OrderInfo> list = orderInfoMapper.engineerListOrder(dbEngineerInfo.getEngineerId(), Const.Order.HAVE_CAUGHT);
-                for (OrderInfo orderInfo1 : list){
-                    if (orderInfo1.getAdminCheck() != Const.AdminCheck.CHECKING){
+                for (OrderInfo orderInfo1 : list) {
+                    if (orderInfo1.getAdminCheck() != Const.AdminCheck.CHECKING) {
                         return ServerResponse.createByErrorMessage("您当前可接订单数已满");
                     }
                 }
@@ -527,6 +526,10 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             orderInfo.setOrderFile(PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFile.getName());
         }
 
+        CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
+        if (customerInfo.getAdminCheck() == Const.AdminCheck.UNCHECK || engineerInfo.getAdminCheck() == Const.AdminCheck.UNCHECK) {
+            orderInfo.setAdminCheck(Const.AdminCheck.CHECKING);
+        } else {
             if (orderInfo.getEngineerCheckId() != null) {
                 orderInfo.setOrderState(Const.Order.QAE_HAVE_CAUGHT);
             } else {
@@ -537,14 +540,14 @@ public class OrderInfoServiceImpl implements OrderInfoService {
                 return ServerResponse.createByErrorMessage("上传失败");
 
             if (orderInfo.getOrderQae() == 0) {
-                CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey
+                customerInfo = customerInfoMapper.selectByPrimaryKey
                         (orderInfo.getCustomerId());
                 Timer timer = new Timer();
                 TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(customerInfo.getEmail(), "您的订单已被工程师完成");
                 timer.schedule(caughtOrder, Const.TIMER_FOR_SEND_EMAIL);
             }
             if (orderInfo.getOrderQae() == 1 && orderInfo.getEngineerCheckId() == null) {
-                CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey
+                 customerInfo = customerInfoMapper.selectByPrimaryKey
                         (orderInfo.getCustomerId());
                 Timer timer = new Timer();
                 TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(customerInfo.getEmail(), "您的订单已被工程师完成,等待审核工程师接单审核");
@@ -552,12 +555,13 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             }
 
             if (orderInfo.getOrderQae() == 1 && orderInfo.getEngineerCheckId() != null) {
-                CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey
+                 customerInfo = customerInfoMapper.selectByPrimaryKey
                         (orderInfo.getCustomerId());
                 Timer timer = new Timer();
                 TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(customerInfo.getEmail(), "您的订单已被工程师完成,等待审核工程师审核");
                 timer.schedule(caughtOrder, Const.TIMER_FOR_SEND_EMAIL);
             }
+        }
         return ServerResponse.createBySuccess("上传成功");
     }
 
@@ -759,9 +763,9 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         PageHelper.orderBy("order_id desc");
         List<OrderInfo> list = orderInfoMapper.engineerListOrder(engineerInfo.getEngineerId(), orderState);
         List<OrderAndMessagenumVo> listVo = new ArrayList<>();
-        for (OrderInfo orderInfo : list){
+        for (OrderInfo orderInfo : list) {
             OrderAndMessagenumVo orderAndMessagenumVo = new OrderAndMessagenumVo();
-            BeanUtils.copyProperties(orderInfo,orderAndMessagenumVo);
+            BeanUtils.copyProperties(orderInfo, orderAndMessagenumVo);
             Integer num = orderAnsqueInfoMapper.getUnReadNum(orderInfo.getOrderId(), 1);
             orderAndMessagenumVo.setUnReadMessage(num);
             listVo.add(orderAndMessagenumVo);
@@ -777,9 +781,9 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         PageHelper.orderBy("update_time desc");
         List<OrderInfo> list = orderInfoMapper.engineerQaeListOrder(engineerInfo.getEngineerId(), orderState);
         List<OrderAndMessagenumVo> listVo = new ArrayList<>();
-        for (OrderInfo orderInfo : list){
+        for (OrderInfo orderInfo : list) {
             OrderAndMessagenumVo orderAndMessagenumVo = new OrderAndMessagenumVo();
-            BeanUtils.copyProperties(orderInfo,orderAndMessagenumVo);
+            BeanUtils.copyProperties(orderInfo, orderAndMessagenumVo);
             Integer num = orderAnsqueInfoMapper.getUnReadNum(orderInfo.getOrderId(), 2);
             orderAndMessagenumVo.setUnReadMessage(num);
             listVo.add(orderAndMessagenumVo);
@@ -925,12 +929,13 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             if (orderInfo.getOrderState() != Const.Order.QAE_HAVE_CAUGHT)
                 return ServerResponse.createByErrorMessage("当前订单状态不可通过");
 
-            if (orderInfo.getAdminCheck() == Const.AdminCheck.CHECK && engineerInfo.getAdminCheck() == Const.AdminCheck.CHECK) {
+            CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
+            if (customerInfo.getAdminCheck() == Const.AdminCheck.CHECK && engineerInfo.getAdminCheck() == Const.AdminCheck.CHECK) {
                 if (orderInfo.getEngineerCheckId() != null && engineerInfo.getEngineerId().intValue() == orderInfo.getEngineerCheckId()) {
                     orderInfo.setOrderState(Const.Order.CHECK);
                     int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
                     if (row > 0) {
-                        CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
+                        customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
                         Timer timer = new Timer();
                         TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(customerInfo.getEmail(), "您的订单已被审核工程师通过");
                         timer.schedule(caughtOrder, Const.TIMER_FOR_SEND_EMAIL);
@@ -939,9 +944,81 @@ public class OrderInfoServiceImpl implements OrderInfoService {
                     }
                     return ServerResponse.createByErrorMessage("通过失败");
                 }
-            }
+            } else {
+                if (orderInfo.getEngineerCheckId() != null && engineerInfo.getEngineerId().intValue() == orderInfo.getEngineerCheckId()) {
+                orderInfo.setAdminCheck(Const.AdminCheck.CHECKING);
+                int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+                if (row <= 0)
+                    return ServerResponse.createByErrorMessage("通过失败");
 
-            if (orderInfo.getAdminCheck() == Const.AdminCheck.UNCHECK) {
+                return ServerResponse.createBySuccess("通过成功");
+                }
+            }
+        }
+
+        return ServerResponse.createByErrorMessage("参数异常");
+    }
+
+    @Override
+    public ServerResponse qaeCheckUploadFile(Integer orderId, EngineerInfo engineerInfo, MultipartFile file, String path) {
+        if (file == null || orderId == null)
+            return ServerResponse.createByErrorMessage("参数不能为空");
+
+        OrderInfo orderInfo = orderInfoMapper.selectByPrimaryKey(orderId);
+        if (orderInfo == null)
+            return ServerResponse.createByErrorMessage("找不到该订单");
+
+        if (orderInfo.getOrderState() != Const.Order.QAE_HAVE_CAUGHT)
+            return ServerResponse.createByErrorMessage("该订单状态不可上传文件");
+
+        if (file != null) {
+            String fileName = file.getOriginalFilename();
+            //扩展名
+            //abc.jpg
+            String fileExtensionName = fileName.substring(fileName.lastIndexOf(".") + 1);
+            String uploadFileName = orderId + "-" + orderInfo.getCustomerFileRealName() + "." + fileExtensionName;
+            logger.info("开始上传文件,上传文件的文件名:{},上传的路径:{},新文件名:{}", fileName, path, uploadFileName);
+
+            File fileDir = new File(path);
+            if (!fileDir.exists()) {
+                fileDir.setWritable(true);
+                fileDir.mkdirs();
+            }
+            File targetFile = new File(path, uploadFileName);
+
+
+            try {
+                file.transferTo(targetFile);
+                //文件已经上传成功了
+
+                FTPUtil.uploadFile(Lists.newArrayList(targetFile));
+                //已经上传到ftp服务器上
+
+                targetFile.delete();
+            } catch (IOException e) {
+                logger.error("上传文件异常", e);
+                return ServerResponse.createByErrorMessage("上传文件异常");
+            }
+            orderInfo.setOrderFile(PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFile.getName());
+        }
+
+        CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
+        if (customerInfo.getAdminCheck() == Const.AdminCheck.CHECK && engineerInfo.getAdminCheck() == Const.AdminCheck.CHECK) {
+            if (orderInfo.getEngineerCheckId() != null && engineerInfo.getEngineerId().intValue() == orderInfo.getEngineerCheckId()) {
+                orderInfo.setOrderState(Const.Order.CHECK);
+                int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+                if (row > 0) {
+                    customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
+                    Timer timer = new Timer();
+                    TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(customerInfo.getEmail(), "您的订单已被审核工程师通过");
+                    timer.schedule(caughtOrder, Const.TIMER_FOR_SEND_EMAIL);
+
+                    return ServerResponse.createBySuccess("通过成功");
+                }
+                return ServerResponse.createByErrorMessage("通过失败");
+            }
+        } else {
+            if (orderInfo.getEngineerCheckId() != null && engineerInfo.getEngineerId().intValue() == orderInfo.getEngineerCheckId()) {
                 orderInfo.setAdminCheck(Const.AdminCheck.CHECKING);
                 int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
                 if (row <= 0)
@@ -950,8 +1027,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
                 return ServerResponse.createBySuccess("通过成功");
             }
         }
-
-        return ServerResponse.createByErrorMessage("参数异常");
+        return ServerResponse.createByErrorMessage("操作失败");
     }
 
     @Override
@@ -1414,7 +1490,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             return ServerResponse.createByErrorMessage("您不属于该订单");
 
         if (type == 1 && userId.intValue() != orderInfo.getEngineerId().intValue()) {
-            if (type == 1 && userId.intValue() != orderInfo.getEngineerCheckId().intValue()){
+            if (type == 1 && userId.intValue() != orderInfo.getEngineerCheckId().intValue()) {
                 return ServerResponse.createByErrorMessage("您不属于该订单");
             }
             type = 2;
@@ -1449,8 +1525,8 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if (type == 0 && userId.intValue() != orderInfo.getCustomerId().intValue())
             return ServerResponse.createByErrorMessage("您不属于该订单");
 
-        if (type == 1 && userId.intValue() != orderInfo.getEngineerId().intValue()){
-            if (type == 1 && userId.intValue() != orderInfo.getEngineerCheckId().intValue()){
+        if (type == 1 && userId.intValue() != orderInfo.getEngineerId().intValue()) {
+            if (type == 1 && userId.intValue() != orderInfo.getEngineerCheckId().intValue()) {
                 return ServerResponse.createByErrorMessage("您不属于该订单");
             }
             type = 2;
@@ -1511,7 +1587,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             return ServerResponse.createByErrorMessage("您不属于该订单");
 
         if (type == 1 && userId.intValue() != orderInfo.getEngineerId().intValue()) {
-            if (type == 1 && userId.intValue() != orderInfo.getEngineerCheckId().intValue()){
+            if (type == 1 && userId.intValue() != orderInfo.getEngineerCheckId().intValue()) {
                 return ServerResponse.createByErrorMessage("您不属于该订单");
             }
             type = 2;
@@ -1519,7 +1595,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         PageHelper.startPage(pageNum, pageSize);
         PageHelper.orderBy("create_time asc");
         List<OrderAnsqueInfo> list = orderAnsqueInfoMapper.list(orderId);
-        orderAnsqueInfoMapper.updateMessAgeState(orderId,type);
+        orderAnsqueInfoMapper.updateMessAgeState(orderId, type);
         PageInfo pageInfo = new PageInfo(list);
         return ServerResponse.createBySuccess(pageInfo);
     }
@@ -1560,14 +1636,14 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         PageHelper.startPage(pageNum, pageSize);
         PageHelper.orderBy("create_time asc");
         List<OrderInfo> list = null;
-        if (type == 0){
-        list = orderInfoMapper.selectByOtherIdLike(idString,
-                null, null);
+        if (type == 0) {
+            list = orderInfoMapper.selectByOtherIdLike(idString,
+                    null, null);
         }
-        if (type == 1){
+        if (type == 1) {
             list = orderInfoMapper.selectByOtherIdLike(null, idString, null);
         }
-        if (type == 2){
+        if (type == 2) {
             list = orderInfoMapper.selectByOtherIdLike(null, null, idString);
         }
         PageInfo pageInfo = new PageInfo(list);
@@ -1576,37 +1652,37 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
     @Override
     public ServerResponse getAllPrice(Integer type) {
-        if (type == 0){
+        if (type == 0) {
             BigDecimal payPrice = payInfoMapper.allPrice();
             return ServerResponse.createBySuccess(payPrice);
         }
 
-        if (type == 1){
+        if (type == 1) {
             BigDecimal drawPrice = drawCashInfoMapper.allPrice();
             return ServerResponse.createBySuccess(drawPrice);
         }
 
-        if (type == 2){
+        if (type == 2) {
             BigDecimal customerPrice = customerInfoMapper.allPrice();
             return ServerResponse.createBySuccess(customerPrice);
         }
 
-        if (type == 3){
+        if (type == 3) {
             BigDecimal engineerPrice = engineerInfoMapper.allPrice();
             return ServerResponse.createBySuccess(engineerPrice);
         }
 
-        if (type == 4){
+        if (type == 4) {
             BigDecimal incomePrice = incomeInfoMapper.allPrice();
             return ServerResponse.createBySuccess(incomePrice);
         }
 
-        if (type == 5){
+        if (type == 5) {
             BigDecimal unFinishedOrderPrice = orderInfoMapper.allUnfinishedPrice();
             return ServerResponse.createBySuccess(unFinishedOrderPrice);
         }
 
-        if (type == 6){
+        if (type == 6) {
             BigDecimal finishedOrderPrice = orderInfoMapper.hasFinshedPrice();
             return ServerResponse.createBySuccess(finishedOrderPrice);
         }
@@ -1695,70 +1771,70 @@ public class OrderInfoServiceImpl implements OrderInfoService {
                 return null;
             }
         }
-        if (type == 1){
+        if (type == 1) {
             try {
-                Date startDate = DateTimeUtil.strToDate(startTime,"yyyy-MM-dd");
+                Date startDate = DateTimeUtil.strToDate(startTime, "yyyy-MM-dd");
                 Date endDate = DateTimeUtil.strToDate(endTime, "yyyy-MM-dd");
-                List<OrderInfo> orderInfoList = orderInfoMapper.selectByTimeAndType(startDate, endDate, null,id, null, Const.Order.HAVE_FINISHED);
-                XSSFWorkbook xssfWorkbook=null;
-                List<ExcelBean> excel=new ArrayList<>();
-                Map<Integer,List<ExcelBean>> map=new LinkedHashMap<>();
+                List<OrderInfo> orderInfoList = orderInfoMapper.selectByTimeAndType(startDate, endDate, null, id, null, Const.Order.HAVE_FINISHED);
+                XSSFWorkbook xssfWorkbook = null;
+                List<ExcelBean> excel = new ArrayList<>();
+                Map<Integer, List<ExcelBean>> map = new LinkedHashMap<>();
                 //设置标题栏
-                excel.add(new ExcelBean("订单id","orderId",0));
-                excel.add(new ExcelBean("订单金额","engineerRealPrice",0));
-                excel.add(new ExcelBean("客户文件名","orderCustomerFile",0));
-                excel.add(new ExcelBean("工程师完单文件","orderFile",0));
-                excel.add(new ExcelBean("客户编号","customerId",0));
-                excel.add(new ExcelBean("制作工程师编号","engineerId",0));
-                excel.add(new ExcelBean("审核工程师编号","engineerCheckId",0));
-                excel.add(new ExcelBean(" PCB种类","orderFirstCategory",0));
-                excel.add(new ExcelBean("订单种类","orderSecondCategory",0));
-                excel.add(new ExcelBean("MI","orderMi",0));
-                excel.add(new ExcelBean("QAE","orderQae",0));
-                excel.add(new ExcelBean("参数","otherParamInfo",0));
-                excel.add(new ExcelBean("层数","basicLayer",0));
-                excel.add(new ExcelBean("拼款数","priceTogetherNum",0));
-                excel.add(new ExcelBean("下订单的时间","createTime",0));
-                excel.add(new ExcelBean("完成时间","updateTime",0));
+                excel.add(new ExcelBean("订单id", "orderId", 0));
+                excel.add(new ExcelBean("订单金额", "engineerRealPrice", 0));
+                excel.add(new ExcelBean("客户文件名", "orderCustomerFile", 0));
+                excel.add(new ExcelBean("工程师完单文件", "orderFile", 0));
+                excel.add(new ExcelBean("客户编号", "customerId", 0));
+                excel.add(new ExcelBean("制作工程师编号", "engineerId", 0));
+                excel.add(new ExcelBean("审核工程师编号", "engineerCheckId", 0));
+                excel.add(new ExcelBean(" PCB种类", "orderFirstCategory", 0));
+                excel.add(new ExcelBean("订单种类", "orderSecondCategory", 0));
+                excel.add(new ExcelBean("MI", "orderMi", 0));
+                excel.add(new ExcelBean("QAE", "orderQae", 0));
+                excel.add(new ExcelBean("参数", "otherParamInfo", 0));
+                excel.add(new ExcelBean("层数", "basicLayer", 0));
+                excel.add(new ExcelBean("拼款数", "priceTogetherNum", 0));
+                excel.add(new ExcelBean("下订单的时间", "createTime", 0));
+                excel.add(new ExcelBean("完成时间", "updateTime", 0));
                 map.put(0, excel);
-                String sheetName ="order";
+                String sheetName = "order";
                 xssfWorkbook = ExcelUtil.createExcelFile(OrderInfo.class, orderInfoList, map, sheetName);
                 return xssfWorkbook;
-            }catch (Exception e){
+            } catch (Exception e) {
                 return null;
             }
         }
 
-        if (type == 2){
+        if (type == 2) {
             try {
-                Date startDate = DateTimeUtil.strToDate(startTime,"yyyy-MM-dd");
+                Date startDate = DateTimeUtil.strToDate(startTime, "yyyy-MM-dd");
                 Date endDate = DateTimeUtil.strToDate(endTime, "yyyy-MM-dd");
                 List<OrderInfo> orderInfoList = orderInfoMapper.selectByTimeAndType(startDate, endDate, null, null, id, Const.Order.HAVE_FINISHED);
-                XSSFWorkbook xssfWorkbook=null;
-                List<ExcelBean> excel=new ArrayList<>();
-                Map<Integer,List<ExcelBean>> map=new LinkedHashMap<>();
+                XSSFWorkbook xssfWorkbook = null;
+                List<ExcelBean> excel = new ArrayList<>();
+                Map<Integer, List<ExcelBean>> map = new LinkedHashMap<>();
                 //设置标题栏
-                excel.add(new ExcelBean("订单id","orderId",0));
-                excel.add(new ExcelBean("订单金额","engineerQaeRealPrice",0));
-                excel.add(new ExcelBean("客户文件名","orderCustomerFile",0));
-                excel.add(new ExcelBean("工程师完单文件","orderFile",0));
-                excel.add(new ExcelBean("客户编号","customerId",0));
-                excel.add(new ExcelBean("制作工程师编号","engineerId",0));
-                excel.add(new ExcelBean("审核工程师编号","engineerCheckId",0));
-                excel.add(new ExcelBean(" PCB种类","orderFirstCategory",0));
-                excel.add(new ExcelBean("订单种类","orderSecondCategory",0));
-                excel.add(new ExcelBean("MI","orderMi",0));
-                excel.add(new ExcelBean("QAE","orderQae",0));
-                excel.add(new ExcelBean("参数","otherParamInfo",0));
-                excel.add(new ExcelBean("层数","basicLayer",0));
-                excel.add(new ExcelBean("拼款数","priceTogetherNum",0));
-                excel.add(new ExcelBean("下订单的时间","createTime",0));
-                excel.add(new ExcelBean("完成时间","updateTime",0));
+                excel.add(new ExcelBean("订单id", "orderId", 0));
+                excel.add(new ExcelBean("订单金额", "engineerQaeRealPrice", 0));
+                excel.add(new ExcelBean("客户文件名", "orderCustomerFile", 0));
+                excel.add(new ExcelBean("工程师完单文件", "orderFile", 0));
+                excel.add(new ExcelBean("客户编号", "customerId", 0));
+                excel.add(new ExcelBean("制作工程师编号", "engineerId", 0));
+                excel.add(new ExcelBean("审核工程师编号", "engineerCheckId", 0));
+                excel.add(new ExcelBean(" PCB种类", "orderFirstCategory", 0));
+                excel.add(new ExcelBean("订单种类", "orderSecondCategory", 0));
+                excel.add(new ExcelBean("MI", "orderMi", 0));
+                excel.add(new ExcelBean("QAE", "orderQae", 0));
+                excel.add(new ExcelBean("参数", "otherParamInfo", 0));
+                excel.add(new ExcelBean("层数", "basicLayer", 0));
+                excel.add(new ExcelBean("拼款数", "priceTogetherNum", 0));
+                excel.add(new ExcelBean("下订单的时间", "createTime", 0));
+                excel.add(new ExcelBean("完成时间", "updateTime", 0));
                 map.put(0, excel);
-                String sheetName ="order";
+                String sheetName = "order";
                 xssfWorkbook = ExcelUtil.createExcelFile(OrderInfo.class, orderInfoList, map, sheetName);
                 return xssfWorkbook;
-            }catch (Exception e){
+            } catch (Exception e) {
                 return null;
             }
         }
@@ -1775,19 +1851,19 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if (orderInfo == null)
             return ServerResponse.createByErrorMessage("找不到该订单");
 
-        if (type == 0){
+        if (type == 0) {
             orderInfo.setOrderState(Const.Order.HAVE_FINISHED);
             int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
-            if (row > 0){
-                if (orderInfo.getCustomerId() != null){
+            if (row > 0) {
+                if (orderInfo.getCustomerId() != null) {
                     CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
                     sendEmai("您的订单已被后台设置为已完成,订单号：" + orderId, customerInfo.getEmail());
                 }
-                if (orderInfo.getEngineerId() != null){
+                if (orderInfo.getEngineerId() != null) {
                     EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerId());
                     sendEmai("您的订单已被后台设置为已完成,订单号：" + orderId, engineerInfo.getEmail());
                 }
-                if (orderInfo.getEngineerCheckId() != null){
+                if (orderInfo.getEngineerCheckId() != null) {
                     EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerCheckId());
                     sendEmai("您的订单已被后台设置为已完成,订单号：" + orderId, engineerInfo.getEmail());
                 }
@@ -1796,19 +1872,19 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             return ServerResponse.createByErrorMessage("修改失败");
         }
 
-        if (type == 1){
+        if (type == 1) {
             orderInfo.setOrderState(Const.Order.CANNCEL);
             int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
-            if (row > 0){
-                if (orderInfo.getCustomerId() != null){
+            if (row > 0) {
+                if (orderInfo.getCustomerId() != null) {
                     CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
                     sendEmai("您的订单已被后台设置为已取消,订单号：" + orderId, customerInfo.getEmail());
                 }
-                if (orderInfo.getEngineerId() != null){
+                if (orderInfo.getEngineerId() != null) {
                     EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerId());
                     sendEmai("您的订单已被后台设置为已取消,订单号：" + orderId, engineerInfo.getEmail());
                 }
-                if (orderInfo.getEngineerCheckId() != null){
+                if (orderInfo.getEngineerCheckId() != null) {
                     EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerCheckId());
                     sendEmai("您的订单已被后台设置为已取消,订单号：" + orderId, engineerInfo.getEmail());
                 }
@@ -1824,36 +1900,36 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if (startTime == null || endTime == null)
             return ServerResponse.createByErrorMessage("参数为空");
 
-        Date startDate = DateTimeUtil.strToDate(startTime,"yyyy-MM-dd");
+        Date startDate = DateTimeUtil.strToDate(startTime, "yyyy-MM-dd");
         Date endDate = DateTimeUtil.strToDate(endTime, "yyyy-MM-dd");
-        List<OrderInfo> list = orderInfoMapper.selectByDateUnDownload(startDate,endDate);
+        List<OrderInfo> list = orderInfoMapper.selectByDateUnDownload(startDate, endDate);
         if (list.size() == 0)
             return ServerResponse.createByErrorMessage("该时间段的文件已经下载");
 
         List<Integer> orderIds = new ArrayList<>();
-        for (OrderInfo orderInfo : list){
+        for (OrderInfo orderInfo : list) {
             orderIds.add(orderInfo.getOrderId());
         }
         List<OrderAnsqueInfo> ansqueInfoList = orderAnsqueInfoMapper.selectByOrderListDownload(orderIds);
         StringBuffer sb = new StringBuffer();
-        for (OrderInfo orderInfo : list){
-            if (orderInfo.getOrderFile() != null){
+        for (OrderInfo orderInfo : list) {
+            if (orderInfo.getOrderFile() != null) {
                 sb.append(orderInfo.getOrderFile().substring(21));
                 sb.append(" ");
             }
-            if (orderInfo.getOrderCustomerFile() != null){
+            if (orderInfo.getOrderCustomerFile() != null) {
                 sb.append(orderInfo.getOrderCustomerFile().substring(21));
                 sb.append(" ");
             }
         }
-        for (OrderAnsqueInfo orderAnsqueInfo : ansqueInfoList){
+        for (OrderAnsqueInfo orderAnsqueInfo : ansqueInfoList) {
             sb.append(orderAnsqueInfo.getOrderAnsqueContent().substring(21));
             sb.append(" ");
         }
 
-        orderInfoMapper.updateDownload(startDate,endDate);
+        orderInfoMapper.updateDownload(startDate, endDate);
 
-        String[] cmd = new String[]{ "/bin/sh", "-c", "cd /product/ftpfile; tar zcvf "+ startTime + endTime + ".tar " + sb.toString() + "; rm -rf " + sb.toString()};
+        String[] cmd = new String[]{"/bin/sh", "-c", "cd /product/ftpfile; tar zcvf " + startTime + endTime + ".tar " + sb.toString() + "; rm -rf " + sb.toString()};
         Runtime run = Runtime.getRuntime();
         try {
             Process process = run.exec(cmd);
@@ -1862,14 +1938,14 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             StringBuffer stringBuffer = new StringBuffer();
             byte b[] = new byte[8192];
-            for (int n; (n = in.read(b)) != -1;){
+            for (int n; (n = in.read(b)) != -1; ) {
                 stringBuffer.append(new String(b, 0, n));
             }
             logger.info(stringBuffer.toString());
             in.close();
             process.destroy();
             return ServerResponse.createBySuccess(PropertiesUtil.getProperty("ftp.server.http.prefix") + startTime + endTime + ".tar");
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.info("执行失败" + e.getMessage());
             e.printStackTrace();
         }
@@ -1881,7 +1957,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if (startTime == null || endTime == null)
             return ServerResponse.createByErrorMessage("参数为空");
 
-        String[] cmd = new String[]{ "/bin/sh", "-c", "cd /product/ftpfile; rm -rf " + startTime + endTime + ".tar"};
+        String[] cmd = new String[]{"/bin/sh", "-c", "cd /product/ftpfile; rm -rf " + startTime + endTime + ".tar"};
         Runtime run = Runtime.getRuntime();
         try {
             Process process = run.exec(cmd);
@@ -1890,14 +1966,14 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             StringBuffer stringBuffer = new StringBuffer();
             byte b[] = new byte[8192];
-            for (int n; (n = in.read(b)) != -1;){
+            for (int n; (n = in.read(b)) != -1; ) {
                 stringBuffer.append(new String(b, 0, n));
             }
             logger.info(stringBuffer.toString());
             in.close();
             process.destroy();
             return ServerResponse.createBySuccess("删除成功");
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.info("执行失败" + e.getMessage());
             e.printStackTrace();
         }
@@ -1922,7 +1998,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if (orderInfo == null)
             return ServerResponse.createByErrorMessage("找不到该订单");
 
-        if (orderInfo.getOrderState() == Const.Order.HAVE_CAUGHT){
+        if (orderInfo.getOrderState() == Const.Order.HAVE_CAUGHT) {
             if (orderInfo.getEngineerCheckId() != null) {
                 orderInfo.setOrderState(Const.Order.QAE_HAVE_CAUGHT);
             } else {
@@ -1957,19 +2033,19 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             }
         }
 
-        if (orderInfo.getOrderState() == Const.Order.QAE_HAVE_CAUGHT){
-                orderInfo.setOrderState(Const.Order.CHECK);
-                orderInfo.setAdminCheck(Const.AdminCheck.CHECK);
-                int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
-                if (row > 0) {
-                    CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
-                    Timer timer = new Timer();
-                    TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(customerInfo.getEmail(), "您的订单已被审核工程师通过");
-                    timer.schedule(caughtOrder, Const.TIMER_FOR_SEND_EMAIL);
-                    return ServerResponse.createBySuccess("审核通过成功");
-                }
-                return ServerResponse.createByErrorMessage("审核通过失败");
+        if (orderInfo.getOrderState() == Const.Order.QAE_HAVE_CAUGHT) {
+            orderInfo.setOrderState(Const.Order.CHECK);
+            orderInfo.setAdminCheck(Const.AdminCheck.CHECK);
+            int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+            if (row > 0) {
+                CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
+                Timer timer = new Timer();
+                TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(customerInfo.getEmail(), "您的订单已被审核工程师通过");
+                timer.schedule(caughtOrder, Const.TIMER_FOR_SEND_EMAIL);
+                return ServerResponse.createBySuccess("审核通过成功");
             }
+            return ServerResponse.createByErrorMessage("审核通过失败");
+        }
         return ServerResponse.createBySuccess("审核通过成功");
     }
 
@@ -1987,14 +2063,22 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
         orderInfo.setAdminCheck(Const.AdminCheck.UNCHECK);
         int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
-        if (row <= 0){
+        if (row <= 0) {
             return ServerResponse.createByErrorMessage("审核拒绝失败");
         }
-        EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerCheckId());
-        Timer timer = new Timer();
-        TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(engineerInfo.getEmail(), "您的订单审核出现问题，请您重新审核");
-        timer.schedule(caughtOrder, Const.TIMER_FOR_SEND_EMAIL);
-        return ServerResponse.createBySuccess("审核拒绝成功");
+        if (orderInfo.getOrderState() == Const.Order.QAE_HAVE_CAUGHT) {
+            EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerCheckId());
+            Timer timer = new Timer();
+            TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(engineerInfo.getEmail(), "您的订单审核出现问题，请您重新审核");
+            timer.schedule(caughtOrder, Const.TIMER_FOR_SEND_EMAIL);
+            return ServerResponse.createBySuccess("审核拒绝成功");
+        } else {
+            EngineerInfo engineerInfo = engineerInfoMapper.selectByPrimaryKey(orderInfo.getEngineerId());
+            Timer timer = new Timer();
+            TimerEmailCaughtOrder caughtOrder = new TimerEmailCaughtOrder(engineerInfo.getEmail(), "您的订单完工文件出现质量问题，请您重新上传");
+            timer.schedule(caughtOrder, Const.TIMER_FOR_SEND_EMAIL);
+            return ServerResponse.createBySuccess("审核拒绝成功");
+        }
     }
 
     @Override
@@ -2006,7 +2090,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if (order == null)
             return ServerResponse.createByErrorMessage("找不到该订单");
 
-        if (order.getOrderState() == Const.Order.CANNCEL || order.getOrderState()== Const.Order.HAVE_FINISHED || order.getOrderState() == Const.Order.PAYING || order.getOrderState() == Const.Order.PAIED)
+        if (order.getOrderState() == Const.Order.CANNCEL || order.getOrderState() == Const.Order.HAVE_FINISHED || order.getOrderState() == Const.Order.PAYING || order.getOrderState() == Const.Order.PAIED)
             return ServerResponse.createByErrorMessage("该订单状态不能退单");
 
         order.setEngineerName(null);
@@ -2035,7 +2119,10 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if (order == null)
             return ServerResponse.createByErrorMessage("找不到该订单");
 
-        if (order.getOrderState() != Const.Order.HAVE_CAUGHT)
+        if (order.getOrderState() != Const.Order.HAVE_CAUGHT && order.getOrderState() != Const.Order.HAVE_UPLOAD_FILE &&
+        order.getOrderState() != Const.Order.QAE_HAVE_CAUGHT &&
+        order.getOrderState() != Const.Order.CHECK &&
+        order.getOrderState() != Const.Order.HAVE_REIVER_ORDER)
             return ServerResponse.createByErrorMessage("该订单状态不能协助上传完工文件");
 
         String fileName = file.getOriginalFilename();
@@ -2067,10 +2154,13 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         }
 
         order.setOrderFile(PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFile.getName());
-        if (order.getOrderQae() == 0 || (order.getOrderQae() == 1 && order.getEngineerCheckId() == null))
-            order.setOrderState(Const.Order.HAVE_UPLOAD_FILE);
-        else
-            order.setOrderState(Const.Order.QAE_HAVE_CAUGHT);
+        if (order.getOrderState() == Const.Order.HAVE_CAUGHT) {
+            if (order.getOrderQae() == 0 || (order.getOrderQae() == 1 && order.getEngineerCheckId() == null))
+                order.setOrderState(Const.Order.HAVE_UPLOAD_FILE);
+            else
+                order.setOrderState(Const.Order.QAE_HAVE_CAUGHT);
+        }
+
         order.setAdminCheck(Const.AdminCheck.CHECK);
 
         int row = orderInfoMapper.updateByPrimaryKey(order);
@@ -2081,7 +2171,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
     @Override
     public ServerResponse adminHelpCheck(Integer orderId) {
-        if (orderId == null )
+        if (orderId == null)
             return ServerResponse.createByErrorMessage("参数不能为空");
 
         OrderInfo order = orderInfoMapper.selectByPrimaryKey(orderId);
@@ -2127,7 +2217,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if (order == null)
             return ServerResponse.createByErrorMessage("找不到该订单");
 
-        if (order.getOrderState() != Const.Order.CHECK  )
+        if (order.getOrderState() != Const.Order.CHECK)
             return ServerResponse.createByErrorMessage("该订单状态不能协助退回给审核工程师");
         order.setAdminCheck(Const.AdminCheck.CHECK);
         order.setOrderState(Const.Order.QAE_HAVE_CAUGHT);
@@ -2165,7 +2255,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if (order == null)
             return ServerResponse.createByErrorMessage("找不到该订单");
 
-        if (order.getOrderState() == Const.Order.PAYING || order.getOrderState() == Const.Order.HAVE_FINISHED|| order.getOrderState() == Const.Order.CANNCEL)
+        if (order.getOrderState() == Const.Order.PAYING || order.getOrderState() == Const.Order.HAVE_FINISHED || order.getOrderState() == Const.Order.CANNCEL)
             return ServerResponse.createByErrorMessage("该订单状态不能协助取消订单");
         order.setOrderState(Const.Order.CANNCEL);
         int row = orderInfoMapper.updateByPrimaryKeySelective(order);
@@ -2202,11 +2292,10 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         return comfirmOrder(orderId, order.getCustomerId());
     }
 
-    private void sendEmai(String str, String email){
+    private void sendEmai(String str, String email) {
         Timer timerCheck = new Timer();
         TimerEmailCaughtOrder caughtOrderCheck = new TimerEmailCaughtOrder(email, str);
         timerCheck.schedule(caughtOrderCheck, Const.TIMER_FOR_SEND_EMAIL);
     }
-
 
 }
