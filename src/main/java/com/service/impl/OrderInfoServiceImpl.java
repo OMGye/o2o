@@ -648,8 +648,9 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if (orderInfo == null)
             return ServerResponse.createByErrorMessage("找不到该订单");
 
-        if (orderInfo.getOrderState() != Const.Order.HAVE_REIVER_ORDER)
+        if (orderInfo.getOrderState() != Const.Order.HAVE_REIVER_ORDER && orderInfo.getOrderState() != Const.Order.CHECK && !(orderInfo.getOrderQae() == 0 && orderInfo.getOrderState() == Const.Order.HAVE_UPLOAD_FILE)) {
             return ServerResponse.createByErrorMessage("当前订单状态不可确认");
+        }
 
         if (orderInfo.getOrderQae() == 0) {
             orderInfo.setOrderState(Const.Order.HAVE_FINISHED);
@@ -2289,8 +2290,6 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if (order == null)
             return ServerResponse.createByErrorMessage("找不到该订单");
 
-        if (order.getOrderState() != Const.Order.HAVE_REIVER_ORDER && order.getOrderState() != Const.Order.CHECK)
-            return ServerResponse.createByErrorMessage("该订单状态不能协助确认订单");
         return comfirmOrder(orderId, order.getCustomerId());
     }
 
