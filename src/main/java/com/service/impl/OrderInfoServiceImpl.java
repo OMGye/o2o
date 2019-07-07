@@ -529,6 +529,9 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         CustomerInfo customerInfo = customerInfoMapper.selectByPrimaryKey(orderInfo.getCustomerId());
         if (customerInfo.getAdminCheck() == Const.AdminCheck.UNCHECK || engineerInfo.getAdminCheck() == Const.AdminCheck.UNCHECK) {
             orderInfo.setAdminCheck(Const.AdminCheck.CHECKING);
+            int row = orderInfoMapper.updateByPrimaryKeySelective(orderInfo);
+            if (row <= 0)
+                return ServerResponse.createByErrorMessage("上传失败");
         } else {
             if (orderInfo.getEngineerCheckId() != null) {
                 orderInfo.setOrderState(Const.Order.QAE_HAVE_CAUGHT);
