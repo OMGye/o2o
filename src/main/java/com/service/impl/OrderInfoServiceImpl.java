@@ -2289,7 +2289,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if (order == null)
             return ServerResponse.createByErrorMessage("找不到该订单");
 
-        if (order.getOrderState() != Const.Order.HAVE_REIVER_ORDER || order.getOrderState() != Const.Order.CHECK)
+        if (order.getOrderState() != Const.Order.HAVE_REIVER_ORDER && order.getOrderState() != Const.Order.CHECK)
             return ServerResponse.createByErrorMessage("该订单状态不能协助确认订单");
         return comfirmOrder(orderId, order.getCustomerId());
     }
