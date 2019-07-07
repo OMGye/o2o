@@ -2158,13 +2158,12 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
         order.setOrderFile(PropertiesUtil.getProperty("ftp.server.http.prefix") + targetFile.getName());
         if (order.getOrderState() == Const.Order.HAVE_CAUGHT) {
+            order.setAdminCheck(Const.AdminCheck.CHECK);
             if (order.getOrderQae() == 0 || (order.getOrderQae() == 1 && order.getEngineerCheckId() == null))
                 order.setOrderState(Const.Order.HAVE_UPLOAD_FILE);
             else
                 order.setOrderState(Const.Order.QAE_HAVE_CAUGHT);
         }
-
-        order.setAdminCheck(Const.AdminCheck.CHECK);
 
         int row = orderInfoMapper.updateByPrimaryKey(order);
         if (row <= 0)
@@ -2290,7 +2289,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if (order == null)
             return ServerResponse.createByErrorMessage("找不到该订单");
 
-        if (order.getOrderState() != Const.Order.HAVE_REIVER_ORDER)
+        if (order.getOrderState() != Const.Order.HAVE_REIVER_ORDER || order.getOrderState() != Const.Order.CHECK)
             return ServerResponse.createByErrorMessage("该订单状态不能协助确认订单");
         return comfirmOrder(orderId, order.getCustomerId());
     }
