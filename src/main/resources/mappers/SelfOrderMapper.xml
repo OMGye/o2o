@@ -42,7 +42,7 @@
     delete from self_order
     where order_id = #{orderId,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.pojo.SelfOrder" >
+  <insert id="insert" parameterType="com.pojo.SelfOrder" useGeneratedKeys="true" keyProperty="orderId">
     insert into self_order (order_id, customer_id, customer_name,
     engineer_id, engineer_name, order_first_category,
     order_self_category, order_dec, order_deduct_rank,
