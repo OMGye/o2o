@@ -16,6 +16,7 @@ import com.vo.AdminAllPrice;
 import com.vo.EngineerDefriendJson;
 import com.vo.EngineerRankVO;
 import com.vo.OrderAndMessagenumVo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1705,10 +1706,11 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             List<OrderInfo> orderInfoList = orderInfoMapper.selectByTime(startDate, endDate);
 
             for (OrderInfo orderInfo : orderInfoList) {
-                orderInfo.setOrderFile(orderInfo.getOrderFile().substring(orderInfo.getOrderFile().lastIndexOf("top") + 4));
+                if (StringUtils.isNotEmpty(orderInfo.getOrderFile()))
+                    orderInfo.setOrderFile(orderInfo.getOrderFile().substring(orderInfo.getOrderFile().lastIndexOf("top") + 4));
             }
 
-                XSSFWorkbook xssfWorkbook = null;
+            XSSFWorkbook xssfWorkbook = null;
             List<ExcelBean> excel = new ArrayList<>();
             Map<Integer, List<ExcelBean>> map = new LinkedHashMap<>();
             //设置标题栏
@@ -1753,9 +1755,9 @@ public class OrderInfoServiceImpl implements OrderInfoService {
                 List<OrderInfo> orderInfoList = orderInfoMapper.selectByTimeAndType(startDate, endDate, id, null, null, Const.Order.HAVE_FINISHED);
 
                 for (OrderInfo orderInfo : orderInfoList) {
-                    orderInfo.setOrderFile(orderInfo.getOrderFile().substring(orderInfo.getOrderFile().lastIndexOf("top") + 4));
+                    if (StringUtils.isNotEmpty(orderInfo.getOrderFile()))
+                        orderInfo.setOrderFile(orderInfo.getOrderFile().substring(orderInfo.getOrderFile().lastIndexOf("top") + 4));
                 }
-
                 XSSFWorkbook xssfWorkbook = null;
                 List<ExcelBean> excel = new ArrayList<>();
                 Map<Integer, List<ExcelBean>> map = new LinkedHashMap<>();
@@ -1791,7 +1793,8 @@ public class OrderInfoServiceImpl implements OrderInfoService {
                 List<OrderInfo> orderInfoList = orderInfoMapper.selectByTimeAndType(startDate, endDate, null, id, null, Const.Order.HAVE_FINISHED);
 
                 for (OrderInfo orderInfo : orderInfoList) {
-                    orderInfo.setOrderFile(orderInfo.getOrderFile().substring(orderInfo.getOrderFile().lastIndexOf("top") + 4));
+                    if (StringUtils.isNotEmpty(orderInfo.getOrderFile()))
+                        orderInfo.setOrderFile(orderInfo.getOrderFile().substring(orderInfo.getOrderFile().lastIndexOf("top") + 4));
                 }
 
                 XSSFWorkbook xssfWorkbook = null;
@@ -1830,7 +1833,8 @@ public class OrderInfoServiceImpl implements OrderInfoService {
                 List<OrderInfo> orderInfoList = orderInfoMapper.selectByTimeAndType(startDate, endDate, null, null, id, Const.Order.HAVE_FINISHED);
 
                 for (OrderInfo orderInfo : orderInfoList) {
-                    orderInfo.setOrderFile(orderInfo.getOrderFile().substring(orderInfo.getOrderFile().lastIndexOf("top") + 4));
+                    if (StringUtils.isNotEmpty(orderInfo.getOrderFile()))
+                        orderInfo.setOrderFile(orderInfo.getOrderFile().substring(orderInfo.getOrderFile().lastIndexOf("top") + 4));
                 }
 
                 XSSFWorkbook xssfWorkbook = null;
