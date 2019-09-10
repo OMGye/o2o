@@ -417,7 +417,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     @Override
     public ServerResponse<PageInfo> engineerCaughtList(int pageSize, int pageNum, EngineerRankVO engineerRankVO) {
         PageHelper.startPage(pageNum, pageSize);
-        PageHelper.orderBy("update_time desc");
+        PageHelper.orderBy("order_id asc");
         List<OrderInfo> list = orderInfoMapper.engineerCaughtList(engineerRankVO.getFirstCategory(), engineerRankVO.getSecondCategories(), engineerRankVO.getMI() == 1 ? null : 0, Const.Order.PAIED);
         PageInfo pageInfo = new PageInfo(list);
         return ServerResponse.createBySuccess(pageInfo);
@@ -831,7 +831,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     @Override
     public ServerResponse<PageInfo> engineerQaeCaughtList(int pageSize, int pageNum, EngineerRankVO engineerRankVO) {
         PageHelper.startPage(pageNum, pageSize);
-        PageHelper.orderBy("update_time desc");
+        PageHelper.orderBy("order_id asc");
         List<OrderInfo> list = orderInfoMapper.engineerQaeCaughtList(engineerRankVO.getFirstCategory(), engineerRankVO.getSecondCategories(), engineerRankVO.getQAE(), Const.Order.HAVE_UPLOAD_FILE);
         PageInfo pageInfo = new PageInfo(list);
         return ServerResponse.createBySuccess(pageInfo);
@@ -1704,7 +1704,11 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             Date endDate = DateTimeUtil.strToDate(endTime, "yyyy-MM-dd");
             List<OrderInfo> orderInfoList = orderInfoMapper.selectByTime(startDate, endDate);
 
-            XSSFWorkbook xssfWorkbook = null;
+            for (OrderInfo orderInfo : orderInfoList) {
+                orderInfo.setOrderFile(orderInfo.getOrderFile().substring(orderInfo.getOrderFile().lastIndexOf("top") + 4));
+            }
+
+                XSSFWorkbook xssfWorkbook = null;
             List<ExcelBean> excel = new ArrayList<>();
             Map<Integer, List<ExcelBean>> map = new LinkedHashMap<>();
             //设置标题栏
@@ -1713,7 +1717,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             excel.add(new ExcelBean("工程师收款金额", "engineerRealPrice", 0));
             excel.add(new ExcelBean("审核工程师收款金额", "engineerQaeRealPrice", 0));
             excel.add(new ExcelBean("平台抽成金额", "adminPrice", 0));
-            excel.add(new ExcelBean("客户文件名", "orderCustomerFile", 0));
+            excel.add(new ExcelBean("客户文件名", "customerFileRealName", 0));
             excel.add(new ExcelBean("工程师完单文件", "orderFile", 0));
             excel.add(new ExcelBean("客户编号", "customerId", 0));
             excel.add(new ExcelBean("制作工程师编号", "engineerId", 0));
@@ -1747,13 +1751,18 @@ public class OrderInfoServiceImpl implements OrderInfoService {
                 Date startDate = DateTimeUtil.strToDate(startTime, "yyyy-MM-dd");
                 Date endDate = DateTimeUtil.strToDate(endTime, "yyyy-MM-dd");
                 List<OrderInfo> orderInfoList = orderInfoMapper.selectByTimeAndType(startDate, endDate, id, null, null, Const.Order.HAVE_FINISHED);
+
+                for (OrderInfo orderInfo : orderInfoList) {
+                    orderInfo.setOrderFile(orderInfo.getOrderFile().substring(orderInfo.getOrderFile().lastIndexOf("top") + 4));
+                }
+
                 XSSFWorkbook xssfWorkbook = null;
                 List<ExcelBean> excel = new ArrayList<>();
                 Map<Integer, List<ExcelBean>> map = new LinkedHashMap<>();
                 //设置标题栏
                 excel.add(new ExcelBean("订单id", "orderId", 0));
                 excel.add(new ExcelBean("订单金额", "orderPrice", 0));
-                excel.add(new ExcelBean("客户文件名", "orderCustomerFile", 0));
+                excel.add(new ExcelBean("客户文件名", "customerFileRealName", 0));
                 excel.add(new ExcelBean("工程师完单文件", "orderFile", 0));
                 excel.add(new ExcelBean("客户编号", "customerId", 0));
                 excel.add(new ExcelBean("制作工程师编号", "engineerId", 0));
@@ -1780,13 +1789,18 @@ public class OrderInfoServiceImpl implements OrderInfoService {
                 Date startDate = DateTimeUtil.strToDate(startTime, "yyyy-MM-dd");
                 Date endDate = DateTimeUtil.strToDate(endTime, "yyyy-MM-dd");
                 List<OrderInfo> orderInfoList = orderInfoMapper.selectByTimeAndType(startDate, endDate, null, id, null, Const.Order.HAVE_FINISHED);
+
+                for (OrderInfo orderInfo : orderInfoList) {
+                    orderInfo.setOrderFile(orderInfo.getOrderFile().substring(orderInfo.getOrderFile().lastIndexOf("top") + 4));
+                }
+
                 XSSFWorkbook xssfWorkbook = null;
                 List<ExcelBean> excel = new ArrayList<>();
                 Map<Integer, List<ExcelBean>> map = new LinkedHashMap<>();
                 //设置标题栏
                 excel.add(new ExcelBean("订单id", "orderId", 0));
                 excel.add(new ExcelBean("订单金额", "engineerRealPrice", 0));
-                excel.add(new ExcelBean("客户文件名", "orderCustomerFile", 0));
+                excel.add(new ExcelBean("客户文件名", "customerFileRealName", 0));
                 excel.add(new ExcelBean("工程师完单文件", "orderFile", 0));
                 excel.add(new ExcelBean("客户编号", "customerId", 0));
                 excel.add(new ExcelBean("制作工程师编号", "engineerId", 0));
@@ -1814,13 +1828,18 @@ public class OrderInfoServiceImpl implements OrderInfoService {
                 Date startDate = DateTimeUtil.strToDate(startTime, "yyyy-MM-dd");
                 Date endDate = DateTimeUtil.strToDate(endTime, "yyyy-MM-dd");
                 List<OrderInfo> orderInfoList = orderInfoMapper.selectByTimeAndType(startDate, endDate, null, null, id, Const.Order.HAVE_FINISHED);
+
+                for (OrderInfo orderInfo : orderInfoList) {
+                    orderInfo.setOrderFile(orderInfo.getOrderFile().substring(orderInfo.getOrderFile().lastIndexOf("top") + 4));
+                }
+
                 XSSFWorkbook xssfWorkbook = null;
                 List<ExcelBean> excel = new ArrayList<>();
                 Map<Integer, List<ExcelBean>> map = new LinkedHashMap<>();
                 //设置标题栏
                 excel.add(new ExcelBean("订单id", "orderId", 0));
                 excel.add(new ExcelBean("订单金额", "engineerQaeRealPrice", 0));
-                excel.add(new ExcelBean("客户文件名", "orderCustomerFile", 0));
+                excel.add(new ExcelBean("客户文件名", "customerFileRealName", 0));
                 excel.add(new ExcelBean("工程师完单文件", "orderFile", 0));
                 excel.add(new ExcelBean("客户编号", "customerId", 0));
                 excel.add(new ExcelBean("制作工程师编号", "engineerId", 0));
@@ -2299,4 +2318,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         timerCheck.schedule(caughtOrderCheck, Const.TIMER_FOR_SEND_EMAIL);
     }
 
+    public static void main(String[] args) {
+        System.out.println("http://img.yycam.top/10032933-S2R04055.zip".substring("http://img.yycam.top/10032933-S2R04055.zip".lastIndexOf("top") + 4));
+    }
 }

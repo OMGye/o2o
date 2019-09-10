@@ -767,6 +767,8 @@ public class SelfOrderServiceImpl implements SelfOrderService{
                 categories.add(selfCategory.getSelfCategoryName());
         }
 
+        if (categories.size() == 0)
+            categories = null;
         PageHelper.startPage(pageNum, pageSize);
         PageHelper.orderBy("order_id asc");
         List<SelfOrder> list = orderMapper.engineerCanCaughtList(engineerInfo.getEngineerClassfy(), categories,Const.SelfOrder.PAID);
