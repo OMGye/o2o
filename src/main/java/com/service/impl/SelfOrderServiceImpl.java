@@ -760,8 +760,6 @@ public class SelfOrderServiceImpl implements SelfOrderService{
 
     @Override
     public ServerResponse engineerCanCaughtList(int pageSize, int pageNum, EngineerInfo engineerInfo) {
-        PageHelper.startPage(pageNum, pageSize);
-        PageHelper.orderBy("order_id asc");
 
         List<SelfCategory> categoryList = categoryMapper.selectList();
         List<String> categories = new ArrayList<>();
@@ -769,6 +767,8 @@ public class SelfOrderServiceImpl implements SelfOrderService{
             if (engineerInfo.getEngineerRank() >= selfCategory.getRank())
                 categories.add(selfCategory.getSelfCategoryName());
         }
+        PageHelper.startPage(pageNum, pageSize);
+        PageHelper.orderBy("order_id asc");
 
         if (categories.size() == 0)
             return ServerResponse.createBySuccess(new PageInfo());
