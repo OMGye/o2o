@@ -185,7 +185,12 @@ public class EngineerInfoController {
         EngineerInfo curEngineerInfo = (EngineerInfo) session.getAttribute(Const.CURRENT_USER);
         if (curEngineerInfo != null){
             ServerResponse response = orderInfoService.getOrderById(orderId);
-            OrderInfo orderInfo = (OrderInfo)response.getData();
+            if (response.isSuccess()){
+                OrderInfo order = (OrderInfo) response.getData();
+                if (order.getEngineerId() != null)
+                    if (order.getEngineerId().intValue() != curEngineerInfo.getEngineerId().intValue())
+                        return ServerResponse.createByErrorMessage("异常操作");
+            }
             return response;
         }
         return ServerResponse.createByErrorMessage("请登入管理员账户");
@@ -489,8 +494,9 @@ public class EngineerInfoController {
             ServerResponse response = selfOrderService.getOrderById(orderId);
             if (response.isSuccess()){
                 SelfOrder order = (SelfOrder) response.getData();
-                if (order.getEngineerId().intValue() != curEngineerInfo.getEngineerId().intValue())
-                    return ServerResponse.createByErrorMessage("异常操作");
+                if (order.getEngineerId() != null)
+                    if (order.getEngineerId().intValue() != curEngineerInfo.getEngineerId().intValue())
+                        return ServerResponse.createByErrorMessage("异常操作");
             }
             return response;
 
